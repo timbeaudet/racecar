@@ -141,8 +141,8 @@ float Racecar::Clutch::ComputeFrictionalTorque(void) const
 	const float clutchStaticFrictionCoefficient(0.6f); //static steel on steel from: http://www.school-for-champions.com/science/friction_equation.htm#.WBSr1fkrLZI
 	const float clutchKineticFrictionCoefficient(0.4f); //kinetic steel on steel
 
-	const float engineVelocity(inputSource.GetAngularVelocity());
-	const float transmissionVelocity(GetAngularVelocity());
+	const float engineVelocity(tbMath::Convert::DegreesToRadians(inputSource.GetAngularVelocity()));
+	const float clutchVelocity(tbMath::Convert::DegreesToRadians(GetAngularVelocity()));
 
 	//http://www.thecartech.com/subjects/design/Automobile_clutchs.htm
 	//318ft-lbs is the torque capacity of a 'race' miata clutch: https://www.flyinmiata.com/fm-level-1-clutch.html
@@ -153,21 +153,77 @@ float Racecar::Clutch::ComputeFrictionalTorque(void) const
 	//2800N * 0.09525m =  266 Nm
 	//318ft-lbs ~= 432 Nm    / 0.09525m (3.75") / 0.6 (coefficient of friction)  = 7567 Nm
 
-	const float frictionCoefficient(tbMath::IsEqual(engineVelocity, transmissionVelocity, 0.1f) ? clutchStaticFrictionCoefficient : clutchKineticFrictionCoefficient);
+	const float frictionCoefficient(tbMath::IsEqual(engineVelocity, clutchVelocity, 0.1f) ? clutchStaticFrictionCoefficient : clutchKineticFrictionCoefficient);
 	const float forceNormal = mClutchEngagement * 7567.0f; //See above comment for where this comes from!
 	const float maximumTorqueAmount(forceNormal * frictionCoefficient * tbMath::Convert::InchesToMeters(3.75f)); //Nm
 
 	//engineVelocity * engineInertia = clutchVelocity * clutchInertia
 
+		//inputBody; momentumEngine = inertiaEngine * velocityEngine;   //inertiaEngine = inputSource->ComputeUpstreamInertia()
+		//outputBody; momentumClutch = inertiaClutch * velocityClutch;  //inertiaClutch = ComputeDownstreamInertia()
+		//momentumEngine + momentumClutch = X;
+
+		//X = inertiaClutch + inertiaEngine
+
+		//velDifference = velocityEngine - velocityClutch; //positive when engine spins faster
+		//value = inertiaEngine / inertiaClutch
+		//			100				1000 = .1
+		//velocityClutch += velDifference * value;
+		//velocityEngine -= velDifference * (1.0f / value)
+
+		//torqueClutch = (velDifference * value) * inertiaClutch
+		//torqueEngine = -(velDifference * (1.0f / value)) * inertiaEngine
+
+		//torqueClutch SHOULD EQUAL -torqueEngine
+
+
+
+	////////////////  Conservation of Momentum
+	//(engineInertia * engineVelocity) + (clutchInertia * clutchVelocity) = inertiaTotal + velocityTotal
+	//inertiaTotal = engineInertia + clutchInertia
+	//velocityTotal = (engineInertia * engineVelocity) + (clutchInertia * clutchVelocity) / inertiaTotal
+	//
+	//velocityTotal = engineVelocity + clutchVelocity
+	//inertiaTotal = (engineInertia * engineVelocity) + (clutchInertia * clutchVelocity) / velocityTotal
+	////////////////
+
+
+
+
+//	before:
+//		clutch:1000 Nm  @  2000RPM
+//		engine:100 Nm   @  3000RPM
+//	after:
+//		clutch and engine wind up at ~2100RPM (I think)
+
+
+
+
 
 	//engineInertia * 5000 + wheelInertia * 1000 = (engineInertia + wheelInertia) engineSpeed + wheelSpeed
-	//const float velocityDifference(tbMath::Convert::DegreesToRadians(engineVelocity - transmissionVelocity)); //Positive if flywheel spinning faster than clutch disc.
+	const float velocityDifference(engineVelocity - clutchVelocity); //Positive if flywheel spinning faster than clutch disc.
+	const float engineInertia(inputSource.ComputeUpstreamInertia(*this));
+	const float clutchInertia(ComputeDownstreamIntertia(*this));
+								//   2000rpm             1000rpm             100             1000  =       2100
+	const float targetVelocity = clutchVelocity + (velocityDifference * ((engineInertia * engineVelocity) / (clutchInertia * clutchVelocity)));
+	const float torqueOnClutch((targetVelocity - clutchVelocity) * clutchInertia);
+	const float torqueOnEngine(-(targetVelocity - engineVelocity) * engineInertia);
+
+	//const float value = engineInertia / clutchInertia; //.1
+	//const float torqueOnClutch = (velocityDifference * (value)) * clutchInertia; //100,000
+	//const float torqueOnEngine = -(velocityDifference * (1.0f / value)) * engineInertia; //1,000,000
+
+	rand();
+
+	return (torqueOnClutch + torqueOnEngine) / -2.0f;
+
+
 	//velocityDifference * DriveTrainSimulation::kFixedTime
 	//const float torqueAmount((velocityDifference > maximumTorqueAmount) ? maximumTorqueAmount : velocityDifference);
 
 	//return torqueAmount;
 
-	return (engineVelocity > transmissionVelocity) ? maximumTorqueAmount : -maximumTorqueAmount;
+	return (engineVelocity > clutchVelocity) ? maximumTorqueAmount : -maximumTorqueAmount;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
