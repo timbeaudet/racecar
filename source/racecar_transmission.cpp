@@ -26,7 +26,7 @@ Racecar::Transmission::Transmission(void) :
 	mInputShaftSpeed(0.0f),
 	mOutputShaftSpeed(0.0f)
 {
-	SetInertia(Racecar::ComputeInertia(10.0f, 3.0f));
+	SetInertia(Racecar::ComputeInertia(5.0f, 3.0f));
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

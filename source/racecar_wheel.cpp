@@ -18,7 +18,7 @@
 
 Racecar::Wheel::Wheel(void)
 {
-	SetInertia(Racecar::ComputeInertia(50.0f, 11.0f));
+	SetInertia(Racecar::ComputeInertia(5.0f, 3.0f));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

@@ -41,9 +41,12 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
 
-	const float frictionalTorque(ComputeFrictionalTorque());
-	inputSource.ApplyUpstreamTorque(-frictionalTorque, *this);
-	ApplyDownstreamTorque(frictionalTorque, *this);
+	if (fabsf(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(100))
+	{
+		const float frictionalTorque(ComputeFrictionalTorque());
+		inputSource.ApplyUpstreamTorque(-frictionalTorque, *this);
+		ApplyDownstreamTorque(frictionalTorque, *this);
+	}
 
 	RotatingBody::Simulate();
 }
@@ -52,6 +55,11 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 float Racecar::Clutch::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
 {
+	if (this == &fromSource)
+	{
+		return RotatingBody::ComputeDownstreamIntertia(fromSource);
+	}
+
 	//return 0.0f;
 
 
@@ -66,7 +74,7 @@ float Racecar::Clutch::ComputeDownstreamIntertia(const RotatingBody& fromSource)
 
 	if (mClutchEngagement < Racecar::PercentTo(0.5f))
 	{
-		return 0.5f;
+		return 0.0f;
 	}
 	else if (mClutchEngagement > Racecar::PercentTo(99.5f))
 	{
@@ -81,12 +89,29 @@ float Racecar::Clutch::ComputeDownstreamIntertia(const RotatingBody& fromSource)
 
 void Racecar::Clutch::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
 {
-	if (this != &fromSource && false == tbMath::IsEqual(GetAngularVelocity(), GetExpectedInputSource().GetAngularVelocity(), 1.0f))
-	{	//The clutch is currently slipping, so it does NOT apply acceleration to itself or downstream sources.
+	if (this == &fromSource)
+	{
+		RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
 		return;
 	}
 
-	return RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
+	//if (this != &fromSource && false == tbMath::IsEqual(GetAngularVelocity(), GetExpectedInputSource().GetAngularVelocity(), 1.0f))
+	//{	//The clutch is currently slipping, so it does NOT apply acceleration to itself or downstream sources.
+	//	return;
+	//}
+
+	if (mClutchEngagement < Racecar::PercentTo(0.5f))
+	{
+		return;
+	}
+	else if (mClutchEngagement > Racecar::PercentTo(99.5f))
+	{
+		RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
+		return;
+	}
+
+	//Somewhere in between; continue the black magic from above.
+	RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

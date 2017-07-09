@@ -20,7 +20,7 @@ Racecar::Engine::Engine(void) :
 {
 	InitializeTorqueTableToMiata();
 
-	SetInertia(Racecar::ComputeInertia(25.0f, 3.5f) + ComputeInertia(9.0f, 7.87f));
+	SetInertia(Racecar::ComputeInertia(15.0f, 3.5f));// +ComputeInertia(9.0f, 7.87f));
 	SetAngularVelocity(360.0f / 60 * 1000);
 }
 
@@ -116,9 +116,12 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	//Now that all torques have been applied to the engine, step it forward in time.
 	RotatingBody::Simulate();
 
-	if (GetEngineSpeedRPM() < 1000.0f)
+	const float differenceTo1000(GetEngineSpeedRPM() - 1000.0f);
+	if (differenceTo1000 < 0.0f)
 	{
-		SetAngularVelocity(Racecar::RevolutionsMinuteToDegreesSecond(1000.0f));
+		//SetAngularVelocity(Racecar::RevolutionsMinuteToDegreesSecond(1000.0f));
+		const float totalInertia(ComputeDownstreamIntertia(*this));
+		ApplyDownstreamTorque(-differenceTo1000 * totalInertia, *this);
 	}
 }
 
