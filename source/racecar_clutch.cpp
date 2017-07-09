@@ -41,7 +41,11 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
 
-	if (fabsf(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(100))
+	//
+	// This is a bit of a hack to only apply the frictional forces if the there is a large enough difference in
+	// angular velocities, which prevents bouncing back and forth like crazy. Ultimately the ComputeFrictionalTorque
+	// function should be accounting for the velocities getting close enough to just match speeds.
+	if (fabsf(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(50))
 	{
 		const float frictionalTorque(ComputeFrictionalTorque());
 		inputSource.ApplyUpstreamTorque(-frictionalTorque, *this);
@@ -200,22 +204,22 @@ float Racecar::Clutch::ComputeFrictionalTorque(void) const
 
 
 
-	//engineInertia * 5000 + wheelInertia * 1000 = (engineInertia + wheelInertia) engineSpeed + wheelSpeed
-	const float velocityDifference(engineVelocity - clutchVelocity); //Positive if flywheel spinning faster than clutch disc.
-	const float engineInertia(inputSource.ComputeUpstreamInertia(*this));
-	const float clutchInertia(ComputeDownstreamIntertia(*this));
-								//   2000rpm             1000rpm             100             1000  =       2100
-	const float targetVelocity = clutchVelocity + (velocityDifference * ((engineInertia * engineVelocity) / (clutchInertia * clutchVelocity)));
-	const float torqueOnClutch((targetVelocity - clutchVelocity) * clutchInertia);
-	const float torqueOnEngine(-(targetVelocity - engineVelocity) * engineInertia);
+	////engineInertia * 5000 + wheelInertia * 1000 = (engineInertia + wheelInertia) engineSpeed + wheelSpeed
+	//const float velocityDifference(engineVelocity - clutchVelocity); //Positive if flywheel spinning faster than clutch disc.
+	//const float engineInertia(inputSource.ComputeUpstreamInertia(*this));
+	//const float clutchInertia(ComputeDownstreamIntertia(*this));
+	//							//   2000rpm             1000rpm             100             1000  =       2100
+	//const float targetVelocity = clutchVelocity + (velocityDifference * ((engineInertia * engineVelocity) / (clutchInertia * clutchVelocity)));
+	//const float torqueOnClutch((targetVelocity - clutchVelocity) * clutchInertia);
+	//const float torqueOnEngine(-(targetVelocity - engineVelocity) * engineInertia);
 
-	//const float value = engineInertia / clutchInertia; //.1
-	//const float torqueOnClutch = (velocityDifference * (value)) * clutchInertia; //100,000
-	//const float torqueOnEngine = -(velocityDifference * (1.0f / value)) * engineInertia; //1,000,000
+	////const float value = engineInertia / clutchInertia; //.1
+	////const float torqueOnClutch = (velocityDifference * (value)) * clutchInertia; //100,000
+	////const float torqueOnEngine = -(velocityDifference * (1.0f / value)) * engineInertia; //1,000,000
 
-	rand();
+	//rand();
 
-	return (torqueOnClutch + torqueOnEngine) / -2.0f;
+	//return (torqueOnClutch + torqueOnEngine) / -2.0f;
 
 
 	//velocityDifference * DriveTrainSimulation::kFixedTime
