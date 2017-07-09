@@ -78,20 +78,17 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 	RotatingBody& inputSource(GetExpectedInputSource());
 
 	mInputShaftSpeed = inputSource.GetAngularVelocity();
-	mOutputShaftSpeed = mInputShaftSpeed * RatioForGear(mSelectedGear);
-	const float inputRotation(mInputShaftSpeed * 360.0f / 60.0f * DriveTrainSimulation::kFixedTime); //RPM to DegreesPerStep
-
-	//if (Gear::Neutral == mCurrentGear) { mOutputShaftSpeed = 0.0f; }
-	//else if (Gear::First == mCurrentGear) { mOutputShaftSpeed = mInputShaftSpeed / kGearRatios[0]; }
-	//else if (Gear::Second == mCurrentGear) { mOutputShaftSpeed = mInputShaftSpeed / kGearRatios[1]; }
-	//else if (Gear::Third == mCurrentGear) { mOutputShaftSpeed = mInputShaftSpeed / kGearRatios[2]; }
-	//else if (Gear::Fourth == mCurrentGear) { mOutputShaftSpeed = mInputShaftSpeed / kGearRatios[3]; }
-	//else if (Gear::Fifth == mCurrentGear) { mOutputShaftSpeed = mInputShaftSpeed / kGearRatios[4]; }
 	
-	const float outputRotation(mOutputShaftSpeed * 360.0f / 60.0f * DriveTrainSimulation::kFixedTime);
-
 	const float finalDriveRatio(4.30f); //Should be down the line, but meh.
-	SetAngularVelocity(mOutputShaftSpeed / finalDriveRatio);
+	if (Gear::Neutral == mSelectedGear)
+	{
+		//Do nothing.
+	}
+	else
+	{
+		mOutputShaftSpeed = mInputShaftSpeed / RatioForGear(mSelectedGear) / finalDriveRatio;
+		SetAngularVelocity(mOutputShaftSpeed);
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
