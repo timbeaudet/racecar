@@ -27,6 +27,8 @@ namespace Racecar
 		inline float GetBrakePosition(void) const { return mBrakePosition; }
 		inline float GetClutchPosition(void) const { return mClutchPosition; }
 		inline float GetSteeringPosition(void) const { return mSteeringPosition; }
+		inline bool IsUpshift(void) const { return mIsUpshift; }
+		inline bool IsDownshift(void) const { return mIsDownshift; }
 
 	protected:
 		virtual void OnUpdateControls(void) = 0;
@@ -36,11 +38,16 @@ namespace Racecar
 		inline void SetClutchPosition(const float clutch) { mClutchPosition = tbMath::Clamp(clutch, 0.0f, 1.0f); }
 		inline void SetSteeringPosition(const float steering) { mSteeringPosition = tbMath::Clamp(steering, -1.0f, 1.0f); }
 
+		inline void SetUpshift(const bool upshift) { mIsUpshift = upshift; }
+		inline void SetDownshift(const bool downshift) { mIsDownshift = downshift; }
+
 	private:
 		float mThrottlePosition;
 		float mBrakePosition;
 		float mClutchPosition;
 		float mSteeringPosition;
+		bool mIsUpshift;
+		bool mIsDownshift;
 	};
 
 	class DoNothingController : public RacecarControllerInterface
