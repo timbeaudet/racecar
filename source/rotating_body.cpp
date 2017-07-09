@@ -106,6 +106,20 @@ Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+const std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void) const
+{
+	return mOutputs;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void)
+{
+	return mOutputs;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 float Racecar::RotatingBody::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
 {
 	float downstreamInertia(GetInertia());
@@ -160,7 +174,6 @@ void Racecar::RotatingBody::ApplyUpstreamTorque(const float torqueNewtonMeters, 
 
 void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
 {
-	tb_unused(fromSource);
 	mAngularAcceleration += changeInAcceleration;
 	for (RotatingBody* output : mOutputs)
 	{
@@ -172,7 +185,6 @@ void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const float changeInAc
 
 void Racecar::RotatingBody::OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
 {
-	tb_unused(fromSource);
 	mAngularAcceleration += changeInAcceleration;
 	if (nullptr != mInput)
 	{

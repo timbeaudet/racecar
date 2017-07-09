@@ -30,3 +30,34 @@ void Racecar::LockedDifferential::Simulate(void)
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
+
+//float Racecar::LockedDifferential::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
+//{
+//	return RotatingBody::ComputeDownstreamIntertia(fromSource) * mFinalDriveRatio;
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//float Racecar::LockedDifferential::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+//{
+//	return GetExpectedInputSource().ComputeUpstreamInertia(fromSource) / mFinalDriveRatio + GetInertia();
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+//{
+//	AddAngularAcceleration(changeInAcceleration);
+//	for (RotatingBody* output : GetOutputs())
+//	{
+//		output->ApplyDownstreamAcceleration(changeInAcceleration * mFinalDriveRatio, fromSource);
+//	}
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//void Racecar::LockedDifferential::OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+//{
+//}
+
+//--------------------------------------------------------------------------------------------------------------------//

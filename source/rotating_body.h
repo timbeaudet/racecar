@@ -73,6 +73,7 @@ namespace Racecar
 		void SetInertia(const float inertia);
 
 		void SetAngularVelocity(const float angularVelocity);
+		void AddAngularAcceleration(const float angularAcceleration) { mAngularAcceleration += angularAcceleration; }
 
 		///
 		/// @details Changes the bodies acceleration.
@@ -90,6 +91,8 @@ namespace Racecar
 
 		const RotatingBody& GetExpectedOutputSource(const size_t& sourceIndex) const;
 		RotatingBody& GetExpectedOutputSource(const size_t& sourceIndex);
+		const std::vector<RotatingBody*>& GetOutputs(void) const;
+		std::vector<RotatingBody*>& GetOutputs(void);
 
 	private:
 		RotatingBody* mInput;
