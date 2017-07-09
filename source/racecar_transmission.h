@@ -31,7 +31,7 @@ namespace Racecar
 		Transmission(void);
 		virtual ~Transmission(void);
 
-		virtual void Simulate(const RacecarControllerInterface& racecarController);
+		void Simulate(const RacecarControllerInterface& racecarController);
 		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
