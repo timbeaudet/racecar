@@ -14,6 +14,7 @@ namespace Racecar
 {
 	enum class Gear
 	{
+		Reverse,
 		Neutral,
 		First,
 		Second,
@@ -31,12 +32,17 @@ namespace Racecar
 		virtual ~Transmission(void);
 
 		virtual void Simulate(const RacecarControllerInterface& racecarController);
+		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
+
+		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 
 	protected:
 
 	private:
 		float mInputShaftSpeed;
 		float mOutputShaftSpeed;
+		Racecar::Gear mSelectedGear;
+		bool mHasClearedShift;
 	};
 
 };	/* namespace Racecar */
