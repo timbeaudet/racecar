@@ -32,7 +32,7 @@ namespace Racecar
 		float GetClutchEngagement(void) const { return mClutchEngagement; }
 
 	protected:
-		virtual float ComputeDownstreamIntertia(const RotatingBody& fromSource) const override;
+		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
 		virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
 
 	private:

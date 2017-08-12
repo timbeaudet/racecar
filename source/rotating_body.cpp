@@ -120,12 +120,12 @@ std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-float Racecar::RotatingBody::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
+float Racecar::RotatingBody::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
 	float downstreamInertia(GetInertia());
 	for (RotatingBody* output : mOutputs)
 	{
-		downstreamInertia += output->ComputeDownstreamIntertia(fromSource);
+		downstreamInertia += output->ComputeDownstreamInertia(fromSource);
 	}
 
 	return downstreamInertia;
@@ -158,7 +158,7 @@ void Racecar::RotatingBody::Simulate(void)
 
 void Racecar::RotatingBody::ApplyDownstreamTorque(const float torqueNewtonMeters, const RotatingBody& fromSource)
 {
-	const float totalInertia(ComputeDownstreamIntertia(fromSource));
+	const float totalInertia(ComputeDownstreamInertia(fromSource));
 	OnApplyDownstreamAcceleration(tbMath::Convert::RadiansToDegrees(torqueNewtonMeters / totalInertia), fromSource);
 }
 
@@ -166,8 +166,8 @@ void Racecar::RotatingBody::ApplyDownstreamTorque(const float torqueNewtonMeters
 
 void Racecar::RotatingBody::ApplyUpstreamTorque(const float torqueNewtonMeters, const RotatingBody& fromSource)
 {
-	const float totalInertia(ComputeDownstreamIntertia(fromSource));
-	OnApplyDownstreamAcceleration(tbMath::Convert::RadiansToDegrees(torqueNewtonMeters / totalInertia), fromSource);
+	const float totalInertia(ComputeUpstreamInertia(fromSource));
+	OnApplyUpstreamAcceleration(tbMath::Convert::RadiansToDegrees(torqueNewtonMeters / totalInertia), fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

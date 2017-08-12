@@ -104,10 +104,13 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	const float& kFixedTime(DriveTrainSimulation::kFixedTime);
 	const float revolutions(GetEngineSpeedRPM() / 60.0f * kFixedTime);
 
-	const float minimumIdleTorque(tbMath::Convert::FootPoundsToNewtonMeters(5.2f));
-	const float onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
-	const float appliedEngineTorque = tbMath::Maximum(minimumIdleTorque, onThrottleTorque);
-	ApplyDownstreamTorque(appliedEngineTorque * revolutions, *this);
+	if (GetEngineSpeedRPM() < 6500)
+	{
+		const float minimumIdleTorque(tbMath::Convert::FootPoundsToNewtonMeters(5.2f));
+		const float onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
+		const float appliedEngineTorque = tbMath::Maximum(minimumIdleTorque, onThrottleTorque);
+		ApplyDownstreamTorque(appliedEngineTorque * revolutions, *this);
+	}
 	
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
 	const float engineResistanceTorque(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * 0.0625f);
@@ -120,7 +123,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	if (differenceTo1000 < 0.0f)
 	{
 		//SetAngularVelocity(Racecar::RevolutionsMinuteToDegreesSecond(1000.0f));
-		const float totalInertia(ComputeDownstreamIntertia(*this));
+		const float totalInertia(ComputeDownstreamInertia(*this));
 		ApplyDownstreamTorque(-differenceTo1000 * totalInertia, *this);
 	}
 }

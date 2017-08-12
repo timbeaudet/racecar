@@ -36,7 +36,12 @@ namespace Racecar
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 
+		//virtual float ComputeDownstreamIntertia(const RotatingBody& fromSource) const override;
+		//virtual float ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+
 	protected:
+		//virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
+		//virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
 		float mInputShaftSpeed;

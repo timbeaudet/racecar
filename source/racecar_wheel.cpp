@@ -8,6 +8,7 @@
 #include "racecar_wheel.h"
 #include "racecar_transmission.h"
 #include "racecar_controller.h"
+#include "../drive_train_simulation.h" //For kFixedTime
 
 #include "../turtle_brains/tb_math_kit.h"
 #include "../turtle_brains/tb_debug_kit.h"
@@ -18,7 +19,7 @@
 
 Racecar::Wheel::Wheel(void)
 {
-	SetInertia(Racecar::ComputeInertia(5.0f, 3.0f));
+	SetInertia(Racecar::ComputeInertia(40.0f, 6.5f));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -33,12 +34,13 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 {
 	RotatingBody& inputSource(GetExpectedInputSource());
 
+	SetAngularVelocity(inputSource.GetAngularVelocity());
 	if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(0.5f))
 	{
-		ApplyUpstreamTorque(-GetAngularVelocity() * 0.23f, *this);
+		//The brake can apply negative force - need to clamp it
+		//HELL - Need to do it correctly!!
+		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * DriveTrainSimulation::kFixedTime, *this);
 	}
-
-	SetAngularVelocity(inputSource.GetAngularVelocity());
 
 	RotatingBody::Simulate();
 }

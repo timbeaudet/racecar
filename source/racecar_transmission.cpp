@@ -93,6 +93,36 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+//float Racecar::Transmission::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
+//{
+//	if (Gear::Neutral == mSelectedGear)
+//	{
+//		return GetInertia();
+//	}
+//
+//	return GetInertia() + GetExpectedOutputSource(0).ComputeDownstreamIntertia(fromSource) / 4.0f;
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//float Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+//{
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//void Racecar::Transmission::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+//{
+//}
+//
+////--------------------------------------------------------------------------------------------------------------------//
+//
+//void Racecar::Transmission::OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+//{
+//}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 void Racecar::Transmission::SimulateShiftLogic(const RacecarControllerInterface& racecarController)
 {
 	if (true == mHasClearedShift)

@@ -45,7 +45,7 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	// This is a bit of a hack to only apply the frictional forces if the there is a large enough difference in
 	// angular velocities, which prevents bouncing back and forth like crazy. Ultimately the ComputeFrictionalTorque
 	// function should be accounting for the velocities getting close enough to just match speeds.
-	if (fabsf(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(50))
+	if (fabsf(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(250))
 	{
 		const float frictionalTorque(ComputeFrictionalTorque());
 		inputSource.ApplyUpstreamTorque(-frictionalTorque, *this);
@@ -57,11 +57,11 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-float Racecar::Clutch::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
+float Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
 	if (this == &fromSource)
 	{
-		return RotatingBody::ComputeDownstreamIntertia(fromSource);
+		return RotatingBody::ComputeDownstreamInertia(fromSource);
 	}
 
 	//return 0.0f;
@@ -82,7 +82,7 @@ float Racecar::Clutch::ComputeDownstreamIntertia(const RotatingBody& fromSource)
 	}
 	else if (mClutchEngagement > Racecar::PercentTo(99.5f))
 	{
-		return RotatingBody::ComputeDownstreamIntertia(fromSource);
+		return RotatingBody::ComputeDownstreamInertia(fromSource);
 	}
 	
 	//Time for black magic!

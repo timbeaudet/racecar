@@ -59,7 +59,7 @@ namespace Racecar
 		///
 		///
 		///
-		virtual float ComputeDownstreamIntertia(const RotatingBody& fromSource) const;
+		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const;
 
 		///
 		///
