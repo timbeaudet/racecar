@@ -19,7 +19,7 @@
 
 Racecar::Wheel::Wheel(void)
 {
-	SetInertia(Racecar::ComputeInertia(40.0f, 6.5f));
+	SetInertia(Racecar::ComputeInertiaImperial(40.0f, 6.5f));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -35,7 +35,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	RotatingBody& inputSource(GetExpectedInputSource());
 
 	SetAngularVelocity(inputSource.GetAngularVelocity());
-	if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(0.5f))
+	if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(1.0f))
 	{
 		//The brake can apply negative force - need to clamp it
 		//HELL - Need to do it correctly!!

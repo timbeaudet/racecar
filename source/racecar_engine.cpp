@@ -20,7 +20,7 @@ Racecar::Engine::Engine(void) :
 {
 	InitializeTorqueTableToMiata();
 
-	SetInertia(Racecar::ComputeInertia(15.0f, 3.5f));// +ComputeInertia(9.0f, 7.87f));
+	SetInertia(Racecar::ComputeInertiaImperial(15.0f, 3.5f));// +ComputeInertia(9.0f, 7.87f));
 	SetAngularVelocity(360.0f / 60 * 1000);
 }
 
@@ -111,7 +111,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 		const float appliedEngineTorque = tbMath::Maximum(minimumIdleTorque, onThrottleTorque);
 		ApplyDownstreamTorque(appliedEngineTorque * revolutions, *this);
 	}
-	
+
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
 	const float engineResistanceTorque(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * 0.0625f);
 	ApplyDownstreamTorque(-engineResistanceTorque, *this);

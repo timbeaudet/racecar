@@ -16,7 +16,7 @@
 //-------------------------------------------------------------------------------------------------------------------//
 
 //Output will be inertia in Kgs/M
-float Racecar::ComputeInertia(float massInPounds, float radiusInInches)
+float Racecar::ComputeInertiaImperial(float massInPounds, float radiusInInches)
 {
 	const float radiusInMeters(tbMath::Convert::InchesToMeters(radiusInInches));
 	return tbMath::Convert::PoundsToKilograms(massInPounds) * (radiusInMeters * radiusInMeters);

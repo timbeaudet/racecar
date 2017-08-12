@@ -24,10 +24,10 @@ namespace Racecar
 		void Simulate(void);
 	
 	protected:
-		//virtual float ComputeDownstreamIntertia(const RotatingBody& fromSource) const override;
-		//virtual float ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
-		//virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
-		//virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
+		virtual float ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+		virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
 		const float mFinalDriveRatio;

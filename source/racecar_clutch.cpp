@@ -19,7 +19,7 @@
 Racecar::Clutch::Clutch(void) :
 	mClutchEngagement(0.0f)
 {
-	SetInertia(Racecar::ComputeInertia(140.0f, 2.5f));
+	SetInertia(Racecar::ComputeInertiaImperial(140.0f, 2.5f));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

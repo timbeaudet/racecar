@@ -8,12 +8,22 @@
 #ifndef _Racecar_RotatingBody_h_
 #define _Racecar_RotatingBody_h_
 
+#include "racecar.h"
+
 #include <vector>
 
 namespace Racecar
 {
 	template<typename Type> constexpr Type PercentTo(const Type& value) { return value / Type(100); }
-	float ComputeInertia(float massInPounds, float radiusInInches);
+
+	///
+	/// @details Computes the moment of inertia for a solid disk using imperial measurements for input and the output
+	///   will be in metric units (kg-m).
+	///
+	/// @note The output will be in metric units, kg-m.
+	///
+	float ComputeInertiaImperial(float massInPounds, float radiusInInches);
+
 	float RevolutionsMinuteToDegreesSecond(const float revolutionsMinute);
 	float DegreesSecondToRevolutionsMinute(const float degreesSecond);
 	
@@ -80,9 +90,11 @@ namespace Racecar
 		///
 		/// @param changeInAcceleration should be in deg/sec/sec
 		///
-		virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
-		virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
-
+	
+		//TODO: FIX: HACK: These methods should be protected, they are not so that the differential can work.
+	public:	virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
+	public:virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
+	protected:
 		///
 		/// @details Returns the input source for the rotating body, in a way that forces can be transmitted back.
 		///

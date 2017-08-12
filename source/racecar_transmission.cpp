@@ -60,7 +60,7 @@ Racecar::Transmission::Transmission(void) :
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true)
 {
-	SetInertia(Racecar::ComputeInertia(5.0f, 3.0f));
+	SetInertia(Racecar::ComputeInertiaImperial(5.0f, 3.0f));
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
