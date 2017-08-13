@@ -18,9 +18,9 @@ namespace Racecar
 
 	///
 	/// @details Computes the moment of inertia for a solid disk using imperial measurements for input and the output
-	///   will be in metric units (kg-m).
+	///   will be in metric units (kg-m^2).
 	///
-	/// @note The output will be in metric units, kg-m.
+	/// @note The output will be in metric units, kg-m^2.
 	///
 	float ComputeInertiaImperial(float massInPounds, float radiusInInches);
 
@@ -30,23 +30,28 @@ namespace Racecar
 	class RotatingBody
 	{
 	public:
-		RotatingBody(void);
+		RotatingBody(const float momentOfInertia);
 		virtual ~RotatingBody(void);
 
 		///
 		///
 		///
-		void SetInput(RotatingBody* input);
+		inline const RotatingBody* const GetInputSource(void) const { return mInputSource; }
 
 		///
 		///
 		///
-		inline const RotatingBody* const GetInput(void) const { return mInput; }
+		void SetInputSource(RotatingBody* inputSource);
 
 		///
 		///
 		///
-		void AddOutput(RotatingBody* output);
+		bool IsOutputSource(const RotatingBody& source) const;
+
+		///
+		///
+		///
+		void AddOutputSource(RotatingBody* outputSource);
 
 		///
 		///
@@ -78,7 +83,7 @@ namespace Racecar
 
 	protected:
 		///
-		/// @details Set the inertia of the body in kg-m.
+		/// @details Set the inertia of the body in kg-m^2.
 		///
 		void SetInertia(const float inertia);
 
@@ -100,15 +105,16 @@ namespace Racecar
 		///
 		const RotatingBody& GetExpectedInputSource(void) const;
 		RotatingBody& GetExpectedInputSource(void);
-
+		inline RotatingBody* GetInputSource(void) { return mInputSource; }
+		
 		const RotatingBody& GetExpectedOutputSource(const size_t& sourceIndex) const;
 		RotatingBody& GetExpectedOutputSource(const size_t& sourceIndex);
-		const std::vector<RotatingBody*>& GetOutputs(void) const;
-		std::vector<RotatingBody*>& GetOutputs(void);
+		const std::vector<RotatingBody*>& GetOutputSources(void) const;
+		std::vector<RotatingBody*>& GetOutputSources(void);
 
 	private:
-		RotatingBody* mInput;
-		std::vector<RotatingBody*> mOutputs;
+		RotatingBody* mInputSource;
+		std::vector<RotatingBody*> mOutputSources;
 		//bool mLockedWithInput;      //Potential future use to replace virtual Down/Up stream compute/accelerates.
 
 		void SetAngularAcceleration(const float angularAcceleration);

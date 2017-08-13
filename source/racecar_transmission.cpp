@@ -54,13 +54,13 @@ constexpr Racecar::Gear DownshiftGear(const Racecar::Gear& gear)
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Transmission::Transmission(void) :
+Racecar::Transmission::Transmission(const float momentOfInertia) :
+	RotatingBody(momentOfInertia),
 	mInputShaftSpeed(0.0f),
 	mOutputShaftSpeed(0.0f),
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true)
 {
-	SetInertia(Racecar::ComputeInertiaImperial(5.0f, 3.0f));
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

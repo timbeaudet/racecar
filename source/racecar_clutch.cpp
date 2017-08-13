@@ -16,10 +16,10 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Clutch::Clutch(void) :
+Racecar::Clutch::Clutch(const float momentOfInertia) :
+	RotatingBody(momentOfInertia),
 	mClutchEngagement(0.0f)
 {
-	SetInertia(Racecar::ComputeInertiaImperial(140.0f, 2.5f));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

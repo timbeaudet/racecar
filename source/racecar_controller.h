@@ -60,6 +60,21 @@ namespace Racecar
 		virtual void OnUpdateControls(void) override;
 	};
 
+	class ProgrammaticController : public RacecarControllerInterface
+	{
+	public:
+		ProgrammaticController(void);
+		virtual ~ProgrammaticController(void);
+
+	public:
+		inline void SetThrottlePosition(const float throttle) { RacecarControllerInterface::SetThrottlePosition(throttle); }
+		inline void SetBrakePosition(const float brake) { RacecarControllerInterface::SetThrottlePosition(brake); }
+		inline void SetClutchPosition(const float clutch) { RacecarControllerInterface::SetThrottlePosition(clutch); }
+		inline void SetSteeringPosition(const float steering) { RacecarControllerInterface::SetThrottlePosition(steering); }
+	protected:
+		virtual void OnUpdateControls(void) override;
+	};
+
 	class PlayerRacecarController : public RacecarControllerInterface
 	{
 	public:

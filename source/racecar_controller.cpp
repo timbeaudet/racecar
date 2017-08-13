@@ -40,7 +40,8 @@ void Racecar::RacecarControllerInterface::UpdateControls(void)
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::DoNothingController::DoNothingController(void)
+Racecar::DoNothingController::DoNothingController(void) :
+	RacecarControllerInterface()
 {
 }
 
@@ -53,6 +54,28 @@ Racecar::DoNothingController::~DoNothingController(void)
 //--------------------------------------------------------------------------------------------------------------------//
 
 void Racecar::DoNothingController::OnUpdateControls(void)
+{
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+Racecar::ProgrammaticController::ProgrammaticController(void) :
+	RacecarControllerInterface()
+{
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+
+Racecar::ProgrammaticController::~ProgrammaticController(void)
+{
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::ProgrammaticController::OnUpdateControls(void)
 {
 }
 

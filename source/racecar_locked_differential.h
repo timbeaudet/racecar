@@ -18,10 +18,10 @@ namespace Racecar
 	class LockedDifferential : public RotatingBody
 	{
 	public:
-		explicit LockedDifferential(const float finalDriveRatio);
+		explicit LockedDifferential(const float finalDriveRatio, const float momentOfInertia);
 		virtual ~LockedDifferential(void);
 
-		void Simulate(void);
+		void Simulate(RacecarControllerInterface& racecarController);
 	
 	protected:
 		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const override;

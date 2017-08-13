@@ -14,13 +14,13 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Engine::Engine(void) :
+Racecar::Engine::Engine(const float momentOfInertia) :
+	RotatingBody(momentOfInertia),
 	mTorqueTable(),
 	mMaximumTorque(162.0f)
 {
 	InitializeTorqueTableToMiata();
 
-	SetInertia(Racecar::ComputeInertiaImperial(15.0f, 3.5f));// +ComputeInertia(9.0f, 7.87f));
 	SetAngularVelocity(360.0f / 60 * 1000);
 }
 

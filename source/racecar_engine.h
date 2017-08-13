@@ -21,7 +21,7 @@ namespace Racecar
 	public:
 		static const size_t kTorqueTableSize = 16;
 
-		Engine(void);
+		Engine(const float momentOfInertia);
 		virtual ~Engine(void);
 
 		///

@@ -15,7 +15,7 @@
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
-//Output will be inertia in Kgs/M
+//Output will be inertia in kg-m^2
 float Racecar::ComputeInertiaImperial(float massInPounds, float radiusInInches)
 {
 	const float radiusInMeters(tbMath::Convert::InchesToMeters(radiusInInches));
@@ -40,10 +40,10 @@ float Racecar::DegreesSecondToRevolutionsMinute(const float degreesSecond)
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::RotatingBody::RotatingBody(void) :
-	mInput(nullptr),
-	mOutputs(),
-	mInertia(1.0f),
+Racecar::RotatingBody::RotatingBody(const float momentOfInertia) :
+	mInputSource(nullptr),
+	mOutputSources(),
+	mInertia(momentOfInertia),
 	mAngularAcceleration(0.0f),
 	mAngularVelocity(0)
 {
@@ -57,65 +57,72 @@ Racecar::RotatingBody::~RotatingBody(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::SetInput(RotatingBody* input)
+void Racecar::RotatingBody::SetInputSource(RotatingBody* input)
 {
-	tb_error_if(nullptr != mInput, "Already has an input, attempting to change is illegal.");
-	mInput = input;
+	tb_error_if(nullptr != mInputSource, "Already has an input, attempting to change is illegal.");
+	mInputSource = input;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedInputSource(void) const
 {
-	tb_error_if(nullptr == mInput, "RotatingBody was expecting to have an input source for use.");
-	return *mInput;
+	tb_error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
+	return *mInputSource;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedInputSource(void)
 {
-	tb_error_if(nullptr == mInput, "RotatingBody was expecting to have an input source for use.");
-	return *mInput;
+	tb_error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
+	return *mInputSource;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::AddOutput(RotatingBody* output)
+bool Racecar::RotatingBody::IsOutputSource(const RotatingBody& source) const
 {
-	tb_error_if(mOutputs.end() != std::find(mOutputs.begin(), mOutputs.end(), output), "Already connected to this output.");
+	return (mOutputSources.end() != std::find(mOutputSources.begin(), mOutputSources.end(), &source));
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RotatingBody::AddOutputSource(RotatingBody* output)
+{
+	tb_error_if(mOutputSources.end() != std::find(mOutputSources.begin(), mOutputSources.end(), output), "Already connected to this output.");
 	tb_error_if(nullptr == output, "Cannot connect to a null output.");
-	mOutputs.push_back(output);
+	mOutputSources.push_back(output);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex) const
 {
-	tb_error_if(mOutputs.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
-	return *mInput;
+	tb_error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	return *mInputSource;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex)
 {
-	tb_error_if(mOutputs.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
-	return *mInput;
+	tb_error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	return *mInputSource;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-const std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void) const
+const std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputSources(void) const
 {
-	return mOutputs;
+	return mOutputSources;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void)
+std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputSources(void)
 {
-	return mOutputs;
+	return mOutputSources;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -123,7 +130,7 @@ std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputs(void)
 float Racecar::RotatingBody::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
 	float downstreamInertia(GetInertia());
-	for (RotatingBody* output : mOutputs)
+	for (RotatingBody* output : mOutputSources)
 	{
 		downstreamInertia += output->ComputeDownstreamInertia(fromSource);
 	}
@@ -136,9 +143,9 @@ float Racecar::RotatingBody::ComputeDownstreamInertia(const RotatingBody& fromSo
 float Racecar::RotatingBody::ComputeUpstreamInertia(const RotatingBody& fromSource) const
 {
 	float upstreamInertia(GetInertia());
-	if (nullptr != mInput)
+	if (nullptr != mInputSource)
 	{
-		upstreamInertia += mInput->ComputeUpstreamInertia(fromSource);
+		upstreamInertia += mInputSource->ComputeUpstreamInertia(fromSource);
 	}
 
 	return upstreamInertia;
@@ -175,7 +182,7 @@ void Racecar::RotatingBody::ApplyUpstreamTorque(const float torqueNewtonMeters, 
 void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
 {
 	mAngularAcceleration += changeInAcceleration;
-	for (RotatingBody* output : mOutputs)
+	for (RotatingBody* output : mOutputSources)
 	{
 		output->OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
 	}
@@ -186,9 +193,9 @@ void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const float changeInAc
 void Racecar::RotatingBody::OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
 {
 	mAngularAcceleration += changeInAcceleration;
-	if (nullptr != mInput)
+	if (nullptr != mInputSource)
 	{
-		mInput->OnApplyUpstreamAcceleration(changeInAcceleration, fromSource);
+		mInputSource->OnApplyUpstreamAcceleration(changeInAcceleration, fromSource);
 	}
 }
 

@@ -28,7 +28,7 @@ namespace Racecar
 	class Transmission : public RotatingBody
 	{
 	public:
-		Transmission(void);
+		Transmission(const float momentOfInertia);
 		virtual ~Transmission(void);
 
 		void Simulate(const RacecarControllerInterface& racecarController);

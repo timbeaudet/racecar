@@ -18,7 +18,7 @@ namespace Racecar
 	class Clutch : public RotatingBody
 	{
 	public:
-		Clutch(void);
+		Clutch(const float momentOfInertia);
 		virtual ~Clutch(void);
 
 		///

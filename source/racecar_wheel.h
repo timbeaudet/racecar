@@ -17,7 +17,7 @@ namespace Racecar
 	class Wheel : public RotatingBody
 	{
 	public:
-		Wheel(void);
+		explicit Wheel(const float momentOfInertia); //kg-m^2
 		virtual ~Wheel(void);
 
 		///
