@@ -166,7 +166,7 @@ void Racecar::RotatingBody::Simulate(const Real fixedTime)
 void Racecar::RotatingBody::ApplyDownstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource)
 {
 	const Real totalInertia(ComputeDownstreamInertia(fromSource));
-	OnApplyDownstreamAcceleration(tbMath::Convert::RadiansToDegrees(torqueNewtonMeters / totalInertia), fromSource);
+	OnApplyDownstreamAcceleration(torqueNewtonMeters / totalInertia, fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -174,7 +174,7 @@ void Racecar::RotatingBody::ApplyDownstreamTorque(const Real torqueNewtonMeters,
 void Racecar::RotatingBody::ApplyUpstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource)
 {
 	const Real totalInertia(ComputeUpstreamInertia(fromSource));
-	OnApplyUpstreamAcceleration(tbMath::Convert::RadiansToDegrees(torqueNewtonMeters / totalInertia), fromSource);
+	OnApplyUpstreamAcceleration(torqueNewtonMeters / totalInertia, fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

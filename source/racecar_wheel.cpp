@@ -8,7 +8,6 @@
 #include "racecar_wheel.h"
 #include "racecar_transmission.h"
 #include "racecar_controller.h"
-#include "../drive_train_simulation.h" //For kFixedTime
 
 #include "../turtle_brains/tb_math_kit.h"
 #include "../turtle_brains/tb_debug_kit.h"
@@ -52,7 +51,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 
 Racecar::Real Racecar::Wheel::GetWheelSpeedMPH(void) const
 {
-	const Real speedFeetPerSecond(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * (22.0 / 2.0) / 12.0);
+	const Real speedFeetPerSecond(GetAngularVelocity() * (22.0 / 2.0) / 12.0);
 	const Real speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0);
 	return fabs(speedMPH);
 }

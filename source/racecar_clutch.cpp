@@ -145,8 +145,8 @@ Racecar::Real Racecar::Clutch::ComputeFrictionalTorque(void) const
 	const Real clutchStaticFrictionCoefficient(0.6); //static steel on steel from: http://www.school-for-champions.com/science/friction_equation.htm#.WBSr1fkrLZI
 	const Real clutchKineticFrictionCoefficient(0.4); //kinetic steel on steel
 
-	const Real engineVelocity(tbMath::Convert::DegreesToRadians(inputSource.GetAngularVelocity()));
-	const Real clutchVelocity(tbMath::Convert::DegreesToRadians(GetAngularVelocity()));
+	const Real engineVelocity(inputSource.GetAngularVelocity());
+	const Real clutchVelocity(GetAngularVelocity());
 
 	//http://www.thecartech.com/subjects/design/Automobile_clutchs.htm
 	//318ft-lbs is the torque capacity of a 'race' miata clutch: https://www.flyinmiata.com/fm-level-1-clutch.html

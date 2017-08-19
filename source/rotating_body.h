@@ -115,13 +115,12 @@ namespace Racecar
 	private:
 		RotatingBody* mInputSource;
 		std::vector<RotatingBody*> mOutputSources;
-		//bool mLockedWithInput;      //Potential future use to replace virtual Down/Up stream compute/accelerates.
 
 		void SetAngularAcceleration(const Real angularAcceleration);
 
 		Real mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
-		Real mAngularAcceleration; //Degrees / Second / Second
-		Real mAngularVelocity;     //Degrees / Second
+		Real mAngularAcceleration; //Radians / Second / Second
+		Real mAngularVelocity;     //Radians / Second
 	};
 };	/* namespace Racecar */
 

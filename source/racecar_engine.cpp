@@ -112,7 +112,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	}
 
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
-	const Real engineResistanceTorque(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * 0.0625);
+	const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
 	ApplyDownstreamTorque(-engineResistanceTorque, *this);
 
 	//Now that all torques have been applied to the engine, step it forward in time.
