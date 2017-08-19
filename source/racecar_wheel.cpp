@@ -6,13 +6,7 @@
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_wheel.h"
-#include "racecar_transmission.h"
 #include "racecar_controller.h"
-
-#include "../turtle_brains/tb_math_kit.h"
-#include "../turtle_brains/tb_debug_kit.h"
-
-#include <cmath>
 
 //-------------------------------------------------------------------------------------------------------------------//
 

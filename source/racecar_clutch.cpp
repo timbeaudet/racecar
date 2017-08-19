@@ -9,11 +9,6 @@
 #include "racecar_clutch.h"
 #include "racecar_controller.h"
 
-#include "../turtle_brains/tb_math_kit.h"
-#include "../turtle_brains/tb_debug_kit.h"
-
-#include "../gameplay_scene.h"
-
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::Clutch::Clutch(const Real momentOfInertia) :
@@ -34,18 +29,13 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 {
 	RotatingBody& inputSource(GetExpectedInputSource());
 
-	if (true == tbGame::Input::IsKeyDown(tbApplication::tbKey2))
-	{
-		SetAngularVelocity(inputSource.GetAngularVelocity());
-	}
-
 	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
 
 	//
 	// This is a bit of a hack to only apply the frictional forces if the there is a large enough difference in
 	// angular velocities, which prevents bouncing back and forth like crazy. Ultimately the ComputeFrictionalTorque
 	// function should be accounting for the velocities getting close enough to just match speeds.
-	if (fabs(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToDegreesSecond(250))
+	if (fabs(inputSource.GetAngularVelocity() - GetAngularVelocity()) > Racecar::RevolutionsMinuteToRadiansSecond(250))
 	{
 		const Real frictionalTorque(ComputeFrictionalTorque());
 		inputSource.ApplyUpstreamTorque(-frictionalTorque, *this);
@@ -127,7 +117,8 @@ Racecar::Real Racecar::Clutch::ClutchPedalToClutchForce(const float pedalInput)
 
 	if (pedalInput < kClutchFullyEngaged) { return 1.0; }
 	if (pedalInput > kClutchDisengaged) { return 0.0; }
-	return tbMath::Clamp(1.0 - ((pedalInput - kClutchFullyEngaged) / (kClutchDisengaged - kClutchFullyEngaged)), 0.0, 1.0);
+	const Real value(1.0 - ((pedalInput - kClutchFullyEngaged) / (kClutchDisengaged - kClutchFullyEngaged)));
+	return (value < 0.0f) ? 0.0f : (1.0f < value) ? 1.0f : value;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -157,9 +148,9 @@ Racecar::Real Racecar::Clutch::ComputeFrictionalTorque(void) const
 	//2800N * 0.09525m =  266 Nm
 	//318ft-lbs ~= 432 Nm    / 0.09525m (3.75") / 0.6 (coefficient of friction)  = 7567 Nm
 
-	const Real frictionCoefficient(tbMath::IsEqual(engineVelocity, clutchVelocity, 0.1) ? clutchStaticFrictionCoefficient : clutchKineticFrictionCoefficient);
+	const Real frictionCoefficient((fabs(engineVelocity - clutchVelocity) < 0.1) ? clutchStaticFrictionCoefficient : clutchKineticFrictionCoefficient);
 	const Real forceNormal = mClutchEngagement * 7567.0f; //See above comment for where this comes from!
-	const Real maximumTorqueAmount(forceNormal * frictionCoefficient * tbMath::Convert::InchesToMeters(3.75f)); //Nm
+	const Real maximumTorqueAmount(forceNormal * frictionCoefficient * (3.75 * 0.0254)); //Nm   (3.75in to meters)
 
 	//engineVelocity * engineInertia = clutchVelocity * clutchInertia
 

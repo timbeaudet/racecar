@@ -16,16 +16,8 @@ namespace Racecar
 {
 	template<typename Type> constexpr Type PercentTo(const Type& value) { return value / Type(100); }
 
-	///
-	/// @details Computes the moment of inertia for a solid disk using imperial measurements for input and the output
-	///   will be in metric units (kg-m^2).
-	///
-	/// @note The output will be in metric units, kg-m^2.
-	///
-	Real ComputeInertiaImperial(Real massInPounds, Real radiusInInches);
-
-	Real RevolutionsMinuteToDegreesSecond(const Real revolutionsMinute);
-	Real DegreesSecondToRevolutionsMinute(const Real degreesSecond);
+	Real RevolutionsMinuteToRadiansSecond(const Real& revolutionsMinute);
+	Real RadiansSecondToRevolutionsMinute(const Real& radiansSecond);
 	
 	class RotatingBody
 	{

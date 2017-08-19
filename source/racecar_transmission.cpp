@@ -15,8 +15,6 @@ const Racecar::Real kGearRatios[] = { 0.0, -3.2, 3.136, 1.888, 1.333, 1.0, 0.814
 //const float kOutputGearRadius[] = { 3.03288f, 2.61496f, 2.28547f, 2.0f, 1.79493f };
 const Racecar::Real kDogCollarSpots[] = { 3.5, 5.625, 7.75 }; //+ or - .375" to engage
 
-Racecar::Real InchToMeter(const Racecar::Real& input) { return tbMath::Convert::InchesToMeters(input); }
-
 constexpr float RatioForGear(const Racecar::Gear& gear)
 {	//const float kGearRatios[] = { 0.0f, -3.2f, 3.136f, 1.888f, 1.333f, 1.0f, 0.814f };
 	return

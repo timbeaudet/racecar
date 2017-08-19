@@ -9,9 +9,6 @@
 #ifndef _Racecar_RacecarController_h_
 #define _Racecar_RacecarController_h_
 
-#include "../turtle_brains/math/tb_math.h"
-#include "../turtle_brains/game/tb_input_action.h"
-
 namespace Racecar
 {
 
@@ -33,10 +30,10 @@ namespace Racecar
 	protected:
 		virtual void OnUpdateControls(void) = 0;
 
-		inline void SetThrottlePosition(const float throttle) { mThrottlePosition = tbMath::Clamp(throttle, 0.0f, 1.0f); }
-		inline void SetBrakePosition(const float brake) { mBrakePosition = tbMath::Clamp(brake, 0.0f, 1.0f); }
-		inline void SetClutchPosition(const float clutch) { mClutchPosition = tbMath::Clamp(clutch, 0.0f, 1.0f); }
-		inline void SetSteeringPosition(const float steering) { mSteeringPosition = tbMath::Clamp(steering, -1.0f, 1.0f); }
+		inline void SetThrottlePosition(const float throttle) { mThrottlePosition = ((throttle < 0.0f) ? 0.0f : (throttle > 1.0f) ? 1.0f : throttle); }
+		inline void SetBrakePosition(const float brake) { mBrakePosition = ((brake < 0.0f) ? 0.0f : (brake > 1.0f) ? 1.0f : brake); }
+		inline void SetClutchPosition(const float clutch) { mClutchPosition = ((clutch < 0.0f) ? 0.0f : (clutch > 1.0f) ? 1.0f : clutch); }
+		inline void SetSteeringPosition(const float steering) { mSteeringPosition = ((steering < -1.0f) ? -1.0f : (steering > 1.0f) ? 1.0f : steering); }
 
 		inline void SetUpshift(const bool upshift) { mIsUpshift = upshift; }
 		inline void SetDownshift(const bool downshift) { mIsDownshift = downshift; }
@@ -71,33 +68,6 @@ namespace Racecar
 		inline void SetBrakePosition(const float brake) { RacecarControllerInterface::SetThrottlePosition(brake); }
 		inline void SetClutchPosition(const float clutch) { RacecarControllerInterface::SetThrottlePosition(clutch); }
 		inline void SetSteeringPosition(const float steering) { RacecarControllerInterface::SetThrottlePosition(steering); }
-	protected:
-		virtual void OnUpdateControls(void) override;
-	};
-
-	class PlayerRacecarController : public RacecarControllerInterface
-	{
-	public:
-		PlayerRacecarController(void);
-		virtual ~PlayerRacecarController(void);
-
-	protected:
-		virtual void OnUpdateControls(void) override;
-
-	private:
-		tbGame::InputAction mThrottleAction;
-		tbGame::InputAction mBrakeAction;
-		tbGame::InputAction mClutchAction;
-		tbGame::InputAction mTurnLeftAction;
-		tbGame::InputAction mTurnRightAction;
-	};
-
-	class PlayerWheelRacecarController : public PlayerRacecarController
-	{
-	public:
-		PlayerWheelRacecarController(void);
-		virtual ~PlayerWheelRacecarController(void);
-
 	protected:
 		virtual void OnUpdateControls(void) override;
 	};

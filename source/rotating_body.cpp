@@ -7,33 +7,23 @@
 
 #include "rotating_body.h"
 
-#include "../drive_train_simulation.h"
-#include "../turtle_brains/tb_math_kit.h"
-#include "../turtle_brains/tb_debug_kit.h"
-
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
-//Output will be inertia in kg-m^2
-Racecar::Real Racecar::ComputeInertiaImperial(Real massInPounds, Real radiusInInches)
+static const Racecar::Real kPi(3.14159265358979323846);
+static const Racecar::Real kTwoPi(kPi * 2.0);
+
+Racecar::Real Racecar::RevolutionsMinuteToRadiansSecond(const Real& revolutionsMinute)
 {
-	const Racecar::Real radiusInMeters(tbMath::Convert::InchesToMeters(radiusInInches));
-	return tbMath::Convert::PoundsToKilograms(massInPounds) * (radiusInMeters * radiusInMeters);
+	return revolutionsMinute / 60.0 * kTwoPi;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::RevolutionsMinuteToDegreesSecond(const Real revolutionsMinute)
+Racecar::Real Racecar::RadiansSecondToRevolutionsMinute(const Real& radiansSecond)
 {
-	return revolutionsMinute / 60.0 * 360.0;
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-Racecar::Real Racecar::DegreesSecondToRevolutionsMinute(const Real degreesSecond)
-{
-	return degreesSecond * 60.0 / 360.0;
+	return radiansSecond * 60.0 / kTwoPi;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -59,7 +49,7 @@ Racecar::RotatingBody::~RotatingBody(void)
 
 void Racecar::RotatingBody::SetInputSource(RotatingBody* input)
 {
-	tb_error_if(nullptr != mInputSource, "Already has an input, attempting to change is illegal.");
+	error_if(nullptr != mInputSource, "Already has an input, attempting to change is illegal.");
 	mInputSource = input;
 }
 
@@ -67,7 +57,7 @@ void Racecar::RotatingBody::SetInputSource(RotatingBody* input)
 
 const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedInputSource(void) const
 {
-	tb_error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
+	error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
 	return *mInputSource;
 }
 
@@ -75,7 +65,7 @@ const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedInputSource(void)
 
 Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedInputSource(void)
 {
-	tb_error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
+	error_if(nullptr == mInputSource, "RotatingBody was expecting to have an input source for use.");
 	return *mInputSource;
 }
 
@@ -90,8 +80,8 @@ bool Racecar::RotatingBody::IsOutputSource(const RotatingBody& source) const
 
 void Racecar::RotatingBody::AddOutputSource(RotatingBody* output)
 {
-	tb_error_if(mOutputSources.end() != std::find(mOutputSources.begin(), mOutputSources.end(), output), "Already connected to this output.");
-	tb_error_if(nullptr == output, "Cannot connect to a null output.");
+	error_if(mOutputSources.end() != std::find(mOutputSources.begin(), mOutputSources.end(), output), "Already connected to this output.");
+	error_if(nullptr == output, "Cannot connect to a null output.");
 	mOutputSources.push_back(output);
 }
 
@@ -99,7 +89,7 @@ void Racecar::RotatingBody::AddOutputSource(RotatingBody* output)
 
 const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex) const
 {
-	tb_error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
 	return *mInputSource;
 }
 
@@ -107,7 +97,7 @@ const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(cons
 
 Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex)
 {
-	tb_error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
 	return *mInputSource;
 }
 
@@ -157,8 +147,6 @@ void Racecar::RotatingBody::Simulate(const Real fixedTime)
 {
 	mAngularVelocity += mAngularAcceleration * fixedTime;
 	SetAngularAcceleration(0.0);
-
-	//mPosition += mAngularVelocity * kFixedTime;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

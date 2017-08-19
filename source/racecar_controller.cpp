@@ -8,9 +8,6 @@
 
 #include "racecar_controller.h"
 
-#include "../drive_train_simulation.h" //For kFixedTime
-#include "../turtle_brains/system/unstable/tbu_input_device_manager.h"
-
 //--------------------------------------------------------------------------------------------------------------------//
 
 Racecar::RacecarControllerInterface::RacecarControllerInterface(void) :

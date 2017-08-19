@@ -8,10 +8,6 @@
 #include "racecar_engine.h"
 #include "racecar_controller.h"
 
-#include "../drive_train_simulation.h" //For kFixedTime 
-#include "../turtle_brains/tb_math_kit.h"
-#include "../turtle_brains/tb_debug_kit.h"
-
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::Engine::Engine(const Real momentOfInertia) :
@@ -51,7 +47,7 @@ void Racecar::Engine::InitializeTorqueTableToMiata(void)
 	mTorqueTable[14] = 25.0;
 	mTorqueTable[15] = 0.0;  //8000rpm
 
-	tb_error_if(kTorqueTableSize != 16, "Error: Expected table size to be 16, may need to change step size or something.");
+	error_if(kTorqueTableSize != 16, "Error: Expected table size to be 16, may need to change step size or something.");
 
 	mMaximumTorque = 162.0; //If unknown a search could find it...
 	for (size_t index(0); index < kTorqueTableSize; ++index)
@@ -107,7 +103,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	{
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
-		const Real appliedEngineTorque = tbMath::Maximum(minimumIdleTorque, onThrottleTorque);
+		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
 		ApplyDownstreamTorque(appliedEngineTorque * revolutions, *this);
 	}
 
