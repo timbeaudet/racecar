@@ -1,21 +1,21 @@
 ///
 /// @file
-/// @details Defines the functions that perform the basic tests for the racecar drive-train.
+/// @details A handful of test functions for testing the translation from angular to linear motion.
 ///
 /// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
-#ifndef _Racecar_BasicTest_h_
-#define _Racecar_BasicTest_h_
+#ifndef _Racecar_LinearMotionTest_h_
+#define _Racecar_LinearMotionTest_h_
 
 namespace Racecar
 {
 	namespace UnitTests
 	{
 
-		bool PerformBasicTests(void);
+		bool WheelWithLinearMotion(void);
 
 	};
 };
 
-#endif /* _Racecar_BasicTest_h_ */
+#endif /* _Racecar_LinearMotionTest_h_ */

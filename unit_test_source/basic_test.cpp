@@ -6,6 +6,7 @@
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "basic_test.h"
+#include "test_kit.h"
 
 #include "../player_racecar_controller.h"
 #include "../racecar/racecar.h"
@@ -14,10 +15,9 @@
 
 #include <cstdio>
 
+const Racecar::Real Racecar::UnitTests::kTestElipson(0.00001f);
 using Racecar::Real;
-
-#define log_test(message, ...)   printf(message, ##__VA_ARGS__)
-static const Racecar::Real kTestElipson(0.00001f);
+using Racecar::UnitTests::kTestElipson;
 
 bool ConstructionTest(void);
 bool ConstantTorqueTest(void);
@@ -28,10 +28,9 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	log_test("\n\n...................\nWelcome to scrutineering\nIt is time to check over the components of your racecar...\nGood Luck!\n...................\n\n");
 
 	bool failedTest(false);
-	if (false == ConstructionTest()) { log_test("Failed: Expected to pass the ConstructionTest().\n"); failedTest = true; }
-	if (false == ConstantTorqueTest()) { log_test("Failed: Expected to pass the ConstantTorqueTest().\n"); failedTest = true; }
-
-	if (false == GearReductionTest()) { log_test("Failed: Expected to pass the GearReductionTest().\n"); failedTest = true; }
+	perform_test(ConstructionTest(), "Constructing a Rotating Body");
+	perform_test(ConstantTorqueTest(), "Applying Constant Torque");
+	perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
 
 	log_test("Your racecar has successfully passed technical inspection.\nYou may now go racing!\n\n");
 	return (false == failedTest);
