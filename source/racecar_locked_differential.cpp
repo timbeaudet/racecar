@@ -27,7 +27,12 @@ void Racecar::LockedDifferential::Simulate(RacecarControllerInterface& racecarCo
 {
 	((void)racecarController);
 	((void)fixedTime);
-	SetAngularVelocity(GetExpectedInputSource().GetAngularVelocity() / mFinalDriveRatio);
+
+	const RotatingBody* inputSource(GetInputSource());
+	if (nullptr != inputSource)
+	{
+		SetAngularVelocity(inputSource->GetAngularVelocity() / mFinalDriveRatio);
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
