@@ -132,12 +132,11 @@ bool ConstantTorqueTest(void)
 
 bool GearReductionTest(void)
 {
-	return true;
-	const Real kGearReduction(3.0);
+	const Real kGearReduction(4.0);
 
 	Racecar::DoNothingController racecarController;
 	Racecar::RotatingBody engineMass(10.0); //10kg-m^2.
-	Racecar::RotatingBody wheelMass(100.0);
+	Racecar::RotatingBody wheelMass(10.0);
 	Racecar::LockedDifferential lockedDifferential(kGearReduction, 10.0); //4:1 ratio with inertia of 10kg-m^2
 
 	engineMass.AddOutputSource(&lockedDifferential);
@@ -154,32 +153,72 @@ bool GearReductionTest(void)
 		wheelMass.Simulate();
 	}
 
-	const Real expectedEngineVelocity(1.0);
-	const Real finalEngineVelocity(engineMass.GetAngularVelocity());
-	const Real expectedWheelVelocity(expectedEngineVelocity / kGearReduction);
-	const Real finalWheelVelocity(wheelMass.GetAngularVelocity());
-	if (fabs(finalWheelVelocity - expectedWheelVelocity) > kTestElipson)
+	const Real expectedDownEngineVelocity(1.0);
+	const Real finalDownEngineVelocity(engineMass.GetAngularVelocity());
+	const Real expectedDownWheelVelocity(expectedDownEngineVelocity / kGearReduction);
+	const Real finalDownWheelVelocity(wheelMass.GetAngularVelocity());
+	if (fabs(finalDownWheelVelocity - expectedDownWheelVelocity) > kTestElipson ||
+		fabs(finalDownEngineVelocity - expectedDownEngineVelocity) > kTestElipson)
 	{
 		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
 		return false;
 	}
 
-	////Simulate 1 second of applying a 30Nm torque to the rotating body.
-	//for (int timer(0); timer < 1000; timer += 10)
-	//{
-	//	wheelMass.ApplyUpstreamTorque(-30.0f, wheelMass);
-	//	engineMass.Simulate(racecarController); //Simulates 10ms of action.
-	//	lockedDifferential.Simulate(racecarController);
-	//	wheelMass.Simulate(racecarController);
-	//}
+	//Simulate 1 second of applying a 30Nm torque to the rotating body.
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engineMass.ApplyDownstreamTorque(-30.0f, engineMass);
+		engineMass.Simulate(); //Simulates 10ms of action.
+		lockedDifferential.Simulate(racecarController);
+		wheelMass.Simulate();
+	}
 
-	//const float nowFinalEngineVelocity(engineMass.GetAngularVelocity());
-	//const float nowFinalWheelVelocity(wheelMass.GetAngularVelocity());
-	//if (fabs(nowFinalEngineVelocity) > kTestElipson || fabsf(nowFinalWheelVelocity) > kTestElipson)
-	//{
-	//	log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
-	//	return false;
-	//}
+	const Racecar::Real negativeDownEngineVelocity(engineMass.GetAngularVelocity());
+	const Racecar::Real negativeDownWheelVelocity(wheelMass.GetAngularVelocity());
+	if (fabs(negativeDownEngineVelocity) > kTestElipson || fabs(negativeDownWheelVelocity) > kTestElipson)
+	{
+		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
+		return false;
+	}
+
+	///////////
+
+	//Simulate 1 second of applying a 30Nm torque to the rotating body.
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		wheelMass.ApplyUpstreamTorque(30.0f, wheelMass);
+		engineMass.Simulate(); //Simulates 10ms of action.
+		lockedDifferential.Simulate(racecarController);
+		wheelMass.Simulate();
+	}
+
+	const Real expectedUpEngineVelocity(1.0);
+	const Real finalUpEngineVelocity(engineMass.GetAngularVelocity());
+	const Real expectedUpWheelVelocity(expectedUpEngineVelocity / kGearReduction);
+	const Real finalUpWheelVelocity(wheelMass.GetAngularVelocity());
+	if (fabs(finalUpWheelVelocity - expectedUpWheelVelocity) > kTestElipson ||
+		fabs(finalUpEngineVelocity - expectedUpEngineVelocity) > kTestElipson)
+	{
+		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
+		return false;
+	}
+
+	//Simulate 1 second of applying a 30Nm torque to the rotating body.
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		wheelMass.ApplyUpstreamTorque(-30.0f, wheelMass);
+		engineMass.Simulate(); //Simulates 10ms of action.
+		lockedDifferential.Simulate(racecarController);
+		wheelMass.Simulate();
+	}
+
+	const Racecar::Real negativeUpEngineVelocity(engineMass.GetAngularVelocity());
+	const Racecar::Real negativeUpWheelVelocity(wheelMass.GetAngularVelocity());
+	if (fabs(negativeUpEngineVelocity) > kTestElipson || fabs(negativeUpWheelVelocity) > kTestElipson)
+	{
+		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
+		return false;
+	}
 
 	return true;
 }
