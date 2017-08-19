@@ -32,7 +32,15 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(ConstantTorqueTest(), "Applying Constant Torque");
 	perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
 
-	log_test("Your racecar has successfully passed technical inspection.\nYou may now go racing!\n\n");
+	if (false == failedTest)
+	{
+		log_test("Your racecar has successfully passed technical inspection.\nYou may now go racing!\n\n");
+	}
+	else
+	{
+		log_test("Your racecar has not passed technical inspection.\nYou must fix it proper before racing!\n\n");
+	}
+
 	return (false == failedTest);
 }
 
@@ -65,7 +73,7 @@ bool ConstructionTest(void)
 bool ConstantTorqueTest(void)
 {
 	Racecar::DoNothingController racecarController;
-	Racecar::Wheel wheel(Racecar::ComputeInertiaMetric(8.0, 0.25)); //0.5kg-m^2.
+	Racecar::Wheel wheel(8.0, 0.25); //0.5kg-m^2.
 
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
