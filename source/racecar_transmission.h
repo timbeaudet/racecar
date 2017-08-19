@@ -28,10 +28,10 @@ namespace Racecar
 	class Transmission : public RotatingBody
 	{
 	public:
-		Transmission(const float momentOfInertia);
+		Transmission(const Real momentOfInertia);
 		virtual ~Transmission(void);
 
-		void Simulate(const RacecarControllerInterface& racecarController);
+		void Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
@@ -44,8 +44,8 @@ namespace Racecar
 		//virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
-		float mInputShaftSpeed;
-		float mOutputShaftSpeed;
+		Real mInputShaftSpeed;
+		Real mOutputShaftSpeed;
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
 	};

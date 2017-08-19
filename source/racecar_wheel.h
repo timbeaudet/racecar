@@ -17,18 +17,18 @@ namespace Racecar
 	class Wheel : public RotatingBody
 	{
 	public:
-		explicit Wheel(const float momentOfInertia); //kg-m^2
+		explicit Wheel(const Real momentOfInertia); //kg-m^2
 		virtual ~Wheel(void);
 
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController);
+		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime = Racecar::kFixedTimeStep);
 
 		///
 		///
 		///
-		float GetWheelSpeedMPH(void) const;
+		Real GetWheelSpeedMPH(void) const;
 
 	protected:
 

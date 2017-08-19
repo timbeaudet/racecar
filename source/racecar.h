@@ -10,6 +10,9 @@
 
 namespace Racecar
 {
+	typedef double Real;
+
+	static const Real kFixedTimeStep(0.01);
 
 	inline constexpr float ComputeInertiaMetric(float massInKilograms, float radiusInMeters)
 	{

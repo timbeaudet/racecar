@@ -18,28 +18,28 @@ namespace Racecar
 	class Clutch : public RotatingBody
 	{
 	public:
-		Clutch(const float momentOfInertia);
+		Clutch(const Real momentOfInertia);
 		virtual ~Clutch(void);
 
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController);
+		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 
 		///
 		///
 		///
-		float GetClutchEngagement(void) const { return mClutchEngagement; }
+		Real GetClutchEngagement(void) const { return mClutchEngagement; }
 
 	protected:
-		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
-		virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
+		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
+		virtual void OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
 
 	private:
-		static float ClutchPedalToClutchForce(const float pedalInput);
-		float ComputeFrictionalTorque(void) const;
+		static Real ClutchPedalToClutchForce(const float pedalInput);
+		Real ComputeFrictionalTorque(void) const;
 
-		float mClutchEngagement; //0.0f for disengaged, 1.0f for completely engaged.
+		Real mClutchEngagement; //0.0f for disengaged, 1.0f for completely engaged.
 	};
 };	/* namespace Racecar */
 

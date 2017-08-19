@@ -22,15 +22,15 @@ namespace Racecar
 	///
 	/// @note The output will be in metric units, kg-m^2.
 	///
-	float ComputeInertiaImperial(float massInPounds, float radiusInInches);
+	Real ComputeInertiaImperial(Real massInPounds, Real radiusInInches);
 
-	float RevolutionsMinuteToDegreesSecond(const float revolutionsMinute);
-	float DegreesSecondToRevolutionsMinute(const float degreesSecond);
+	Real RevolutionsMinuteToDegreesSecond(const Real revolutionsMinute);
+	Real DegreesSecondToRevolutionsMinute(const Real degreesSecond);
 	
 	class RotatingBody
 	{
 	public:
-		RotatingBody(const float momentOfInertia);
+		RotatingBody(const Real momentOfInertia);
 		virtual ~RotatingBody(void);
 
 		///
@@ -56,39 +56,39 @@ namespace Racecar
 		///
 		///
 		///
-		void Simulate(void);
+		void Simulate(const Real fixedTime = kFixedTimeStep);
 
 		///
 		/// @details Applies a torque in Newton-meters, Nm, to the body.
 		///
-		void ApplyDownstreamTorque(const float torqueNewtonMeters, const RotatingBody& fromSource);
-		void ApplyUpstreamTorque(const float torqueNewtonMeters, const RotatingBody& fromSource);
+		void ApplyDownstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource);
+		void ApplyUpstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource);
 
 		///
 		/// @details Returns the angular velocity of the body in degrees/second.
 		///
-		inline float GetAngularVelocity(void) const { return mAngularVelocity; }
+		inline Real GetAngularVelocity(void) const { return mAngularVelocity; }
 
-		inline float GetInertia(void) const { return mInertia; }
-
-		///
-		///
-		///
-		virtual float ComputeDownstreamInertia(const RotatingBody& fromSource) const;
+		inline Real GetInertia(void) const { return mInertia; }
 
 		///
 		///
 		///
-		virtual float ComputeUpstreamInertia(const RotatingBody& fromSource) const;
+		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
+
+		///
+		///
+		///
+		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
 
 	protected:
 		///
 		/// @details Set the inertia of the body in kg-m^2.
 		///
-		void SetInertia(const float inertia);
+		void SetInertia(const Real inertia);
 
-		void SetAngularVelocity(const float angularVelocity);
-		void AddAngularAcceleration(const float angularAcceleration) { mAngularAcceleration += angularAcceleration; }
+		void SetAngularVelocity(const Real angularVelocity);
+		void AddAngularAcceleration(const Real angularAcceleration) { mAngularAcceleration += angularAcceleration; }
 
 		///
 		/// @details Changes the bodies acceleration.
@@ -97,8 +97,8 @@ namespace Racecar
 		///
 	
 		//TODO: FIX: HACK: These methods should be protected, they are not so that the differential can work.
-	public:	virtual void OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
-	public:virtual void OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource);
+	public:	virtual void OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
+	public: virtual void OnApplyUpstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
 	protected:
 		///
 		/// @details Returns the input source for the rotating body, in a way that forces can be transmitted back.
@@ -117,11 +117,11 @@ namespace Racecar
 		std::vector<RotatingBody*> mOutputSources;
 		//bool mLockedWithInput;      //Potential future use to replace virtual Down/Up stream compute/accelerates.
 
-		void SetAngularAcceleration(const float angularAcceleration);
+		void SetAngularAcceleration(const Real angularAcceleration);
 
-		float mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
-		float mAngularAcceleration; //Degrees / Second / Second
-		float mAngularVelocity;     //Degrees / Second
+		Real mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
+		Real mAngularAcceleration; //Degrees / Second / Second
+		Real mAngularVelocity;     //Degrees / Second
 	};
 };	/* namespace Racecar */
 

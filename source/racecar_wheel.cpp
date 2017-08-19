@@ -17,7 +17,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Wheel::Wheel(const float momentOfInertia) :
+Racecar::Wheel::Wheel(const Real momentOfInertia) :
 	RotatingBody(momentOfInertia)
 {
 }
@@ -30,7 +30,7 @@ Racecar::Wheel::~Wheel(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController)
+void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime)
 {
 	const RotatingBody* inputSource(GetInputSource());
 	if (nullptr != inputSource)
@@ -42,7 +42,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	{
 		//The brake can apply negative force - need to clamp it
 		//HELL - Need to do it correctly!!
-		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * DriveTrainSimulation::kFixedTime, *this);
+		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * fixedTime, *this);
 	}
 
 	RotatingBody::Simulate();
@@ -50,11 +50,11 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-float Racecar::Wheel::GetWheelSpeedMPH(void) const
+Racecar::Real Racecar::Wheel::GetWheelSpeedMPH(void) const
 {
-	const float speedFeetPerSecond(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * (22.0f / 2.0f) / 12.0f);
-	const float speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0f);
-	return fabsf(speedMPH);
+	const Real speedFeetPerSecond(tbMath::Convert::DegreesToRadians(GetAngularVelocity()) * (22.0 / 2.0) / 12.0);
+	const Real speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0);
+	return fabs(speedMPH);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

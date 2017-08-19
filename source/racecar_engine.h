@@ -21,41 +21,41 @@ namespace Racecar
 	public:
 		static const size_t kTorqueTableSize = 16;
 
-		Engine(const float momentOfInertia);
+		Engine(const Real momentOfInertia);
 		virtual ~Engine(void);
 
 		///
 		/// @details Returns the maximum amount of torque in Nm (Newton-meters) of the engine.
 		///
-		float GetMaximumTorque(void) const;
+		Real GetMaximumTorque(void) const;
 
 		///
 		/// @details Returns the maximum torque output of the engine at the given engine speed in Nm (Newton-meters).
 		///
-		float GetOutputTorque(const float engineSpeedRPM) const;
+		Real GetOutputTorque(const Real engineSpeedRPM) const;
 
 		///
 		/// @details Returns a value from 0 to 1 representing a percentage of the maximum torque at this given engine speed.
 		///
-		float GetOutputValue(const float engineSpeedRPM) const;
+		Real GetOutputValue(const Real engineSpeedRPM) const;
 
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController);
+		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 
 		///
 		/// @details Returns the speed of the engine in revolutions per minute.
 		///
-		float GetEngineSpeedRPM(void) const;
+		Real GetEngineSpeedRPM(void) const;
 
 	protected:
 
 	private:
 		void InitializeTorqueTableToMiata(void);
 
-		std::array<float, kTorqueTableSize> mTorqueTable; //500, 1000 ... 8000  (normalized 0 .. 1, where 1 = maximum torque.
-		float mMaximumTorque;  //In Nm
+		std::array<Real, kTorqueTableSize> mTorqueTable; //500, 1000 ... 8000  (normalized 0 .. 1, where 1 = maximum torque.
+		Real mMaximumTorque;  //In Nm
 	};
 };	/* namespace Racecar */
 
