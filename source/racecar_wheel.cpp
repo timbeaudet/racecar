@@ -10,8 +10,12 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Wheel::Wheel(const Real momentOfInertia) :
-	RotatingBody(momentOfInertia)
+Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
+	RotatingBody(massInKilograms * (radiusInMeters * radiusInMeters)), //kg-m^2
+	mMass(massInKilograms),
+	mLinearAcceleration(0.0),
+	mLinearVelocity(0.0),
+	mIsOnGround(false)
 {
 }
 
@@ -23,7 +27,7 @@ Racecar::Wheel::~Wheel(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime)
+void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
 	const RotatingBody* inputSource(GetInputSource());
 	if (nullptr != inputSource)
@@ -39,6 +43,27 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	}
 
 	RotatingBody::Simulate();
+
+	mLinearVelocity += mLinearAcceleration * fixedTime;
+	mLinearAcceleration = 0.0;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::AddAngularAcceleration(const Real& angularAcceleration)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

@@ -30,7 +30,7 @@ Racecar::Real Racecar::RadiansSecondToRevolutionsMinute(const Real& radiansSecon
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::RotatingBody::RotatingBody(const Real momentOfInertia) :
+Racecar::RotatingBody::RotatingBody(const Real& momentOfInertia) :
 	mInputSource(nullptr),
 	mOutputSources(),
 	mInertia(momentOfInertia),
@@ -143,7 +143,7 @@ Racecar::Real Racecar::RotatingBody::ComputeUpstreamInertia(const RotatingBody& 
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::Simulate(const Real fixedTime)
+void Racecar::RotatingBody::Simulate(const Real& fixedTime)
 {
 	mAngularVelocity += mAngularAcceleration * fixedTime;
 	SetAngularAcceleration(0.0);
@@ -151,7 +151,7 @@ void Racecar::RotatingBody::Simulate(const Real fixedTime)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::ApplyDownstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource)
+void Racecar::RotatingBody::ApplyDownstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource)
 {
 	const Real totalInertia(ComputeDownstreamInertia(fromSource));
 	OnApplyDownstreamAcceleration(torqueNewtonMeters / totalInertia, fromSource);
@@ -159,7 +159,7 @@ void Racecar::RotatingBody::ApplyDownstreamTorque(const Real torqueNewtonMeters,
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::ApplyUpstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource)
+void Racecar::RotatingBody::ApplyUpstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource)
 {
 	const Real totalInertia(ComputeUpstreamInertia(fromSource));
 	OnApplyUpstreamAcceleration(torqueNewtonMeters / totalInertia, fromSource);
@@ -167,7 +167,7 @@ void Racecar::RotatingBody::ApplyUpstreamTorque(const Real torqueNewtonMeters, c
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
 	mAngularAcceleration += changeInAcceleration;
 	for (RotatingBody* output : mOutputSources)
@@ -178,7 +178,7 @@ void Racecar::RotatingBody::OnApplyDownstreamAcceleration(const Real changeInAcc
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::OnApplyUpstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::RotatingBody::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
 	mAngularAcceleration += changeInAcceleration;
 	if (nullptr != mInputSource)
@@ -189,21 +189,21 @@ void Racecar::RotatingBody::OnApplyUpstreamAcceleration(const Real changeInAccel
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::SetInertia(const Real inertia)
+void Racecar::RotatingBody::SetInertia(const Real& inertia)
 {
 	mInertia = inertia;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::SetAngularAcceleration(const Real angularAcceleration)
+void Racecar::RotatingBody::SetAngularAcceleration(const Real& angularAcceleration)
 {
 	mAngularAcceleration = angularAcceleration;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::SetAngularVelocity(const Real angularVelocity)
+void Racecar::RotatingBody::SetAngularVelocity(const Real& angularVelocity)
 {
 	mAngularVelocity = angularVelocity;
 }

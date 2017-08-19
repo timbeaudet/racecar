@@ -9,7 +9,7 @@
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::LockedDifferential::LockedDifferential(const Real finalDriveRatio, const Real momentOfInertia) :
+Racecar::LockedDifferential::LockedDifferential(const Real& finalDriveRatio, const Real& momentOfInertia) :
 	RotatingBody(momentOfInertia),
 	mFinalDriveRatio(finalDriveRatio)
 {
@@ -54,7 +54,7 @@ Racecar::Real Racecar::LockedDifferential::ComputeUpstreamInertia(const Rotating
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
 	AddAngularAcceleration(changeInAcceleration);
 	for (RotatingBody* output : GetOutputSources())
@@ -65,7 +65,7 @@ void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real chang
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::LockedDifferential::OnApplyUpstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::LockedDifferential::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
 	AddAngularAcceleration(changeInAcceleration);
 

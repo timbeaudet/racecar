@@ -22,7 +22,7 @@ namespace Racecar
 	class RotatingBody
 	{
 	public:
-		RotatingBody(const Real momentOfInertia);
+		RotatingBody(const Real& momentOfInertia);
 		virtual ~RotatingBody(void);
 
 		///
@@ -48,13 +48,13 @@ namespace Racecar
 		///
 		///
 		///
-		void Simulate(const Real fixedTime = kFixedTimeStep);
+		void Simulate(const Real& fixedTime = kFixedTimeStep);
 
 		///
 		/// @details Applies a torque in Newton-meters, Nm, to the body.
 		///
-		void ApplyDownstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource);
-		void ApplyUpstreamTorque(const Real torqueNewtonMeters, const RotatingBody& fromSource);
+		void ApplyDownstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource);
+		void ApplyUpstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource);
 
 		///
 		/// @details Returns the angular velocity of the body in degrees/second.
@@ -77,10 +77,10 @@ namespace Racecar
 		///
 		/// @details Set the inertia of the body in kg-m^2.
 		///
-		void SetInertia(const Real inertia);
+		void SetInertia(const Real& inertia);
 
-		void SetAngularVelocity(const Real angularVelocity);
-		void AddAngularAcceleration(const Real angularAcceleration) { mAngularAcceleration += angularAcceleration; }
+		void SetAngularVelocity(const Real& angularVelocity);
+		virtual void AddAngularAcceleration(const Real& angularAcceleration) { mAngularAcceleration += angularAcceleration; }
 
 		///
 		/// @details Changes the bodies acceleration.
@@ -89,8 +89,8 @@ namespace Racecar
 		///
 	
 		//TODO: FIX: HACK: These methods should be protected, they are not so that the differential can work.
-	public:	virtual void OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
-	public: virtual void OnApplyUpstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
+	public:	virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource);
+	public: virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource);
 	protected:
 		///
 		/// @details Returns the input source for the rotating body, in a way that forces can be transmitted back.
@@ -108,7 +108,7 @@ namespace Racecar
 		RotatingBody* mInputSource;
 		std::vector<RotatingBody*> mOutputSources;
 
-		void SetAngularAcceleration(const Real angularAcceleration);
+		void SetAngularAcceleration(const Real& angularAcceleration);
 
 		Real mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
 		Real mAngularAcceleration; //Radians / Second / Second

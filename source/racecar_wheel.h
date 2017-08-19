@@ -17,13 +17,13 @@ namespace Racecar
 	class Wheel : public RotatingBody
 	{
 	public:
-		explicit Wheel(const Real momentOfInertia); //kg-m^2
+		explicit Wheel(const Real& massInKilograms, const Real& radiusInMeters); //kg-m^2
 		virtual ~Wheel(void);
 
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime = Racecar::kFixedTimeStep);
+		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 
 		///
 		///
@@ -31,9 +31,17 @@ namespace Racecar
 		Real GetWheelSpeedMPH(void) const;
 
 	protected:
+		virtual void AddAngularAcceleration(const Real& angularAcceleration) override;
+		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
+		Real mMass;
+		Real mLinearAcceleration;
+		Real mLinearVelocity;
+		bool mIsOnGround;
 	};
+
 };	/* namespace Racecar */
 
 #endif /* _Racecar_Wheel_h_ */

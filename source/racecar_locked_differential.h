@@ -18,7 +18,7 @@ namespace Racecar
 	class LockedDifferential : public RotatingBody
 	{
 	public:
-		explicit LockedDifferential(const Real finalDriveRatio, const Real momentOfInertia);
+		explicit LockedDifferential(const Real& finalDriveRatio, const Real& momentOfInertia);
 		virtual ~LockedDifferential(void);
 
 		void Simulate(RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
@@ -26,8 +26,8 @@ namespace Racecar
 	protected:
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
 		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
-		virtual void OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource) override;
-		virtual void OnApplyUpstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
 		const Real mFinalDriveRatio;
