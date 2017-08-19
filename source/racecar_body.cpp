@@ -9,7 +9,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::RacecarBody::RacecarBody(const Real mass) :
+Racecar::RacecarBody::RacecarBody(const Real& mass) :
 	mMass(mass),
 	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0)

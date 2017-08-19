@@ -17,7 +17,7 @@ namespace Racecar
 	class RacecarBody
 	{
 	public:
-		explicit RacecarBody(const Real mass); //kg
+		explicit RacecarBody(const Real& mass); //kg
 		virtual ~RacecarBody(void);
 
 		///

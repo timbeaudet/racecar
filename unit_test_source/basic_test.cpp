@@ -7,6 +7,7 @@
 
 #include "basic_test.h"
 #include "test_kit.h"
+#include "linear_motion_test.h"
 
 #include "../player_racecar_controller.h"
 #include "../racecar/racecar.h"
@@ -30,7 +31,8 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	bool failedTest(false);
 	perform_test(ConstructionTest(), "Constructing a Rotating Body");
 	perform_test(ConstantTorqueTest(), "Applying Constant Torque");
-	perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
+	//perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
+	perform_test(WheelWithLinearMotion(), "Wheel with Linear Motion");
 
 	if (false == failedTest)
 	{

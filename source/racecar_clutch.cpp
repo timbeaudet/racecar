@@ -11,7 +11,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Clutch::Clutch(const Real momentOfInertia) :
+Racecar::Clutch::Clutch(const Real& momentOfInertia) :
 	RotatingBody(momentOfInertia),
 	mClutchEngagement(0.0)
 {

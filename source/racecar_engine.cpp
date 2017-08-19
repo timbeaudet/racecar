@@ -10,7 +10,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Engine::Engine(const Real momentOfInertia) :
+Racecar::Engine::Engine(const Real& momentOfInertia) :
 	RotatingBody(momentOfInertia),
 	mTorqueTable(),
 	mMaximumTorque(162.0)

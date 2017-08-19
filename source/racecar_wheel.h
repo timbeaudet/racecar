@@ -30,13 +30,21 @@ namespace Racecar
 		///
 		Real GetWheelSpeedMPH(void) const;
 
+		inline bool IsOnGround(void) const { return mIsOnGround; }
+		inline void SetOnGround(bool isOnGround) { mIsOnGround = isOnGround; }
+
+		inline const Real& GetLinearVelocity(void) const { return mLinearVelocity; }
+
 	protected:
 		virtual void AddAngularAcceleration(const Real& angularAcceleration) override;
 		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
+		void ApplyForceToGroundFrom(const Real& angularAcceleration);
+
 	private:
 		Real mMass;
+		Real mRadius;
 		Real mLinearAcceleration;
 		Real mLinearVelocity;
 		bool mIsOnGround;
