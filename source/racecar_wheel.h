@@ -13,6 +13,7 @@
 namespace Racecar
 {
 	class RacecarControllerInterface;
+	class RacecarBody;
 
 	class Wheel : public RotatingBody
 	{
@@ -31,9 +32,13 @@ namespace Racecar
 		Real GetWheelSpeedMPH(void) const;
 
 		inline bool IsOnGround(void) const { return mIsOnGround; }
-		inline void SetOnGround(bool isOnGround) { mIsOnGround = isOnGround; }
+		void SetOnGround(bool isOnGround);
 
 		inline const Real& GetLinearVelocity(void) const { return mLinearVelocity; }
+		inline void SetLinearVelocity(const Real& linearVelocity) { mLinearVelocity = linearVelocity; }
+
+		const Real& GetMass(void) const { return mMass; }
+		void SetRacecarBody(RacecarBody* racecarBody);
 
 	protected:
 		virtual void AddAngularAcceleration(const Real& angularAcceleration) override;
@@ -47,6 +52,7 @@ namespace Racecar
 		Real mRadius;
 		Real mLinearAcceleration;
 		Real mLinearVelocity;
+		RacecarBody* mRacecarBody;
 		bool mIsOnGround;
 	};
 

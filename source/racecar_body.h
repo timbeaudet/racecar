@@ -10,8 +10,11 @@
 
 #include "racecar.h"
 
+#include <array>
+
 namespace Racecar
 {
+	class Wheel;
 	class RacecarControllerInterface;
 
 	class RacecarBody
@@ -30,9 +33,26 @@ namespace Racecar
 		///
 		void ApplyForce(const Real& forceInNewtons);
 
+		///
+		///
+		///
+		void OnApplyLinearAcceleration(const Real& changeInAcceleration);
+
+		inline const Real& GetLinearVelocity(void) const { return mLinearVelocity; }
+
+		// This was at least needed for UnitTesting, may not be needed in API.
+		void SetLinearVelocity(const Real& linearVelocity);
+
+		inline const Real& GetMass(void) const { return mMass; }
+
+		inline const Wheel* const GetWheel(const size_t& wheelIndex) const { return mWheels[wheelIndex]; }
+		inline Wheel* GetWheel(const size_t& wheelIndex) { return mWheels[wheelIndex]; }
+		inline void SetWheel(const size_t& wheelIndex, Wheel* wheelBody) { mWheels[wheelIndex] = wheelBody; }
+
 	protected:
 
 	private:
+		std::array<Wheel*, 4> mWheels;
 		Real mMass;
 		Real mLinearAcceleration;
 		Real mLinearVelocity;

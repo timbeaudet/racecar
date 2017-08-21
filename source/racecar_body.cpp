@@ -6,10 +6,12 @@
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_body.h"
+#include "racecar_wheel.h"
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::RacecarBody::RacecarBody(const Real& mass) :
+	mWheels{nullptr, nullptr, nullptr, nullptr},
 	mMass(mass),
 	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0)
@@ -28,15 +30,47 @@ void Racecar::RacecarBody::Simulate(const Racecar::RacecarControllerInterface& r
 {
 	((void)racecarController);
 
-	mLinearVelocity += mLinearAcceleration * fixedTime;
+	SetLinearVelocity(mLinearVelocity + mLinearAcceleration * fixedTime);
 	mLinearAcceleration = 0.0;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RacecarBody::SetLinearVelocity(const Real& linearVelocity)
+{
+	mLinearVelocity = linearVelocity;
+	for (Wheel* wheel : mWheels)
+	{
+		if (nullptr == wheel)
+		{
+			continue;
+		}
+		
+		wheel->SetLinearVelocity(linearVelocity);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 void Racecar::RacecarBody::ApplyForce(const Real& forceInNewtons)
 {
-	mLinearAcceleration += forceInNewtons / mMass;
+	Real totalMass(mMass);
+	for (Wheel* wheel : mWheels)
+	{
+		if (nullptr != wheel)
+		{
+			totalMass += wheel->GetMass();
+		}
+	}
+
+	mLinearAcceleration += forceInNewtons / totalMass;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RacecarBody::OnApplyLinearAcceleration(const Real& changeInAcceleration)
+{
+	mLinearAcceleration += changeInAcceleration;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

@@ -15,7 +15,7 @@ namespace Racecar
 
 		bool WheelWithLinearMotion(void);
 		bool RacecarWithLinearMotion(void);
-
+		bool FlyingCarHitsTrack(void);
 	};
 };
 

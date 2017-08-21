@@ -33,6 +33,8 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(ConstantTorqueTest(), "Applying Constant Torque");
 	//perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
 	perform_test(WheelWithLinearMotion(), "Wheel with Linear Motion");
+	perform_test(RacecarWithLinearMotion(), "Wheel with Linear Motion");
+	perform_test(FlyingCarHitsTrack(), "Linear Motion Spins Wheels");
 
 	if (false == failedTest)
 	{

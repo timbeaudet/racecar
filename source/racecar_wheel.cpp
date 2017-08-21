@@ -6,6 +6,7 @@
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_wheel.h"
+#include "racecar_body.h"
 #include "racecar_controller.h"
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -16,6 +17,7 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 	mRadius(radiusInMeters),
 	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0),
+	mRacecarBody(nullptr),
 	mIsOnGround(false)
 {
 }
@@ -24,6 +26,14 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 
 Racecar::Wheel::~Wheel(void)
 {
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::SetRacecarBody(RacecarBody* racecarBody)
+{
+	error_if(mRacecarBody != nullptr, "This wheel already has a racecar body.");
+	mRacecarBody = racecarBody;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -41,6 +51,27 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 		//The brake can apply negative force - need to clamp it
 		//HELL - Need to do it correctly!!
 		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * fixedTime, *this);
+	}
+
+	///
+	if (true == IsOnGround())
+	{
+		const Real expectedAngularVelocity(mLinearVelocity / mRadius); //radians / sec
+		const Real difference = GetAngularVelocity() - expectedAngularVelocity; //faster positive, slower negative
+
+		const Real totalMass(mMass + ((nullptr == mRacecarBody) ? 0.0f : mRacecarBody->GetMass()));
+		const Real totalInertia(ComputeUpstreamInertia(*this));
+		const Real impulse = totalMass * totalInertia * (GetLinearVelocity() - GetAngularVelocity() * mRadius) / (totalMass * (mRadius * mRadius) + totalInertia);
+		ApplyUpstreamTorque(impulse * mRadius / fixedTime, *this);
+		if (nullptr != mRacecarBody)
+		{ 
+			mRacecarBody->ApplyForce(impulse * -2.0 / fixedTime);
+		}
+		else
+		{
+			mLinearAcceleration += -2.0 * impulse / totalInertia / fixedTime;
+		}
+		//That should have applied correct force to racecar body, should it exist.
 	}
 
 	RotatingBody::Simulate();
@@ -91,7 +122,24 @@ void Racecar::Wheel::ApplyForceToGroundFrom(const Real& angularAcceleration)
 {
 	const Real appliedTorque(angularAcceleration * GetInertia());
 	const Real appliedForce(appliedTorque / mRadius);
-	mLinearAcceleration += appliedForce / mMass;
+	
+	if (nullptr != mRacecarBody)
+	{
+		const Real changeInAcceleration(appliedForce / (mMass + mRacecarBody->GetMass()));
+		mLinearAcceleration += changeInAcceleration;
+		mRacecarBody->OnApplyLinearAcceleration(changeInAcceleration);
+	}
+	else
+	{
+		mLinearAcceleration += appliedForce / mMass;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::SetOnGround(bool isOnGround)
+{
+	mIsOnGround = isOnGround;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
