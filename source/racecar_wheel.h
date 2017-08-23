@@ -41,11 +41,14 @@ namespace Racecar
 		void SetRacecarBody(RacecarBody* racecarBody);
 
 	protected:
+		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
+		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
 		virtual void AddAngularAcceleration(const Real& angularAcceleration) override;
 		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 		void ApplyForceToGroundFrom(const Real& angularAcceleration);
+		void ApplyGroundFriction(const Real& fixedTime);
 
 	private:
 		Real mMass;

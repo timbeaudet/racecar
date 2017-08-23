@@ -52,7 +52,7 @@ void Racecar::RacecarBody::SetLinearVelocity(const Real& linearVelocity)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RacecarBody::ApplyForce(const Real& forceInNewtons)
+Racecar::Real Racecar::RacecarBody::GetTotalMass(void) const
 {
 	Real totalMass(mMass);
 	for (Wheel* wheel : mWheels)
@@ -62,7 +62,14 @@ void Racecar::RacecarBody::ApplyForce(const Real& forceInNewtons)
 			totalMass += wheel->GetMass();
 		}
 	}
+	return totalMass;
+}
 
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RacecarBody::ApplyForce(const Real& forceInNewtons)
+{
+	const Real totalMass(GetTotalMass());
 	mLinearAcceleration += forceInNewtons / totalMass;
 }
 

@@ -44,6 +44,7 @@ namespace Racecar
 		void SetLinearVelocity(const Real& linearVelocity);
 
 		inline const Real& GetMass(void) const { return mMass; }
+		Real GetTotalMass(void) const;
 
 		inline const Wheel* const GetWheel(const size_t& wheelIndex) const { return mWheels[wheelIndex]; }
 		inline Wheel* GetWheel(const size_t& wheelIndex) { return mWheels[wheelIndex]; }
