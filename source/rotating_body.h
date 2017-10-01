@@ -19,6 +19,8 @@ namespace Racecar
 	Real RevolutionsMinuteToRadiansSecond(const Real& revolutionsMinute);
 	Real RadiansSecondToRevolutionsMinute(const Real& radiansSecond);
 	
+	extern Real kGravityConstant;
+
 	class RotatingBody
 	{
 	public:
@@ -61,6 +63,12 @@ namespace Racecar
 		///
 		inline Real GetAngularVelocity(void) const { return mAngularVelocity; }
 
+		///
+		/// @details Immediately sets the angular velocity of the rotating body, no forces involved and this
+		///   may ignore the angular velocities of those components upstream and downstream from this body.
+		///
+		void SetAngularVelocity(const Real& angularVelocity);
+
 		inline Real GetInertia(void) const { return mInertia; }
 
 		///
@@ -79,7 +87,6 @@ namespace Racecar
 		///
 		void SetInertia(const Real& inertia);
 
-		void SetAngularVelocity(const Real& angularVelocity);
 		virtual void AddAngularAcceleration(const Real& angularAcceleration) { mAngularAcceleration += angularAcceleration; }
 
 		///

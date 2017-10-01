@@ -9,6 +9,8 @@
 #include "racecar_body.h"
 #include "racecar_controller.h"
 
+const Racecar::Real Racecar::Wheel::kInfiniteFriction(-1.0);
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
@@ -17,6 +19,7 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 	mRadius(radiusInMeters),
 	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0),
+	mGroundFrictionCoefficient(-1.0),
 	mRacecarBody(nullptr),
 	mIsOnGround(false)
 {
@@ -52,6 +55,8 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 		//HELL - Need to do it correctly!!
 		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * fixedTime, *this);
 	}
+
+	
 
 	///This is currently assuming an INFINITE amount of friction which will cause the tire never to lock up, and always
 	///match the speed of the racecar, but will slow the car/speed the wheel or speed the car/slow the wheel as necessary
@@ -161,8 +166,13 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		//rotational acceleration / torques and then separately the linear, which we use to need to negate.
 		mIsOnGround = false;
 		const Real totalInertia(ComputeUpstreamInertia(*this));
-		const Real impulse = totalMass * totalInertia * (GetLinearVelocity() - GetAngularVelocity() * mRadius) / (totalMass * (mRadius * mRadius) + totalInertia);
-		ApplyUpstreamTorque(impulse * mRadius / fixedTime, *this);
+		const Real impulse = ((GetAngularVelocity() * mRadius - GetLinearVelocity()) * totalInertia * totalMass) / (totalInertia + ((mRadius * mRadius) * totalMass));
+
+		const Real frictionForce(ComputeFrictionForce(totalMass));
+		const Real appliedForce((fabs(impulse) <= frictionForce || mGroundFrictionCoefficient <= 0.0) ? 
+			impulse / fixedTime : ((impulse < 0.0f) ? -frictionForce : frictionForce));
+
+		ApplyUpstreamTorque(-appliedForce * mRadius, *this);
 		mIsOnGround = true;
 
 		//TODO: Understand:
@@ -175,21 +185,21 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		//ApplyUpstreamTorque since we are using the isOnGround = false hack that is documented above!
 		if (nullptr != mRacecarBody)
 		{
-			mRacecarBody->ApplyForce(impulse * -1.0 / fixedTime);
+			mRacecarBody->ApplyForce(appliedForce);
 		}
 		else
 		{
-			mLinearAcceleration += -1.0 * impulse / totalInertia / fixedTime;
+			mLinearAcceleration += appliedForce / totalInertia;
 		}
-		//That should have applied correct force to racecar body, should it exist.
 	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::SetOnGround(bool isOnGround)
+void Racecar::Wheel::SetOnGround(bool isOnGround, const Real& frictionCoefficient)
 {
 	mIsOnGround = isOnGround;
+	mGroundFrictionCoefficient = frictionCoefficient;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -199,6 +209,14 @@ Racecar::Real Racecar::Wheel::GetWheelSpeedMPH(void) const
 	const Real speedFeetPerSecond(GetAngularVelocity() * (22.0 / 2.0) / 12.0);
 	const Real speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0);
 	return fabs(speedMPH);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::Wheel::ComputeFrictionForce(const Real& totalMass)
+{
+	const Real normalForce(Racecar::GetGravityConstant() * totalMass);
+	return normalForce * mGroundFrictionCoefficient;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

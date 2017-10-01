@@ -15,11 +15,15 @@ namespace Racecar
 	typedef double Real;
 
 	static const Real kFixedTimeStep(0.01);
+	extern Real kGravityConstant;
 
 	inline constexpr Real ComputeInertiaMetric(const Real& massInKilograms, const Real& radiusInMeters)
 	{
 		return massInKilograms * (radiusInMeters * radiusInMeters);
 	}
+
+	inline Real GetGravityConstant(void) { return kGravityConstant; }
+	inline void SetGravityConstant(const Real& gravity) { kGravityConstant = gravity; }
 
 #define error_if(test, message, ...)  if(test) { printf(message, ##__VA_ARGS__); throw std::runtime_error(message); }
 

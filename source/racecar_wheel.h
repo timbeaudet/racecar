@@ -18,6 +18,8 @@ namespace Racecar
 	class Wheel : public RotatingBody
 	{
 	public:
+		static const Real kInfiniteFriction;
+
 		explicit Wheel(const Real& massInKilograms, const Real& radiusInMeters); //kg-m^2
 		virtual ~Wheel(void);
 
@@ -32,7 +34,7 @@ namespace Racecar
 		Real GetWheelSpeedMPH(void) const;
 
 		inline bool IsOnGround(void) const { return mIsOnGround; }
-		void SetOnGround(bool isOnGround);
+		void SetOnGround(bool isOnGround, const Real& frictionCoefficient);
 
 		inline const Real& GetLinearVelocity(void) const { return mLinearVelocity; }
 		inline void SetLinearVelocity(const Real& linearVelocity) { mLinearVelocity = linearVelocity; }
@@ -51,12 +53,16 @@ namespace Racecar
 		void ApplyGroundFriction(const Real& fixedTime);
 
 	private:
+		Real ComputeFrictionForce(const Real& totalMass);
+
 		Real mMass;
 		Real mRadius;
 		Real mLinearAcceleration;
 		Real mLinearVelocity;
+		Real mGroundFrictionCoefficient; //If <= 0.0 assume infinite friction!
 		RacecarBody* mRacecarBody;
 		bool mIsOnGround;
+		
 	};
 
 };	/* namespace Racecar */
