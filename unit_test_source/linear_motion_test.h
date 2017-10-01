@@ -12,9 +12,10 @@ namespace Racecar
 {
 	namespace UnitTests
 	{
-
 		bool WheelWithLinearMotion(void);
 		bool RacecarWithLinearMotion(void);
+		bool SpinningWheelOnGround(void);
+		bool SpinningWheelsReleasedFromJack(void);
 		bool FlyingCarHitsTrack(void);
 	};
 };
