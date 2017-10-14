@@ -65,9 +65,9 @@ namespace Racecar
 
 	public:
 		inline void SetThrottlePosition(const float throttle) { RacecarControllerInterface::SetThrottlePosition(throttle); }
-		inline void SetBrakePosition(const float brake) { RacecarControllerInterface::SetThrottlePosition(brake); }
-		inline void SetClutchPosition(const float clutch) { RacecarControllerInterface::SetThrottlePosition(clutch); }
-		inline void SetSteeringPosition(const float steering) { RacecarControllerInterface::SetThrottlePosition(steering); }
+		inline void SetBrakePosition(const float brake) { RacecarControllerInterface::SetBrakePosition(brake); }
+		inline void SetClutchPosition(const float clutch) { RacecarControllerInterface::SetClutchPosition(clutch); }
+		inline void SetSteeringPosition(const float steering) { RacecarControllerInterface::SetSteeringPosition(steering); }
 	protected:
 		virtual void OnUpdateControls(void) override;
 	};
