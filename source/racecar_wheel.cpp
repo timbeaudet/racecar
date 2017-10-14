@@ -151,6 +151,13 @@ void Racecar::Wheel::ApplyForceToGroundFrom(const Real& angularAcceleration)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+template <typename Type> int Sign(const Type& value)
+{
+	return (Type(0) < value) - (value < Type(0));
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 {
 	if (true == IsOnGround())
@@ -166,13 +173,14 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		//rotational acceleration / torques and then separately the linear, which we use to need to negate.
 		mIsOnGround = false;
 		const Real totalInertia(ComputeUpstreamInertia(*this));
-		const Real impulse = ((GetAngularVelocity() * mRadius - GetLinearVelocity()) * totalInertia * totalMass) / (totalInertia + ((mRadius * mRadius) * totalMass));
+		const Real velocityDifference(GetAngularVelocity() * mRadius - GetLinearVelocity());
+		const Real impulse = (velocityDifference * totalInertia * totalMass) / (totalInertia + ((mRadius * mRadius) * totalMass));
 
-		const Real frictionForce(ComputeFrictionForce(totalMass));
-		const Real appliedForce((fabs(impulse) <= frictionForce || mGroundFrictionCoefficient <= 0.0) ? 
-			impulse / fixedTime : ((impulse < 0.0f) ? -frictionForce : frictionForce));
-
-		ApplyUpstreamTorque(-appliedForce * mRadius, *this);
+		const Real frictionImpulse(ComputeFrictionForce(totalMass) * Sign(velocityDifference) * fixedTime);
+		const Real appliedImpulse((fabs(impulse) <= fabs(frictionImpulse) || mGroundFrictionCoefficient <= 0.0) ?
+			impulse : frictionImpulse);
+		
+		ApplyUpstreamTorque(-appliedImpulse / fixedTime * mRadius, *this);
 		mIsOnGround = true;
 
 		//TODO: Understand:
@@ -185,11 +193,11 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		//ApplyUpstreamTorque since we are using the isOnGround = false hack that is documented above!
 		if (nullptr != mRacecarBody)
 		{
-			mRacecarBody->ApplyForce(appliedForce);
+			mRacecarBody->ApplyForce(appliedImpulse / fixedTime);
 		}
 		else
 		{
-			mLinearAcceleration += appliedForce / totalInertia;
+			mLinearAcceleration += appliedImpulse / fixedTime / totalMass;
 		}
 	}
 }
