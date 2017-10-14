@@ -2,7 +2,8 @@
 /// @file
 /// @details Defines the functions that perform the basic tests for the racecar drive-train.
 ///
-/// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "basic_test.h"
