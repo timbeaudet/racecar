@@ -12,7 +12,6 @@
 #include "../racecar/racecar.h"
 #include "../racecar/racecar_body.h"
 #include "../racecar/racecar_wheel.h"
-#include "../racecar/racecar_locked_differential.h"
 
 #include <fstream>
 
@@ -31,7 +30,7 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyDownstreamTorque(200.0, wheel); //200nm torque
-		wheel.Simulate(racecarController); //Simulates 10ms of action.
+		wheel.Simulate(racecarController, 0.01);
 	}
 
 	const Real expectedLinearVelocity(100.0);  //100m/s
@@ -63,8 +62,8 @@ bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyDownstreamTorque(200.0, wheel); //200nm torque
-		wheel.Simulate(racecarController); //Simulates 10ms of action.
-		carBody.Simulate(racecarController);
+		wheel.Simulate(racecarController, 0.01);
+		carBody.Simulate(racecarController, 0.01);
 	}
 
 	const Real expectedLinearVelocity(8.0);  //m/s
@@ -120,8 +119,8 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		wheel.SetOnGround(true, test.mFrictionCoefficient); //0.05 for ice friction, 0.7 for pavement friction.
 
 		//Simulate a time step, with infinite friction this should be all that is needed.
-		wheel.Simulate(racecarController); //Simulates 10ms of action.
-		carBody.Simulate(racecarController);
+		wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
+		carBody.Simulate(racecarController, 0.01);
 
 		outFile << "10\t" << wheel.GetLinearVelocity() << "\t" << wheel.GetAngularVelocity() << "\n";
 		outFile.flush();
@@ -146,8 +145,8 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		//Simulate the time steps for the remainder of the test, when complete the car/wheel should be in equilibrium from friction.
 		for (int timer(10); timer < test.mTestTime; timer += 10)
 		{
-			wheel.Simulate(racecarController); //Simulates 10ms of action.
-			carBody.Simulate(racecarController);
+			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
+			carBody.Simulate(racecarController, 0.01);
 
 			outFile << timer + 10 << "\t" << wheel.GetLinearVelocity() << "\t" << wheel.GetAngularVelocity() << "\n";
 			outFile.flush();
@@ -211,8 +210,8 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		//Simulate 500ms of the car flying through the air, the car has NOT landed on the ground, and should have identical state.
 		for (int timer(10); timer < 500; timer += 10)
 		{
-			wheel.Simulate(racecarController); //Simulates 10ms of action.
-			racecarBody.Simulate(racecarController);
+			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
+			racecarBody.Simulate(racecarController, 0.01);
 		}
 
 		{	//Check that the car and wheel are in identical states as when we started the test, (haven't touched ground yet!)
@@ -230,8 +229,8 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 
 		//Car has now landed on the ground, simulate a single time step, with infinite friction this should be all that is needed.
 		wheel.SetOnGround(true, test.mFrictionCoefficient);
-		wheel.Simulate(racecarController); //Simulates 10ms of action.
-		racecarBody.Simulate(racecarController);
+		wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
+		racecarBody.Simulate(racecarController, 0.01);
 
 		{	//Check for results after a single time step, should be matched for infinite friction.
 			if (fabs(wheel.GetLinearVelocity() - racecarBody.GetLinearVelocity()) > Racecar::UnitTests::kTestElipson)
@@ -253,8 +252,8 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		//Simulate the time steps for the remainder of the test, when complete the car/wheel should be in equilibrium from friction.
 		for (int timer(10); timer < test.mTestTime; timer += 10)
 		{
-			wheel.Simulate(racecarController); //Simulates 10ms of action.
-			racecarBody.Simulate(racecarController);
+			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
+			racecarBody.Simulate(racecarController, 0.01);
 		}
 
 		{	//Check for results after a single time step, should be matched for infinite friction.
