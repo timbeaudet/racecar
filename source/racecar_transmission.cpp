@@ -2,7 +2,8 @@
 /// @file
 /// @details This is a basic simulation for a 5 speed h-shifter transmission.
 ///
-/// <!-- Copyright (c) 2017 Tim Beaudet - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_transmission.h"

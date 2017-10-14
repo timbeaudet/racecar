@@ -2,7 +2,8 @@
 /// @file
 /// @details This is a basic simulation for a locked differential, where both wheels spin same speed.
 ///
-/// <!-- Copyright (c) 2017 Tim Beaudet - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #ifndef _Racecar_LockedDifferential_h_

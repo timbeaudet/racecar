@@ -3,7 +3,8 @@
 /// @details This is a simple racecar controller that provides all the controls a person would find inside a typical
 ///   racecar; throttle, brake, clutch pedals, steering wheel, shifter...
 ///
-/// <!-- Copyright (c) 2017 Tim Beaudet - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #ifndef _Racecar_RacecarController_h_

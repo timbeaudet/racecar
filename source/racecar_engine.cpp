@@ -2,7 +2,8 @@
 /// @file
 /// @details This is a simple start to simulating a physical engine that simply has a torque table to look up.
 ///
-/// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_engine.h"

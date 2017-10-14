@@ -1,8 +1,9 @@
 ///
 /// @file
-/// @details A simple base class for each of the components of the drivetrain that have rotating bodies.
+/// @details A simple base class for each of the components of the drive-train that have rotating bodies.
 ///
-/// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #ifndef _Racecar_RotatingBody_h_

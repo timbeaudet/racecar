@@ -2,7 +2,8 @@
 /// @file
 /// @details Provides includes for the different components of the racecar drivetrain.
 ///
-/// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #ifndef _Racecar_Racecar_h_

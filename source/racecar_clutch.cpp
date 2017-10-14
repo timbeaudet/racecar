@@ -3,7 +3,8 @@
 /// @details This is a simple simulation for a clutch, that applies forces to two separate rotating bodies via
 ///   a frictional clutch disk.
 ///
-/// <!-- Copyright (c) Tim Beaudet 2017 - All Rights Reserved -->
+/// <!-- This file is made available under the terms of the MIT license(see LICENSE.md) -->
+/// <!-- Copyright (c) 2017 Contributers: Tim Beaudet, -->
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "racecar_clutch.h"
