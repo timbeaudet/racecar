@@ -76,7 +76,6 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 	SimulateShiftLogic(racecarController);
 
 	RotatingBody& inputSource(GetExpectedInputSource());
-
 	mInputShaftSpeed = inputSource.GetAngularVelocity();
 	
 	const Real finalDriveRatio(4.30); //Should be down the line, but meh.
@@ -110,14 +109,14 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 //}
 //
 ////--------------------------------------------------------------------------------------------------------------------//
-//
-//void Racecar::Transmission::OnApplyDownstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+
+//void Racecar::Transmission::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 //{
 //}
 //
 ////--------------------------------------------------------------------------------------------------------------------//
 //
-//void Racecar::Transmission::OnApplyUpstreamAcceleration(const float changeInAcceleration, const RotatingBody& fromSource)
+//void Racecar::Transmission::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 //{
 //}
 
