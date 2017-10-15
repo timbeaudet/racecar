@@ -62,8 +62,6 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 		}
 	}
 
-	EngineWithConnectionTest();
-
 	return true;
 }
 
