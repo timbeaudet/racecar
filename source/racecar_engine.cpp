@@ -141,14 +141,12 @@ Racecar::Real Racecar::Engine::GetOutputValue(const Real engineSpeedRPM) const
 
 void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
-	const Real revolutions(GetEngineSpeedRPM() / 60.0 * fixedTime);
-
 	if (GetEngineSpeedRPM() < 6500)
 	{
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
-		ApplyDownstreamTorque(appliedEngineTorque , *this);
+		ApplyDownstreamTorque(appliedEngineTorque, *this);
 	}
 
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
