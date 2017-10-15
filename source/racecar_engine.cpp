@@ -115,10 +115,13 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	//Now that all torques have been applied to the engine, step it forward in time.
 	RotatingBody::Simulate();
 
-	const Real differenceTo1000(GetEngineSpeedRPM() - 1000.0);
+	//
+	//Create a fictional force to keep the engine from stalling out. This is NOT simulation quality here...
+	//
+	const Real differenceTo1000(GetEngineSpeedRPM() - 1000.0); //Why does this work <<< and this vvv doesn't?
+	//const Real differenceTo1000(GetAngularVelocity() - Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
 	if (differenceTo1000 < 0.0)
 	{
-		//SetAngularVelocity(Racecar::RevolutionsMinuteToDegreesSecond(1000.0f));
 		const Real totalInertia(ComputeDownstreamInertia(*this));
 		ApplyDownstreamTorque(-differenceTo1000 * totalInertia, *this);
 	}
