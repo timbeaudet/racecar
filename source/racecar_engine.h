@@ -17,6 +17,20 @@ namespace Racecar
 {
 	class RacecarControllerInterface;
 
+	class ConstantEngine : public RotatingBody
+	{
+	public:
+		explicit ConstantEngine(const Real& momentOfInertia, const Real& constantTorque);
+		virtual ~ConstantEngine(void);
+
+		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
+
+		Real GetEngineSpeedRPM(void) const;
+
+	private:
+		const Real mConstantTorque;
+	};
+
 	class Engine : public RotatingBody
 	{
 	public:

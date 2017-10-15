@@ -11,6 +11,49 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+Racecar::ConstantEngine::ConstantEngine(const Real& momentOfInertia, const Real& constantTorque) :
+	RotatingBody(momentOfInertia),
+	mConstantTorque(constantTorque)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::ConstantEngine::~ConstantEngine(void)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
+{
+	const Real revolutions(GetEngineSpeedRPM() / 60.0 * fixedTime);
+
+	if (racecarController.GetThrottlePosition() > 0.5)
+	{
+		ApplyDownstreamTorque(mConstantTorque, *this);
+	}
+
+	{	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
+//		const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
+//		ApplyDownstreamTorque(-engineResistanceTorque, *this);
+	}
+
+	//Now that all torques have been applied to the engine, step it forward in time.
+	RotatingBody::Simulate(fixedTime);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::ConstantEngine::GetEngineSpeedRPM(void) const
+{
+	return Racecar::RadiansSecondToRevolutionsMinute(GetAngularVelocity());
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+
 Racecar::Engine::Engine(const Real& momentOfInertia) :
 	RotatingBody(momentOfInertia),
 	mTorqueTable(),
@@ -105,7 +148,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
-		ApplyDownstreamTorque(appliedEngineTorque * revolutions, *this);
+		ApplyDownstreamTorque(appliedEngineTorque , *this);
 	}
 
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
@@ -113,7 +156,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	ApplyDownstreamTorque(-engineResistanceTorque, *this);
 
 	//Now that all torques have been applied to the engine, step it forward in time.
-	RotatingBody::Simulate();
+	RotatingBody::Simulate(fixedTime);
 
 	//
 	//Create a fictional force to keep the engine from stalling out. This is NOT simulation quality here...

@@ -54,10 +54,8 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	{
 		//The brake can apply negative force - need to clamp it
 		//HELL - Need to do it correctly!!
-		ApplyUpstreamTorque(-GetAngularVelocity() * (0.83f * racecarController.GetBrakePosition()) * fixedTime, *this);
+		ApplyUpstreamTorque(-GetAngularVelocity() * ComputeUpstreamInertia(*this) * (0.83f * racecarController.GetBrakePosition()), *this);
 	}
-
-	
 
 	///This is currently assuming an INFINITE amount of friction which will cause the tire never to lock up, and always
 	///match the speed of the racecar, but will slow the car/speed the wheel or speed the car/slow the wheel as necessary

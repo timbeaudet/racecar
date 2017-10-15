@@ -86,7 +86,7 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 	}
 	else
 	{
-		mOutputShaftSpeed = mInputShaftSpeed / RatioForGear(mSelectedGear) / finalDriveRatio;
+		mOutputShaftSpeed = mInputShaftSpeed / RatioForGear(mSelectedGear);
 		SetAngularVelocity(mOutputShaftSpeed);
 	}
 }
