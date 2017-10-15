@@ -44,6 +44,8 @@ void Racecar::Wheel::SetRacecarBody(RacecarBody* racecarBody)
 
 void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
+	((void)racecarController);
+
 	const RotatingBody* inputSource(GetInputSource());
 	if (nullptr != inputSource)
 	{
