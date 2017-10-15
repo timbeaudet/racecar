@@ -13,10 +13,10 @@
 #include "differential_test.h"
 #include "linear_motion_test.h"
 
-#include "../racecar/racecar.h"
-#include "../racecar/racecar_controller.h"
-#include "../racecar/racecar_wheel.h"
-#include "../racecar/racecar_locked_differential.h"
+#include "../source/racecar.h"
+#include "../source/racecar_controller.h"
+#include "../source/racecar_wheel.h"
+#include "../source/racecar_locked_differential.h"
 
 #include <cstdio>
 

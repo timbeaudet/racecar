@@ -9,11 +9,11 @@
 #include "differential_test.h"
 #include "test_kit.h"
 
-#include "../racecar/racecar.h"
-#include "../racecar/racecar_controller.h"
-#include "../racecar/racecar_engine.h"
-#include "../racecar/racecar_locked_differential.h"
-#include "../racecar/racecar_wheel.h"
+#include "../source/racecar.h"
+#include "../source/racecar_controller.h"
+#include "../source/racecar_engine.h"
+#include "../source/racecar_locked_differential.h"
+#include "../source/racecar_wheel.h"
 
 #include <array>
 

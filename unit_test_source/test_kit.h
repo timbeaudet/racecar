@@ -9,7 +9,7 @@
 #ifndef _Racecar_TestKit_h_
 #define _Racecar_TestKit_h_
 
-#include "../racecar/racecar.h"
+#include "../source/racecar.h"
 
 #include <cstdio>
 

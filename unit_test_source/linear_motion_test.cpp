@@ -9,11 +9,12 @@
 #include "linear_motion_test.h"
 #include "test_kit.h"
 
-#include "../player_racecar_controller.h"
-#include "../racecar/racecar.h"
-#include "../racecar/racecar_body.h"
-#include "../racecar/racecar_wheel.h"
+#include "../source/racecar.h"
+#include "../source/racecar_controller.h"
+#include "../source/racecar_body.h"
+#include "../source/racecar_wheel.h"
 
+#include <string>
 #include <fstream>
 
 //--------------------------------------------------------------------------------------------------------------------//

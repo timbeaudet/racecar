@@ -9,11 +9,11 @@
 #include "clutch_test.h"
 #include "test_kit.h"
 
-#include "../racecar/racecar.h"
-#include "../racecar/racecar_controller.h"
-#include "../racecar/racecar_engine.h"
-#include "../racecar/racecar_clutch.h"
-#include "../racecar/racecar_wheel.h"
+#include "../source/racecar.h"
+#include "../source/racecar_controller.h"
+#include "../source/racecar_engine.h"
+#include "../source/racecar_clutch.h"
+#include "../source/racecar_wheel.h"
 
 #include <array>
 
