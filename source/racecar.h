@@ -26,6 +26,11 @@ namespace Racecar
 	inline Real GetGravityConstant(void) { return kGravityConstant; }
 	inline void SetGravityConstant(const Real& gravity) { kGravityConstant = gravity; }
 
+	template <typename Type> int Sign(const Type& value)
+	{
+		return (Type(0) < value) - (value < Type(0));
+	}
+
 #define error_if(test, message, ...)  if(test) { printf(message, ##__VA_ARGS__); throw std::runtime_error(message); }
 
 } /* namespace Racecar */

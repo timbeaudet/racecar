@@ -22,11 +22,13 @@ namespace Racecar
 		ClutchJoint(Real staticFrictionCoefficient, Real kineticFrictionCoefficient);
 		~ClutchJoint(void);
 
-		Racecar::Real ComputeTorqueImpulseFromFriction(const RotatingBody& input, const RotatingBody& output);
-
 		inline void SetNormalForce(const Real& normalForce) { mNormalForce = normalForce; }
+		Racecar::Real ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
 
 	private:
+		Racecar::Real ComputeTorqueImpulseToMatchVelocity(const RotatingBody& input, const RotatingBody& output);
+		Racecar::Real ComputeTorqueImpulseFromFriction(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
+
 		const Real mStaticFrictionCoefficient;
 		const Real mKineticFrictionCoefficient;
 		Real mNormalForce; //N
@@ -56,12 +58,13 @@ namespace Racecar
 		Real GetClutchEngagement(void) const { return mClutchEngagement; }
 
 	protected:
+
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
-		virtual void OnApplyDownstreamAcceleration(const Real changeInAcceleration, const RotatingBody& fromSource);
+		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
 		static Real ClutchPedalToClutchForce(const float pedalInput);
-		Real ComputeFrictionalTorque(void) const;
+		//Real ComputeFrictionalTorque(void) const;
 
 		Real mClutchEngagement; //0.0f for disengaged, 1.0f for completely engaged.
 		const Real mMaximumNormalForce;

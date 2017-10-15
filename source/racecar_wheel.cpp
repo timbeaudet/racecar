@@ -152,13 +152,6 @@ void Racecar::Wheel::ApplyForceToGroundFrom(const Real& angularAcceleration)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-template <typename Type> int Sign(const Type& value)
-{
-	return (Type(0) < value) - (value < Type(0));
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 {
 	if (true == IsOnGround())
@@ -177,7 +170,7 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		const Real velocityDifference(GetAngularVelocity() * mRadius - GetLinearVelocity());
 		const Real impulse = (velocityDifference * totalInertia * totalMass) / (totalInertia + ((mRadius * mRadius) * totalMass));
 
-		const Real frictionImpulse(ComputeFrictionForce(totalMass) * Sign(velocityDifference) * fixedTime);
+		const Real frictionImpulse(ComputeFrictionForce(totalMass) * Racecar::Sign(velocityDifference) * fixedTime);
 		const Real appliedImpulse((fabs(impulse) <= fabs(frictionImpulse) || mGroundFrictionCoefficient <= 0.0) ?
 			impulse : frictionImpulse);
 		

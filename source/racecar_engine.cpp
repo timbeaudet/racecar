@@ -18,7 +18,7 @@ Racecar::Engine::Engine(const Real& momentOfInertia) :
 {
 	InitializeTorqueTableToMiata();
 
-	SetAngularVelocity(360.0 / 60 * 1000);
+	SetAngularVelocity(Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
