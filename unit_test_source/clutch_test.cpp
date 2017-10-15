@@ -9,8 +9,9 @@
 #include "clutch_test.h"
 #include "test_kit.h"
 
-#include "../player_racecar_controller.h"
 #include "../racecar/racecar.h"
+#include "../racecar/racecar_controller.h"
+#include "../racecar/racecar_engine.h"
 #include "../racecar/racecar_clutch.h"
 #include "../racecar/racecar_wheel.h"
 
@@ -92,6 +93,39 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 				return false;
 			}
 		}
+	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::SlippingClutchTest(void)
+{
+	Racecar::ProgrammaticController racecarController;
+	Racecar::ConstantEngine engine(10.0, 1000);
+	Racecar::Clutch clutch(10, 100, 0.6, 0.4);
+	Racecar::Wheel wheel(1000, 1.0);
+
+	engine.AddOutputSource(&clutch);
+	clutch.SetInputSource(&engine);
+	clutch.AddOutputSource(&wheel);
+	wheel.SetInputSource(&clutch);
+
+	racecarController.SetThrottlePosition(1.0);
+	racecarController.SetClutchPosition(0.0);
+
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	//Should differ, by an amount that Tim was too lazy to do the math for, this will prove it works, but not works perfectly!
+	if (fabs(engine.GetAngularVelocity() - wheel.GetAngularVelocity()) < UnitTests::kTestElipson)
+	{
+		return false;
 	}
 
 	return true;
