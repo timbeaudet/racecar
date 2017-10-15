@@ -11,8 +11,8 @@
 #include "clutch_test.h"
 #include "linear_motion_test.h"
 
-#include "../player_racecar_controller.h"
 #include "../racecar/racecar.h"
+#include "../racecar/racecar_controller.h"
 #include "../racecar/racecar_wheel.h"
 #include "../racecar/racecar_locked_differential.h"
 
