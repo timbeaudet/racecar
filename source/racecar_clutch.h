@@ -16,10 +16,33 @@ namespace Racecar
 {
 	class RacecarControllerInterface;
 
+	class ClutchJoint
+	{
+	public:
+		ClutchJoint(Real staticFrictionCoefficient, Real kineticFrictionCoefficient);
+		~ClutchJoint(void);
+
+		Racecar::Real ComputeTorqueImpulseFromFriction(const RotatingBody& input, const RotatingBody& output);
+
+		inline void SetNormalForce(const Real& normalForce) { mNormalForce = normalForce; }
+
+	private:
+		const Real mStaticFrictionCoefficient;
+		const Real mKineticFrictionCoefficient;
+		Real mNormalForce; //N
+	};
+
+
 	class Clutch : public RotatingBody
 	{
 	public:
-		explicit Clutch(const Real& momentOfInertia);
+		///
+		/// @param staticFrictionCoefficient is default to 'steel-on-steel'
+		/// @param kineticFrictionCoefficient is default to 'steel-on-steel'
+		/// @ref http://www.school-for-champions.com/science/friction_equation.htm#.WBSr1fkrLZI
+		///
+		explicit Clutch(const Real& momentOfInertia, const Real& maximumNormalForce,
+			const Real& staticFrictionCoefficient = 0.6, const Real& kineticFrictionCoefficient = 0.4);
 		virtual ~Clutch(void);
 
 		///
@@ -41,6 +64,10 @@ namespace Racecar
 		Real ComputeFrictionalTorque(void) const;
 
 		Real mClutchEngagement; //0.0f for disengaged, 1.0f for completely engaged.
+		const Real mMaximumNormalForce;
+		const Real mStaticFrictionCoefficient;
+		const Real mKineticFrictionCoefficient;
+		ClutchJoint mClutchJoint;
 	};
 };	/* namespace Racecar */
 

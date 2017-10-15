@@ -12,9 +12,40 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Clutch::Clutch(const Real& momentOfInertia) :
+Racecar::ClutchJoint::ClutchJoint(Real staticFrictionCoefficient, Real kineticFrictionCoefficient) :
+	mStaticFrictionCoefficient(staticFrictionCoefficient),
+	mKineticFrictionCoefficient(kineticFrictionCoefficient)
+{
+}
+
+Racecar::ClutchJoint::~ClutchJoint(void)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::ClutchJoint::ComputeTorqueImpulseFromFriction(const RotatingBody& input, const RotatingBody& output)
+{
+	const Real angularVelocityDifference(output.GetAngularVelocity() - input.GetAngularVelocity());
+	const Real inputInertia(input.ComputeUpstreamInertia(output));
+	const Real outputInertia(output.ComputeDownstreamInertia(output));
+
+	const Real torqueImpulse = (inputInertia * outputInertia * angularVelocityDifference) / (inputInertia + outputInertia);
+	return torqueImpulse;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Clutch::Clutch(const Real& momentOfInertia, const Real& maximumNormalForce, 
+	const Real& staticFrictionCoefficient, const Real& kineticFrictionCoefficient) :
 	RotatingBody(momentOfInertia),
-	mClutchEngagement(0.0)
+	mClutchEngagement(0.0),
+	mStaticFrictionCoefficient(staticFrictionCoefficient),
+	mKineticFrictionCoefficient(kineticFrictionCoefficient),
+	mMaximumNormalForce(maximumNormalForce),
+	mClutchJoint(staticFrictionCoefficient, kineticFrictionCoefficient)
 {
 }
 
@@ -31,6 +62,9 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	RotatingBody& inputSource(GetExpectedInputSource());
 
 	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
+
+	const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
+	mClutchJoint.SetNormalForce(actualNormalForce);
 
 	//
 	// This is a bit of a hack to only apply the frictional forces if the there is a large enough difference in
@@ -134,24 +168,14 @@ Racecar::Real Racecar::Clutch::ComputeFrictionalTorque(void) const
 	const RotatingBody& inputSource(GetExpectedInputSource());
 
 	//http://x-engineer.org/automotive-engineering/drivetrain/coupling-devices/calculate-torque-capacity-clutch/
-	const Real clutchStaticFrictionCoefficient(0.6); //static steel on steel from: http://www.school-for-champions.com/science/friction_equation.htm#.WBSr1fkrLZI
-	const Real clutchKineticFrictionCoefficient(0.4); //kinetic steel on steel
 
 	const Real engineVelocity(inputSource.GetAngularVelocity());
 	const Real clutchVelocity(GetAngularVelocity());
 
-	//http://www.thecartech.com/subjects/design/Automobile_clutchs.htm
-	//318ft-lbs is the torque capacity of a 'race' miata clutch: https://www.flyinmiata.com/fm-level-1-clutch.html
-	//8 1/2 inch diameter for clutch: http://www.autozone.com/drivetrain/clutch-set/duralast-clutch-set/245070_123121_4121
-	//GUESSTIMATE: radius of effect - 3.75" 
-
-	//7000N * 0.4 = 2800N --> Nm?
-	//2800N * 0.09525m =  266 Nm
-	//318ft-lbs ~= 432 Nm    / 0.09525m (3.75") / 0.6 (coefficient of friction)  = 7567 Nm
-
-	const Real frictionCoefficient((fabs(engineVelocity - clutchVelocity) < 0.1) ? clutchStaticFrictionCoefficient : clutchKineticFrictionCoefficient);
-	const Real forceNormal = mClutchEngagement * 7567.0f; //See above comment for where this comes from!
-	const Real maximumTorqueAmount(forceNormal * frictionCoefficient * (3.75 * 0.0254)); //Nm   (3.75in to meters)
+	const Real frictionCoefficient((fabs(engineVelocity - clutchVelocity) < 0.1) ? mStaticFrictionCoefficient : mKineticFrictionCoefficient);
+	const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
+	const Real maximumTorqueAmount(actualNormalForce * frictionCoefficient * (3.75 * 0.0254)); //Nm   (3.75in to meters)
+	
 
 	//engineVelocity * engineInertia = clutchVelocity * clutchInertia
 

@@ -128,12 +128,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 Racecar::Real Racecar::Engine::GetEngineSpeedRPM(void) const
 {
-	//deg   60 sec   1 rev       rev
-	//--- * ---    * ---         ---
-	//sec   1 min    360 deg     min
-
-
-	return GetAngularVelocity() * 60.0 / 360.0;
+	return Racecar::RadiansSecondToRevolutionsMinute(GetAngularVelocity());
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
