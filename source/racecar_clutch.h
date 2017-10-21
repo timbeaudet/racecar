@@ -68,8 +68,6 @@ namespace Racecar
 
 		Real mClutchEngagement; //0.0f for disengaged, 1.0f for completely engaged.
 		const Real mMaximumNormalForce;
-		const Real mStaticFrictionCoefficient;
-		const Real mKineticFrictionCoefficient;
 		ClutchJoint mClutchJoint;
 	};
 };	/* namespace Racecar */

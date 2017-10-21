@@ -65,8 +65,6 @@ Racecar::Clutch::Clutch(const Real& momentOfInertia, const Real& maximumNormalFo
 	const Real& staticFrictionCoefficient, const Real& kineticFrictionCoefficient) :
 	RotatingBody(momentOfInertia),
 	mClutchEngagement(0.0),
-	mStaticFrictionCoefficient(staticFrictionCoefficient),
-	mKineticFrictionCoefficient(kineticFrictionCoefficient),
 	mMaximumNormalForce(maximumNormalForce),
 	mClutchJoint(staticFrictionCoefficient, kineticFrictionCoefficient)
 {
