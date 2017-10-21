@@ -11,6 +11,8 @@
 
 #include "rotating_body.h"
 
+#include <array>
+
 namespace Racecar
 {
 
@@ -19,11 +21,6 @@ namespace Racecar
 	public:
 		GearJoint(Real gearRatio);
 		~GearJoint(void);
-
-		Racecar::Real ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
-		
-		void OnApplyDownstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource);
-		void OnApplyUpstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource);
 
 		const Real& GetGearRatio(void) const { return mGearRatio; }
 
@@ -35,13 +32,14 @@ namespace Racecar
 
 	enum class Gear
 	{
-		Reverse,
 		Neutral,
 		First,
 		Second,
 		Third,
 		Fourth,
-		Fifth
+		Fifth,
+		Sixth,
+		Reverse,
 	};
 
 	class RacecarControllerInterface;
@@ -49,28 +47,29 @@ namespace Racecar
 	class Transmission : public RotatingBody
 	{
 	public:
-		explicit Transmission(const Real momentOfInertia);
+		explicit Transmission(const Real momentOfInertia, const std::array<Real, 8>& gearRatios);
 		virtual ~Transmission(void);
 
 		void Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
+		Real GetSelectedGearRatio(void) const;
 
 		virtual Racecar::Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
 		virtual Racecar::Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
-		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
-		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	protected:
-		//virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
-		//virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
 		Real mInputShaftSpeed;
 		Real mOutputShaftSpeed;
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
+
+		std::array<GearJoint, 8> mGearJoints;
 	};
 
 };	/* namespace Racecar */
