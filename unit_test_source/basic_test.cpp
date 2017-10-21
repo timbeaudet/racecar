@@ -10,6 +10,7 @@
 #include "test_kit.h"
 #include "engine_test.h"
 #include "clutch_test.h"
+#include "wheel_test.h"
 #include "differential_test.h"
 #include "linear_motion_test.h"
 
@@ -44,6 +45,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(FlyingCarHitsTrack(), "Flying Car Hits Track");
 
 	perform_test(BasicEngineTest(), "Basic Engine Test");
+	perform_test(WheelBrakingTest(), "Wheel Braking Test");
 	perform_test(EngineWithConnectionTest(), "Engine With Connection Test");
 	perform_test(ClutchInputTest(), "Clutch Input Test");
 	perform_test(SlippingClutchTest(), "Slipping Clutch Test");

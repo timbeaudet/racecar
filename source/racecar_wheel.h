@@ -43,6 +43,8 @@ namespace Racecar
 		const Real& GetMass(void) const { return mMass; }
 		void SetRacecarBody(RacecarBody* racecarBody);
 
+		inline void SetMaximumBrakingTorque(const Real& maximumBrakingTorque) { mMaximumBrakingTorque = maximumBrakingTorque; }
+
 	protected:
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
 		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
@@ -61,9 +63,9 @@ namespace Racecar
 		Real mLinearAcceleration;
 		Real mLinearVelocity;
 		Real mGroundFrictionCoefficient; //If <= 0.0 assume infinite friction!
+		Real mMaximumBrakingTorque;
 		RacecarBody* mRacecarBody;
 		bool mIsOnGround;
-		
 	};
 
 };	/* namespace Racecar */

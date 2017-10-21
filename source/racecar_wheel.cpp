@@ -21,6 +21,7 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0),
 	mGroundFrictionCoefficient(-1.0),
+	mMaximumBrakingTorque(100.0), //Nm
 	mRacecarBody(nullptr),
 	mIsOnGround(false)
 {
@@ -44,22 +45,19 @@ void Racecar::Wheel::SetRacecarBody(RacecarBody* racecarBody)
 
 void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
-	((void)racecarController);
-
-	//if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(1.0f))
-	//{
+	if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(1.0f))
+	{
 	//	//The brake can apply negative force - need to clamp it
 	//	//HELL - Need to do it correctly!!
 	//	ApplyUpstreamTorque(-GetAngularVelocity() * ComputeUpstreamInertia(*this) * (0.83f * racecarController.GetBrakePosition()), *this);
 		
-		//Just change to Upstream and/or carbody mass included, and this should be good for braking.
-		//const Real totalInertia(ComputeDownstreamInertia(*this));
-		//const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
-		//const Real actualImpulse(mResistanceTorque * fixedTime); //kg*m^2 / s
-		//const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
-		////The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
-		//ApplyDownstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
-	//}
+		const Real totalInertia(ComputeUpstreamInertia(*this));
+		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
+		const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
+		const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
+		//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
+		ApplyUpstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
+	}
 
 	///This is currently assuming an INFINITE amount of friction which will cause the tire never to lock up, and always
 	///match the speed of the racecar, but will slow the car/speed the wheel or speed the car/slow the wheel as necessary
