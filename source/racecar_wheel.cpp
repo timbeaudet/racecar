@@ -69,13 +69,13 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	mLinearVelocity += mLinearAcceleration * fixedTime;
 	mLinearAcceleration = 0.0;
 
-	const RotatingBody* inputSource(GetInputSource());
-	if (nullptr != inputSource)
-	{
-	//	error_if(fabs(GetAngularVelocity() - inputSource->GetAngularVelocity()) > Racecar::kElipson,
-	//		"The wheel speed does not match the input velocity after Simulate().");
-		SetAngularVelocity(inputSource->GetAngularVelocity());
-	}
+	//const RotatingBody* inputSource(GetInputSource());
+	//if (nullptr != inputSource)
+	//{
+	////	error_if(fabs(GetAngularVelocity() - inputSource->GetAngularVelocity()) > Racecar::kElipson,
+	////		"The wheel speed does not match the input velocity after Simulate().");
+	//	SetAngularVelocity(inputSource->GetAngularVelocity());
+	//}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

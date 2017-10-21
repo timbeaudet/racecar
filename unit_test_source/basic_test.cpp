@@ -46,6 +46,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 
 	perform_test(BasicEngineTest(), "Basic Engine Test");
 	perform_test(WheelBrakingTest(), "Wheel Braking Test");
+	perform_test(WheelAndAxleBrakingTest(), "Wheel And Axle Braking Test");	
 	perform_test(EngineWithConnectionTest(), "Engine With Connection Test");
 	perform_test(ClutchInputTest(), "Clutch Input Test");
 	perform_test(SlippingClutchTest(), "Slipping Clutch Test");
