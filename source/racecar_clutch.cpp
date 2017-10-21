@@ -87,9 +87,13 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
 	mClutchJoint.SetNormalForce(actualNormalForce);
 
-	const Real frictionalTorque = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime) / fixedTime;
-	inputSource.ApplyUpstreamTorque(frictionalTorque, *this);
-	ApplyDownstreamTorque(-frictionalTorque, *this);
+	const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
+	if (fabs(frictionalImpulse) > kElipson)	//Make sure not zero!
+	{
+		const Real frictionalTorque(frictionalImpulse / fixedTime);
+		inputSource.ApplyUpstreamTorque(frictionalTorque, *this);
+		ApplyDownstreamTorque(-frictionalTorque, *this);
+	}
 
 	////
 	//// This is a bit of a hack to only apply the frictional forces if the there is a large enough difference in

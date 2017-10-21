@@ -45,17 +45,15 @@ void Racecar::Wheel::SetRacecarBody(RacecarBody* racecarBody)
 
 void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
-	if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(1.0f))
-	{
-	//	//The brake can apply negative force - need to clamp it
-	//	//HELL - Need to do it correctly!!
-	//	ApplyUpstreamTorque(-GetAngularVelocity() * ComputeUpstreamInertia(*this) * (0.83f * racecarController.GetBrakePosition()), *this);
-		
-		const Real totalInertia(ComputeUpstreamInertia(*this));
-		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
-		const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
-		const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
-		//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
+	///Compute the impulse it would take to stop the wheel / car + connections, compare that against the
+	///actual impulse that would be applied based on braking torque, use the lower of those values in the
+	///correct direction, and apply the upstream torque to slow the wheel + connections.
+	const Real totalInertia(ComputeUpstreamInertia(*this));
+	const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
+	const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
+	const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
+	if (appliedImpulse > kElipson)
+	{	//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
 		ApplyUpstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
 	}
 
@@ -182,25 +180,28 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		const Real appliedImpulse((fabs(impulse) <= fabs(frictionImpulse) || mGroundFrictionCoefficient <= 0.0) ?
 			impulse : frictionImpulse);
 		
-		ApplyUpstreamTorque(-appliedImpulse / fixedTime * mRadius, *this);
-		mIsOnGround = true;
+		if (fabs(appliedImpulse) > kElipson)
+		{	//Ensure there is some amount of frictional impulse, to avoid NaN.
+			ApplyUpstreamTorque(-appliedImpulse / fixedTime * mRadius, *this);
 
-		//TODO: Understand:
-		//OLD: We use to apply -2.0 * impulse below, and this is the note of why:
-		//The following is for the 'reversal' of the force/torque applied by the impulse. The drive-train currently
-		//may not have positive/negative values correct, or something? So we do 2 times the impulse to first negate
-		//the impulse then make it in the direction expected by the unit tests... Obviously this needs investigating.
-		//
-		//NEW: We now apply -1.0 * impulse below for linear accelerations since they are NOT being applied during the
-		//ApplyUpstreamTorque since we are using the isOnGround = false hack that is documented above!
-		if (nullptr != mRacecarBody)
-		{
-			mRacecarBody->ApplyForce(appliedImpulse / fixedTime);
+			//TODO: Understand:
+			//OLD: We use to apply -2.0 * impulse below, and this is the note of why:
+			//The following is for the 'reversal' of the force/torque applied by the impulse. The drive-train currently
+			//may not have positive/negative values correct, or something? So we do 2 times the impulse to first negate
+			//the impulse then make it in the direction expected by the unit tests... Obviously this needs investigating.
+			//
+			//NEW: We now apply -1.0 * impulse below for linear accelerations since they are NOT being applied during the
+			//ApplyUpstreamTorque since we are using the isOnGround = false hack that is documented above!
+			if (nullptr != mRacecarBody)
+			{
+				mRacecarBody->ApplyForce(appliedImpulse / fixedTime);
+			}
+			else
+			{
+				mLinearAcceleration += appliedImpulse / fixedTime / totalMass;
+			}
 		}
-		else
-		{
-			mLinearAcceleration += appliedImpulse / fixedTime / totalMass;
-		}
+		mIsOnGround = true;
 	}
 }
 

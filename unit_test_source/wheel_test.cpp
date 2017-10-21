@@ -180,23 +180,37 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 
 bool Racecar::UnitTests::WheelClutchAndEngineBrakingTest(void)
 {
-	//Racecar::ProgrammaticController racecarController;
-	//Racecar::Wheel wheel(8.0, 0.25); //0.5kg*m^2
-	//Racecar::Clutch clutch(2.5, 100, 0.6, 0.4); //kg*m^2
-	//Racecar::ConstantEngine engine(2.5, 100, 50); //kg*m^2
+	Racecar::ProgrammaticController racecarController;
+	Racecar::Wheel wheel(8.0, 0.25); //0.5kg*m^2
+	Racecar::Clutch clutch(2.5, 100, 0.6, 0.4); //kg*m^2
+	Racecar::Engine engine(2.0); //kg*m^2
 
-	//engine.AddOutputSource(&clutch);
-	//clutch.SetInputSource(&engine);
+	engine.AddOutputSource(&clutch);
+	clutch.SetInputSource(&engine);
+	clutch.AddOutputSource(&wheel);
+	wheel.SetInputSource(&clutch);
 
+	engine.SetAngularVelocity(RevolutionsMinuteToRadiansSecond(1000));
+	clutch.SetAngularVelocity(0.0);
+	wheel.SetAngularVelocity(0.0); //rad/s
+	wheel.SetMaximumBrakingTorque(200.0); //Nm
 
-	//wheel.SetInputSource(&clutch);
-	//
+	racecarController.SetBrakePosition(1.0);
+	racecarController.SetClutchPosition(0.5);
+	racecarController.SetThrottlePosition(0.10);
 
-	//axle.SetAngularVelocity(40.0);
-	//wheel.SetAngularVelocity(40.0); //rad/s
-	//wheel.SetMaximumBrakingTorque(200.0); //Nm
+	for (int timer(0); timer < 200000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.0);
+		wheel.Simulate(racecarController, 0.01);
 
-
+		if (wheel.GetAngularVelocity() < 0.0 || engine.GetAngularVelocity() < 0.0 || clutch.GetAngularVelocity() < 0.0 ||
+			wheel.GetAngularVelocity() > 10000.0 || engine.GetAngularVelocity() > 10000.0 || clutch.GetAngularVelocity() > 10000.0)
+		{	//This was causing a 0.0 / 0.01 issue that resulted in NaN to be generated.
+			return false;
+		}
+	}
 
 	return true;
 }

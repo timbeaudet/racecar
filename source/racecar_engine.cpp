@@ -35,7 +35,7 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 	{
 		ApplyDownstreamTorque(mConstantTorque, *this);
 	}
-	if (racecarController.GetThrottlePosition() < 0.1)
+	if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kElipson)
 	{
 		const Real totalInertia(ComputeDownstreamInertia(*this));
 		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
