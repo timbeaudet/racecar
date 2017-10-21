@@ -19,45 +19,71 @@
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+struct LockedDifferentialTestBlob
+{
+	Racecar::Real gearRatio;
+	Racecar::Real inputInertia;
+	Racecar::Real inputAngularVelocity;
+	Racecar::Real outputInertia;
+	Racecar::Real outputAngularVelocity;
+	Racecar::Real mExpectedInputAngularVelocity[2]; //After a single step, after a full second of steps.
+	Racecar::Real mExpectedOutputAngularVelocity[2]; //After a single step, after a full second of steps.
+};
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 bool Racecar::UnitTests::LockedDifferentialTest(void)
 {
-	Racecar::ProgrammaticController racecarController;
-	Racecar::ConstantEngine engine(10, 100);
-	Racecar::LockedDifferential lockedDifferential(10, 3.0);
-	Racecar::Wheel wheel(10, 1);
+	std::array<LockedDifferentialTestBlob, 2> tests {
+		LockedDifferentialTestBlob{ 1.0,   10.0, 0.0,   10.0, 0.0,   { 0.1, 10.0 }, { 0.1, 10.0 } },
+		LockedDifferentialTestBlob{ 4.0,   10.0, 0.0,   10.0, 0.0,   { 0.16, 16.0 }, { 0.04, 4.0 } },
+	};
 
-	engine.AddOutputSource(&lockedDifferential);
-	lockedDifferential.SetInputSource(&engine);
-	lockedDifferential.AddOutputSource(&wheel);
-	wheel.SetInputSource(&lockedDifferential);
-
-	//Compute and test a single time-step of constant engine torque.
-	racecarController.SetThrottlePosition(1.0f);
-	engine.Simulate(racecarController, 0.01);
-	lockedDifferential.Simulate(racecarController, 0.01);
-	wheel.Simulate(racecarController, 0.01);
-
-	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
-		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestElipson)
-		{
-			return false;
-		}
-	}
-
-	//Simulate 1 seconds with the constant engine torque of 100Nm.
-	racecarController.SetThrottlePosition(1.0f);
-	for (int timer(10); timer < 1000; timer += 10)
+	for (const LockedDifferentialTestBlob& test : tests)
 	{
-		engine.Simulate(racecarController, 0.01);
-	}
+		Racecar::ProgrammaticController racecarController;
+		Racecar::ConstantEngine engine(test.inputInertia, 200);
+		Racecar::LockedDifferential lockedDifferential(test.outputInertia, test.gearRatio);
 
-	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-		if (fabs(engine.GetAngularVelocity() - 10.0) > UnitTests::kTestElipson)
+		engine.AddOutputSource(&lockedDifferential);
+		lockedDifferential.SetInputSource(&engine);
+
+		//Compute and test a single time-step of constant engine torque.
+		racecarController.SetThrottlePosition(1.0f);
+		engine.Simulate(racecarController, 0.01);
+		lockedDifferential.Simulate(racecarController, 0.01);
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[0]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[0]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+		}
+
+		//Simulate 1 seconds with the constant engine torque of 100Nm.
+		racecarController.SetThrottlePosition(1.0f);
+		for (int timer(10); timer < 1000; timer += 10)
 		{
-			return false;
+			engine.Simulate(racecarController, 0.01);
+			lockedDifferential.Simulate(racecarController, 0.01);
+		}
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
 		}
 	}
-	
+
 	return true;
 }
 

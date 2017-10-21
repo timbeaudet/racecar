@@ -33,6 +33,8 @@ struct ClutchTestBlob
 	int mTestTime;
 };
 
+//--------------------------------------------------------------------------------------------------------------------//
+
 bool Racecar::UnitTests::ClutchInputTest(void)
 {
 	std::array<ClutchTestBlob, 2> tests{
