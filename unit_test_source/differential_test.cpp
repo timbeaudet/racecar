@@ -42,7 +42,7 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 	for (const LockedDifferentialTestBlob& test : tests)
 	{
 		Racecar::ProgrammaticController racecarController;
-		Racecar::ConstantEngine engine(test.inputInertia, 200);
+		Racecar::ConstantEngine engine(test.inputInertia, 200.0, 0.0);
 		Racecar::LockedDifferential lockedDifferential(test.outputInertia, test.gearRatio);
 
 		engine.AddOutputSource(&lockedDifferential);

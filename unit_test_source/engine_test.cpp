@@ -21,7 +21,7 @@
 bool Racecar::UnitTests::BasicEngineTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
-	Racecar::ConstantEngine engine(10, 100);
+	Racecar::ConstantEngine engine(10.0, 100.0, 0.0);
 
 	//Simulate 1 seconds with no throttle input, nothing should change.
 	racecarController.SetThrottlePosition(0.0f);
@@ -70,7 +70,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 bool Racecar::UnitTests::EngineWithConnectionTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
-	Racecar::ConstantEngine engine(10, 100);
+	Racecar::ConstantEngine engine(10.0, 100.0, 0.0);
 	Racecar::Wheel wheel(10, 1.0);
 	engine.AddOutputSource(&wheel);
 	wheel.SetInputSource(&engine);

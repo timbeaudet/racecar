@@ -105,7 +105,7 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 bool Racecar::UnitTests::SlippingClutchTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
-	Racecar::ConstantEngine engine(10.0, 1000);
+	Racecar::ConstantEngine engine(10.0, 1000.0, 0.0);
 	Racecar::Clutch clutch(10, 100, 0.6, 0.4);
 	Racecar::Wheel wheel(1000, 1.0);
 

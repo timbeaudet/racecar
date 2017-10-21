@@ -20,7 +20,7 @@ namespace Racecar
 	class ConstantEngine : public RotatingBody
 	{
 	public:
-		explicit ConstantEngine(const Real& momentOfInertia, const Real& constantTorque);
+		explicit ConstantEngine(const Real& momentOfInertia, const Real& constantTorque, const Real& resistanceTorque);
 		virtual ~ConstantEngine(void);
 
 		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
@@ -28,7 +28,8 @@ namespace Racecar
 		Real GetEngineSpeedRPM(void) const;
 
 	private:
-		const Real mConstantTorque;
+		const Real mConstantTorque;     //Applied if throttle is greater than 0.5
+		const Real mResistanceTorque;   //Applied if throttle is less than 0.1, and angular velocity > 0.
 	};
 
 	class Engine : public RotatingBody

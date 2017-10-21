@@ -11,9 +11,10 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::ConstantEngine::ConstantEngine(const Real& momentOfInertia, const Real& constantTorque) :
+Racecar::ConstantEngine::ConstantEngine(const Real& momentOfInertia, const Real& constantTorque, const Real& resistanceTorque) :
 	RotatingBody(momentOfInertia),
-	mConstantTorque(constantTorque)
+	mConstantTorque(constantTorque),
+	mResistanceTorque(resistanceTorque)
 {
 }
 
