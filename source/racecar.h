@@ -16,6 +16,7 @@ namespace Racecar
 	typedef double Real;
 
 	static const Real kFixedTimeStep(0.01);
+	static const Real kElipson(0.00001);
 	extern Real kGravityConstant;
 
 	inline constexpr Real ComputeInertiaMetric(const Real& massInKilograms, const Real& radiusInMeters)

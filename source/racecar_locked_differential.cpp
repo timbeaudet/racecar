@@ -10,7 +10,7 @@
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::LockedDifferential::LockedDifferential(const Real& finalDriveRatio, const Real& momentOfInertia) :
+Racecar::LockedDifferential::LockedDifferential(const Real& momentOfInertia, const Real& finalDriveRatio) :
 	RotatingBody(momentOfInertia),
 	mFinalDriveRatio(finalDriveRatio)
 {

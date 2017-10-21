@@ -19,7 +19,7 @@ namespace Racecar
 	class LockedDifferential : public RotatingBody
 	{
 	public:
-		explicit LockedDifferential(const Real& finalDriveRatio, const Real& momentOfInertia);
+		explicit LockedDifferential(const Real& momentOfInertia, const Real& finalDriveRatio);
 		virtual ~LockedDifferential(void);
 
 		void Simulate(RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);

@@ -46,12 +46,6 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 {
 	((void)racecarController);
 
-	const RotatingBody* inputSource(GetInputSource());
-	if (nullptr != inputSource)
-	{
-		SetAngularVelocity(inputSource->GetAngularVelocity());
-	}
-
 	//if (racecarController.GetBrakePosition() > Racecar::PercentTo<float>(1.0f))
 	//{
 	//	//The brake can apply negative force - need to clamp it
@@ -68,6 +62,14 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 
 	mLinearVelocity += mLinearAcceleration * fixedTime;
 	mLinearAcceleration = 0.0;
+
+	const RotatingBody* inputSource(GetInputSource());
+	if (nullptr != inputSource)
+	{
+		error_if(fabs(GetAngularVelocity() - inputSource->GetAngularVelocity()) > Racecar::kElipson,
+			"The wheel speed does not match the input velocity after Simulate().");
+	//	SetAngularVelocity(inputSource->GetAngularVelocity());
+	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
