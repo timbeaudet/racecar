@@ -20,7 +20,7 @@
 
 #include <cstdio>
 
-const Racecar::Real Racecar::UnitTests::kTestElipson(0.00001f);
+const Racecar::Real Racecar::UnitTests::kTestElipson(0.00001);
 using Racecar::Real;
 using Racecar::UnitTests::kTestElipson;
 
@@ -167,7 +167,7 @@ bool GearReductionTest(void)
 	Racecar::DoNothingController racecarController;
 	Racecar::RotatingBody engineMass(10.0); //10kg-m^2.
 	Racecar::RotatingBody wheelMass(10.0);
-	Racecar::LockedDifferential lockedDifferential(kGearReduction, 10.0); //4:1 ratio with inertia of 10kg-m^2
+	Racecar::LockedDifferential lockedDifferential(10.0, kGearReduction); //4:1 ratio with inertia of 10kg-m^2
 
 	engineMass.AddOutputSource(&lockedDifferential);
 	lockedDifferential.SetInputSource(&engineMass);

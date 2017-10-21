@@ -23,7 +23,7 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
 	Racecar::ConstantEngine engine(10, 100);
-	Racecar::LockedDifferential lockedDifferential(3.0, 10);
+	Racecar::LockedDifferential lockedDifferential(10, 3.0);
 	Racecar::Wheel wheel(10, 1);
 
 	engine.AddOutputSource(&lockedDifferential);
