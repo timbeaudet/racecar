@@ -91,10 +91,11 @@ void Racecar::Engine::InitializeTorqueTableToMiata(void)
 	mTorqueTable[14] = 25.0;
 	mTorqueTable[15] = 0.0;  //8000rpm
 
-	error_if(kTorqueTableSize != 16, "Error: Expected table size to be 16, may need to change step size or something.");
+	error_if(mTorqueTable.size() != 16, "Error: Expected table size to be 16, may need to change step size or something.");
+	error_if(mTorqueTable.size() != kTorqueTableSize, "Error: Expected table size to be 16, may need to change step size or something.");
 
 	mMaximumTorque = 162.0; //If unknown a search could find it...
-	for (size_t index(0); index < kTorqueTableSize; ++index)
+	for (size_t index(0); index < mTorqueTable.size(); ++index)
 	{	//Normalize the curve so it fits in range 0 to 1, from no to max torque??
 		mTorqueTable[index] /= mMaximumTorque;
 	}
