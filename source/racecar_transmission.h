@@ -21,6 +21,9 @@ namespace Racecar
 		~GearJoint(void);
 
 		Racecar::Real ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
+		
+		void OnApplyDownstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource);
+		void OnApplyUpstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource);
 
 		const Real& GetGearRatio(void) const { return mGearRatio; }
 
@@ -54,8 +57,10 @@ namespace Racecar
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 
-		//virtual float ComputeDownstreamIntertia(const RotatingBody& fromSource) const override;
-		//virtual float ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+		virtual Racecar::Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
+		virtual Racecar::Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	protected:
 		//virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;

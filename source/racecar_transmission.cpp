@@ -91,34 +91,45 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
+Racecar::GearJoint mFinalDriveJoint(3.0);
+Racecar::Real Racecar::Transmission::ComputeDownstreamInertia(const RotatingBody& fromSource) const
+{
+	return RotatingBody::ComputeDownstreamInertia(fromSource) / mFinalDriveJoint.GetGearRatio();
+}
 
-//float Racecar::Transmission::ComputeDownstreamIntertia(const RotatingBody& fromSource) const
-//{
-//	if (Gear::Neutral == mSelectedGear)
-//	{
-//		return GetInertia();
-//	}
-//
-//	return GetInertia() + GetExpectedOutputSource(0).ComputeDownstreamIntertia(fromSource) / 4.0f;
-//}
-//
-////--------------------------------------------------------------------------------------------------------------------//
-//
-//float Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& fromSource) const
-//{
-//}
-//
-////--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
 
-//void Racecar::Transmission::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
-//{
-//}
-//
-////--------------------------------------------------------------------------------------------------------------------//
-//
-//void Racecar::Transmission::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
-//{
-//}
+Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+{
+	//return GetExpectedInputSource().ComputeUpstreamInertia(fromSource);// / mFinalDriveRatio + GetInertia();
+	//return RotatingBody::ComputeUpstreamInertia(fromSource);
+	return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
+	//return GetInertia() + GetExpectedInputSource().ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Transmission::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
+	AddAngularAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio());
+	for (RotatingBody* output : GetOutputSources())
+	{
+		output->OnApplyDownstreamAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio(), fromSource);
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Transmission::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
+	AddAngularAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio());
+
+	RotatingBody* inputBody(GetInputSource());
+	if (nullptr != inputBody)
+	{
+		inputBody->OnApplyUpstreamAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio(), fromSource);
+	}
+}
 
 //--------------------------------------------------------------------------------------------------------------------//
 
@@ -171,6 +182,34 @@ Racecar::Real Racecar::GearJoint::ComputeTorqueImpulse(const RotatingBody& input
 	((void)fixedTimeStep);
 
 	return 0.0;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::GearJoint::OnApplyDownstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
+	output.OnApplyDownstreamAcceleration(changeInAcceleration / GetGearRatio(), fromSource);
+
+	//AddAngularAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio());
+	//for (RotatingBody* output : GetOutputSources())
+	//{
+	//	output->OnApplyDownstreamAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio(), fromSource);
+	//}
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::GearJoint::OnApplyUpstreamAcceleration(RotatingBody& input, RotatingBody& output, const Real& changeInAcceleration, const RotatingBody& fromSource)
+{
+	//AddAngularAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio());
+
+	//RotatingBody* inputBody(GetInputSource());
+	//if (nullptr != inputBody)
+	//{
+	//	inputBody->OnApplyUpstreamAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio(), fromSource);
+	//}
+
+	output.OnApplyUpstreamAcceleration(changeInAcceleration * GetGearRatio(), fromSource);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
