@@ -10,6 +10,7 @@
 #define _Racecar_LockedDifferential_h_
 
 #include "rotating_body.h"
+#include "racecar_transmission.h" //For GearJoint
 
 namespace Racecar
 {
@@ -31,7 +32,7 @@ namespace Racecar
 		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 
 	private:
-		const Real mFinalDriveRatio;
+		GearJoint mFinalDriveJoint;
 	};
 
 };	/* namespace Racecar */

@@ -13,6 +13,23 @@
 
 namespace Racecar
 {
+
+	class GearJoint
+	{
+	public:
+		GearJoint(Real gearRatio);
+		~GearJoint(void);
+
+		Racecar::Real ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
+
+		const Real& GetGearRatio(void) const { return mGearRatio; }
+
+	private:
+		const Real mGearRatio;
+	};
+
+//--------------------------------------------------------------------------------------------------------------------//
+
 	enum class Gear
 	{
 		Reverse,

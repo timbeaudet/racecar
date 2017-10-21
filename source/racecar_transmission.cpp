@@ -147,3 +147,30 @@ void Racecar::Transmission::SimulateShiftLogic(const RacecarControllerInterface&
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------------------//
+
+Racecar::GearJoint::GearJoint(Real gearRatio) :
+	mGearRatio(gearRatio)
+{
+	error_if(fabs(mGearRatio) < 0.01, "Error: gearRatio too close to zero.");
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+Racecar::GearJoint::~GearJoint(void)
+{
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::GearJoint::ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep)
+{
+	((void)input);
+	((void)output);
+	((void)fixedTimeStep);
+
+	return 0.0;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//

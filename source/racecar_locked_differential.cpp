@@ -12,7 +12,7 @@
 
 Racecar::LockedDifferential::LockedDifferential(const Real& momentOfInertia, const Real& finalDriveRatio) :
 	RotatingBody(momentOfInertia),
-	mFinalDriveRatio(finalDriveRatio)
+	mFinalDriveJoint(finalDriveRatio)
 {
 }
 
@@ -29,18 +29,22 @@ void Racecar::LockedDifferential::Simulate(RacecarControllerInterface& racecarCo
 	((void)racecarController);
 	((void)fixedTime);
 
-	const RotatingBody* inputSource(GetInputSource());
-	if (nullptr != inputSource)
-	{
-		SetAngularVelocity(inputSource->GetAngularVelocity() / mFinalDriveRatio);
-	}
+	RotatingBody::Simulate(fixedTime);
+
+	//const RotatingBody* inputSource(GetInputSource());
+	//if (nullptr != inputSource)
+	//{
+	//	error_if(fabs(GetAngularVelocity() - (inputSource->GetAngularVelocity() / mFinalDriveRatio)) > Racecar::kElipson,
+	//		"The wheel speed does not match the input velocity after Simulate().");
+	//	//SetAngularVelocity(inputSource->GetAngularVelocity() / mFinalDriveRatio);
+	//}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 Racecar::Real Racecar::LockedDifferential::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
-	return RotatingBody::ComputeDownstreamInertia(fromSource);// / mFinalDriveRatio;
+	return RotatingBody::ComputeDownstreamInertia(fromSource) / mFinalDriveJoint.GetGearRatio();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -49,18 +53,18 @@ Racecar::Real Racecar::LockedDifferential::ComputeUpstreamInertia(const Rotating
 {
 	//return GetExpectedInputSource().ComputeUpstreamInertia(fromSource);// / mFinalDriveRatio + GetInertia();
 	//return RotatingBody::ComputeUpstreamInertia(fromSource);
-	return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveRatio;
-	//return GetInertia() + GetExpectedInputSource().ComputeUpstreamInertia(fromSource) * mFinalDriveRatio;
+	return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
+	//return GetInertia() + GetExpectedInputSource().ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
-	AddAngularAcceleration(changeInAcceleration);
+	AddAngularAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio());
 	for (RotatingBody* output : GetOutputSources())
 	{
-		output->OnApplyDownstreamAcceleration(changeInAcceleration / mFinalDriveRatio, fromSource);
+		output->OnApplyDownstreamAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio(), fromSource);
 	}
 }
 
@@ -68,12 +72,12 @@ void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real& chan
 
 void Racecar::LockedDifferential::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
-	AddAngularAcceleration(changeInAcceleration);
+	AddAngularAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio());
 
 	RotatingBody* inputBody(GetInputSource());
 	if (nullptr != inputBody)
 	{
-		inputBody->OnApplyUpstreamAcceleration(changeInAcceleration, fromSource);
+		inputBody->OnApplyUpstreamAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio(), fromSource);
 	}
 }
 
