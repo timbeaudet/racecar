@@ -51,6 +51,14 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	//	//The brake can apply negative force - need to clamp it
 	//	//HELL - Need to do it correctly!!
 	//	ApplyUpstreamTorque(-GetAngularVelocity() * ComputeUpstreamInertia(*this) * (0.83f * racecarController.GetBrakePosition()), *this);
+		
+		//Just change to Upstream and/or carbody mass included, and this should be good for braking.
+		//const Real totalInertia(ComputeDownstreamInertia(*this));
+		//const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
+		//const Real actualImpulse(mResistanceTorque * fixedTime); //kg*m^2 / s
+		//const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
+		////The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
+		//ApplyDownstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
 	//}
 
 	///This is currently assuming an INFINITE amount of friction which will cause the tire never to lock up, and always
@@ -63,13 +71,13 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	mLinearVelocity += mLinearAcceleration * fixedTime;
 	mLinearAcceleration = 0.0;
 
-	//const RotatingBody* inputSource(GetInputSource());
-	//if (nullptr != inputSource)
-	//{
+	const RotatingBody* inputSource(GetInputSource());
+	if (nullptr != inputSource)
+	{
 	//	error_if(fabs(GetAngularVelocity() - inputSource->GetAngularVelocity()) > Racecar::kElipson,
 	//		"The wheel speed does not match the input velocity after Simulate().");
-	////	SetAngularVelocity(inputSource->GetAngularVelocity());
-	//}
+		SetAngularVelocity(inputSource->GetAngularVelocity());
+	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

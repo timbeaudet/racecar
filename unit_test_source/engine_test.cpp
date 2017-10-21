@@ -21,7 +21,7 @@
 bool Racecar::UnitTests::BasicEngineTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
-	Racecar::ConstantEngine engine(10.0, 100.0, 0.0);
+	Racecar::ConstantEngine engine(10.0, 100.0, 50.0);
 
 	//Simulate 1 seconds with no throttle input, nothing should change.
 	racecarController.SetThrottlePosition(0.0f);
@@ -57,6 +57,49 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
 		if (fabs(engine.GetAngularVelocity() - 10.0) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+	}
+
+	//Compute and test a single time-step of constant engine resistance torque.
+	racecarController.SetThrottlePosition(0.0f);
+	engine.Simulate(racecarController, 0.01);
+
+	{	//Should slow down the engine a little bit.
+		if (fabs(engine.GetAngularVelocity() - 9.95) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+	}
+
+	//Simulate ~2 seconds with the constant lower engine RESISTANCE of 50Nm.
+	racecarController.SetThrottlePosition(0.0f);
+	for (int timer(10); timer < 1980; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+	}
+
+	{	//Engine should be slowed down a lot.
+		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+
+		//Get the engine to hit a zero velocity state.
+		engine.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, 0.01);
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+
+		//Finally ensure that over simulating won't bounce back and forth, and should remain 0.
+		engine.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, 0.01);
+
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
 		{
 			return false;
 		}

@@ -16,6 +16,7 @@ Racecar::ConstantEngine::ConstantEngine(const Real& momentOfInertia, const Real&
 	mConstantTorque(constantTorque),
 	mResistanceTorque(resistanceTorque)
 {
+	error_if(mResistanceTorque < 0.0, "Then engine resistance torque should always be >= 0.")
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -33,6 +34,15 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 	if (racecarController.GetThrottlePosition() > 0.5)
 	{
 		ApplyDownstreamTorque(mConstantTorque, *this);
+	}
+	if (racecarController.GetThrottlePosition() < 0.1)
+	{
+		const Real totalInertia(ComputeDownstreamInertia(*this));
+		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
+		const Real actualImpulse(mResistanceTorque * fixedTime); //kg*m^2 / s
+		const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
+		//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
+		ApplyDownstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
 	}
 
 	{	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
