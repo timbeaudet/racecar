@@ -9,6 +9,7 @@
 #ifndef _Racecar_Racecar_h_
 #define _Racecar_Racecar_h_
 
+#include <cmath>
 #include <stdexcept>
 
 namespace Racecar
