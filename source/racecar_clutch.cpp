@@ -78,6 +78,13 @@ Racecar::Clutch::~Clutch(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+void Racecar::Clutch::OnControllerChange(const Racecar::RacecarControllerInterface& racecarController)
+{
+	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
 	RotatingBody& inputSource(GetExpectedInputSource());
