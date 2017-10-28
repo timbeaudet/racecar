@@ -60,8 +60,8 @@ namespace Racecar
 		virtual Racecar::Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
 
 	protected:
-		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
-		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
 
 	private:
 		Real mInputShaftSpeed;

@@ -33,7 +33,7 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 
 	if (racecarController.GetThrottlePosition() > 0.5)
 	{
-		ApplyDownstreamTorque(mConstantTorque, *this);
+		ApplyDownstreamAngularImpulse(mConstantTorque * fixedTime, *this);
 	}
 	if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kElipson)
 	{
@@ -42,7 +42,7 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 		const Real actualImpulse(mResistanceTorque * fixedTime); //kg*m^2 / s
 		const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
 		//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
-		ApplyDownstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
+		ApplyDownstreamAngularImpulse(appliedImpulse * -Racecar::Sign(GetAngularVelocity()), *this);
 	}
 
 	{	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
@@ -158,12 +158,12 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
-		ApplyDownstreamTorque(appliedEngineTorque, *this);
+		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime, *this);
 	}
 
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
 	const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
-	ApplyDownstreamTorque(-engineResistanceTorque, *this);
+	ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime, *this);
 
 	//Now that all torques have been applied to the engine, step it forward in time.
 	RotatingBody::Simulate(fixedTime);
@@ -176,7 +176,7 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	if (differenceTo1000 < 0.0)
 	{
 		const Real totalInertia(ComputeDownstreamInertia(*this));
-		ApplyDownstreamTorque(-differenceTo1000 * totalInertia, *this);
+		ApplyDownstreamAngularImpulse(-differenceTo1000 * fixedTime * totalInertia, *this);
 	}
 }
 

@@ -48,10 +48,10 @@ namespace Racecar
 	protected:
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
 		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
-		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
-		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
+		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
 
-		void ApplyForceToGroundFrom(const Real& angularAcceleration);
+		//void ApplyForceToGroundFrom(const Real& angularAcceleration);
 		void ApplyGroundFriction(const Real& fixedTime);
 
 	private:
@@ -59,7 +59,6 @@ namespace Racecar
 
 		Real mMass;
 		Real mRadius;
-		Real mLinearAcceleration;
 		Real mLinearVelocity;
 		Real mGroundFrictionCoefficient; //If <= 0.0 assume infinite friction!
 		Real mMaximumBrakingTorque;

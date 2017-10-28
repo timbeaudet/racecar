@@ -56,16 +56,16 @@ Racecar::Real Racecar::LockedDifferential::ComputeUpstreamInertia(const Rotating
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::LockedDifferential::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::LockedDifferential::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration / mFinalDriveJoint.GetGearRatio(), fromSource);
+	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity / mFinalDriveJoint.GetGearRatio(), fromSource);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::LockedDifferential::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::LockedDifferential::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	RotatingBody::OnApplyUpstreamAcceleration(changeInAcceleration * mFinalDriveJoint.GetGearRatio(), fromSource);
+	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity * mFinalDriveJoint.GetGearRatio(), fromSource);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

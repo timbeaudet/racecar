@@ -18,7 +18,6 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 	RotatingBody(massInKilograms * (radiusInMeters * radiusInMeters)), //kg-m^2
 	mMass(massInKilograms),
 	mRadius(radiusInMeters),
-	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0),
 	mGroundFrictionCoefficient(-1.0),
 	mMaximumBrakingTorque(100.0), //Nm
@@ -53,8 +52,8 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
 	const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
 	if (appliedImpulse > kElipson)
-	{	//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
-		ApplyUpstreamTorque(appliedImpulse / fixedTime * -Racecar::Sign(GetAngularVelocity()), *this);
+	{
+		ApplyUpstreamAngularImpulse(appliedImpulse * -Racecar::Sign(GetAngularVelocity()), *this);
 	}
 
 	///This is currently assuming an INFINITE amount of friction which will cause the tire never to lock up, and always
@@ -63,9 +62,6 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	ApplyGroundFriction(fixedTime);
 
 	RotatingBody::Simulate();
-
-	mLinearVelocity += mLinearAcceleration * fixedTime;
-	mLinearAcceleration = 0.0;
 
 	//const RotatingBody* inputSource(GetInputSource());
 	//if (nullptr != inputSource)
@@ -81,8 +77,9 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 Racecar::Real Racecar::Wheel::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
 	if (true == mIsOnGround && nullptr != mRacecarBody)
-	{
-		return RotatingBody::ComputeDownstreamInertia(fromSource) + (mRacecarBody->GetMass() * mRadius * mRadius);
+	{	//Minus our inertia because it is included in car mass.
+		const Real carInertia((mRacecarBody->GetMass() * mRadius * mRadius));
+		return RotatingBody::ComputeDownstreamInertia(fromSource) + carInertia;
 	}
 
 	return RotatingBody::ComputeDownstreamInertia(fromSource);
@@ -93,8 +90,9 @@ Racecar::Real Racecar::Wheel::ComputeDownstreamInertia(const RotatingBody& fromS
 Racecar::Real Racecar::Wheel::ComputeUpstreamInertia(const RotatingBody& fromSource) const
 {
 	if (true == mIsOnGround && nullptr != mRacecarBody)
-	{
-		return RotatingBody::ComputeUpstreamInertia(fromSource) + (mRacecarBody->GetMass() * mRadius * mRadius);
+	{	//Minus our inertia because it is included in car mass.
+		const Real carInertia((mRacecarBody->GetMass() * mRadius * mRadius));
+		return RotatingBody::ComputeUpstreamInertia(fromSource) + carInertia;
 	}
 
 	return RotatingBody::ComputeUpstreamInertia(fromSource);
@@ -102,47 +100,92 @@ Racecar::Real Racecar::Wheel::ComputeUpstreamInertia(const RotatingBody& fromSou
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::Wheel::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
+	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
 
 	if (true == mIsOnGround)
 	{
-		ApplyForceToGroundFrom(changeInAcceleration);
+		//TODO: DriveTrain: This is NOT correct. It use to take changeInAcceleratoin. So:
+		//  angAcceleration += changeInAcceleration;
+		//  angVelocity += angAcceleration * deltaTime;
+		//
+		// We don't have a delta / fixed time here. And changeInAngularVelocity is:
+		//  angVelocity += changeInAngularVelocity.
+//		ApplyForceToGroundFrom(changeInAngularVelocity);
+
+		const Real changeInLinearVelocity = changeInAngularVelocity * mRadius;
+		if (nullptr != mRacecarBody)
+		{
+			mRacecarBody->OnLinearVelocityChange(changeInLinearVelocity);
+		}
+		else
+		{
+			mLinearVelocity += changeInLinearVelocity;
+		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::Wheel::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	RotatingBody::OnApplyUpstreamAcceleration(changeInAcceleration, fromSource);
+	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
 
 	if (true == mIsOnGround)
 	{
-		ApplyForceToGroundFrom(changeInAcceleration);
+		//TODO: DriveTrain: This is NOT correct. It use to take changeInAcceleratoin. So:
+		//  angAcceleration += changeInAcceleration;
+		//  angVelocity += angAcceleration * deltaTime;
+		//
+		// We don't have a delta / fixed time here. And changeInAngularVelocity is:
+		//  angVelocity += changeInAngularVelocity.
+//		ApplyForceToGroundFrom(changeInAngularVelocity);
+
+		const Real changeInLinearVelocity = changeInAngularVelocity * mRadius;
+		if (nullptr != mRacecarBody)
+		{
+			mRacecarBody->OnLinearVelocityChange(changeInLinearVelocity);
+		}
+		else
+		{
+			mLinearVelocity += changeInLinearVelocity;
+		}
 	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::ApplyForceToGroundFrom(const Real& angularAcceleration)
-{
-	const Real totalInertia((false == IsOnGround() || nullptr == mRacecarBody) ? GetInertia() : ((mRacecarBody->GetMass() * 0.25 * 0.25) + GetInertia()));
-	const Real appliedTorque(angularAcceleration * totalInertia);
-	const Real appliedForce(appliedTorque / mRadius);
-	
-	if (nullptr != mRacecarBody)
-	{
-		const Real changeInAcceleration(appliedForce / (mRacecarBody->GetTotalMass()));
-		mLinearAcceleration += changeInAcceleration;
-		mRacecarBody->OnApplyLinearAcceleration(changeInAcceleration);
-	}
-	else
-	{
-		mLinearAcceleration += appliedForce / mMass;
-	}
-}
+//void Racecar::Wheel::ApplyForceToGroundFrom(const Real& changeInAngularVelocity)
+//{
+//	//TODO: DriveTrain: This is NOT correct. It use to take changeInAcceleratoin. So:
+//	//  angAcceleration += changeInAcceleration;
+//	//  angVelocity += angAcceleration * deltaTime;
+//	//
+//	// We don't have a delta / fixed time here. And changeInAngularVelocity is:
+//	//  angVelocity += changeInAngularVelocity.
+//	//
+//	//See OnUpstreamAngularVelocityChange() and OnDownstreamAngularVelocityChange().
+//	const Real totalInertia((false == IsOnGround() || nullptr == mRacecarBody) ? GetInertia() : ((mRacecarBody->GetMass() * 0.25 * 0.25) + GetInertia()));
+//	const Real appliedTorque(angularAcceleration * totalInertia);
+//	const Real appliedForce(appliedTorque / mRadius);
+//	
+//	if (nullptr != mRacecarBody)
+//	{
+//		const Real totalMass(mRacecarBody->GetTotalMass()); //This automatically includes mass of the wheel.
+//
+//		const Real changeInAcceleration(appliedForce / totalMass);
+//		mLinearAcceleration += changeInAcceleration;
+//		
+//		//mLinearVelocity += mLinearAcceleration * fixedTime;
+//
+//		mRacecarBody->OnApplyLinearAcceleration(changeInAcceleration);
+//	}
+//	else
+//	{
+//		mLinearAcceleration += appliedForce / mMass;
+//	}
+//}
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -170,7 +213,7 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		
 		if (fabs(appliedImpulse) > kElipson)
 		{	//Ensure there is some amount of frictional impulse, to avoid NaN.
-			ApplyUpstreamTorque(-appliedImpulse / fixedTime * mRadius, *this);
+			ApplyUpstreamAngularImpulse(-appliedImpulse * mRadius, *this);
 
 			//TODO: Understand:
 			//OLD: We use to apply -2.0 * impulse below, and this is the note of why:
@@ -181,12 +224,12 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 			//NEW: We now apply -1.0 * impulse below for linear accelerations since they are NOT being applied during the
 			//ApplyUpstreamTorque since we are using the isOnGround = false hack that is documented above!
 			if (nullptr != mRacecarBody)
-			{
-				mRacecarBody->ApplyForce(appliedImpulse / fixedTime);
+			{	//TODO: DriveTrain: Change ApplyForce to ApplyLinearImpulse for consistency reasons.
+				mRacecarBody->ApplyLinearImpulse(appliedImpulse);
 			}
 			else
 			{
-				mLinearAcceleration += appliedImpulse / fixedTime / totalMass;
+				//mLinearAcceleration += appliedImpulse / fixedTime / totalMass;
 			}
 		}
 		mIsOnGround = true;

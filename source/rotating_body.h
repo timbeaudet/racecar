@@ -56,8 +56,8 @@ namespace Racecar
 		///
 		/// @details Applies a torque in Newton-meters, Nm, to the body.
 		///
-		void ApplyDownstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource);
-		void ApplyUpstreamTorque(const Real& torqueNewtonMeters, const RotatingBody& fromSource);
+		void ApplyDownstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource);
+		void ApplyUpstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource);
 
 		///
 		/// @details Returns the angular velocity of the body in degrees/second.
@@ -94,9 +94,9 @@ namespace Racecar
 		/// @param changeInAcceleration should be in deg/sec/sec
 		///
 	
-		//TODO: FIX: HACK: These methods should be protected, they are not so that the differential can work.
-	public:	virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource);
-	public: virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource);
+		//TODO: DriveTrain: FIX: HACK: These methods should be protected, they are not so that the differential can work.
+	public: virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource);
+	public: virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource);
 	protected:
 		///
 		/// @details Returns the input source for the rotating body, in a way that forces can be transmitted back.
@@ -114,10 +114,7 @@ namespace Racecar
 		RotatingBody* mInputSource;
 		std::vector<RotatingBody*> mOutputSources;
 
-		void SetAngularAcceleration(const Real& angularAcceleration);
-
 		Real mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
-		Real mAngularAcceleration;
 		Real mAngularVelocity;     //Radians / Second
 	};
 };	/* namespace Racecar */

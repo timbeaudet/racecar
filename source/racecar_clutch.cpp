@@ -97,9 +97,8 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
 	if (fabs(frictionalImpulse) > kElipson)	//Make sure not zero!
 	{
-		const Real frictionalTorque(frictionalImpulse / fixedTime);
-		inputSource.ApplyUpstreamTorque(frictionalTorque, *this);
-		ApplyDownstreamTorque(-frictionalTorque, *this);
+		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse, *this);
+		ApplyUpstreamAngularImpulse(-frictionalImpulse, *this);
 	}
 
 	////
@@ -142,11 +141,11 @@ Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& from
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Clutch::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::Clutch::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
 	if (this == &fromSource)
 	{
-		RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
+		RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
 		return;
 	}
 
@@ -155,7 +154,7 @@ void Racecar::Clutch::OnApplyDownstreamAcceleration(const Real& changeInAccelera
 		return;
 	}
 
-	RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);
+	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

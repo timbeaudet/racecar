@@ -31,7 +31,7 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamTorque(200.0, wheel); //200nm torque
+		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01, wheel); //200nm torque
 		wheel.Simulate(racecarController, 0.01);
 	}
 
@@ -63,7 +63,7 @@ bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamTorque(200.0, wheel); //200nm torque
+		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01, wheel); //200nm torque
 		wheel.Simulate(racecarController, 0.01);
 		carBody.Simulate(racecarController, 0.01);
 	}

@@ -100,21 +100,21 @@ Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& 
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Transmission::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::Transmission::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
 	if (Gear::Neutral != mSelectedGear)
 	{
-		RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration / GetSelectedGearRatio(), fromSource);
+		RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity / GetSelectedGearRatio(), fromSource);
 	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Transmission::OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
+void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
 	if (Gear::Neutral != mSelectedGear)
 	{
-		RotatingBody::OnApplyUpstreamAcceleration(changeInAcceleration * GetSelectedGearRatio(), fromSource);
+		RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio(), fromSource);
 	}
 }
 

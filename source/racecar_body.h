@@ -30,14 +30,14 @@ namespace Racecar
 		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime = Racecar::kFixedTimeStep);
 
 		///
-		/// @details Applies a force to the body of the car, which will effect the accelerations for the next Simulate step.
+		/// @details Applies an impulse to the body of the car, which will effect the velocity immediately.
 		///
-		void ApplyForce(const Real& forceInNewtons);
+		void ApplyLinearImpulse(const Real& linearImpulse);
 
 		///
 		///
 		///
-		void OnApplyLinearAcceleration(const Real& changeInAcceleration);
+		void OnLinearVelocityChange(const Real& changeInLinearVelocity);
 
 		inline const Real& GetLinearVelocity(void) const { return mLinearVelocity; }
 
@@ -56,7 +56,6 @@ namespace Racecar
 	private:
 		std::array<Wheel*, 4> mWheels;
 		Real mMass;
-		Real mLinearAcceleration;
 		Real mLinearVelocity;
 	};
 };	/* namespace Racecar */

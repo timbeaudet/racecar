@@ -14,7 +14,6 @@
 Racecar::RacecarBody::RacecarBody(const Real& mass) :
 	mWheels{nullptr, nullptr, nullptr, nullptr},
 	mMass(mass),
-	mLinearAcceleration(0.0),
 	mLinearVelocity(0.0)
 {
 }
@@ -30,9 +29,10 @@ Racecar::RacecarBody::~RacecarBody(void)
 void Racecar::RacecarBody::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime)
 {
 	((void)racecarController);
+	((void)fixedTime);
 
-	SetLinearVelocity(mLinearVelocity + mLinearAcceleration * fixedTime);
-	mLinearAcceleration = 0.0;
+	//SetLinearVelocity(mLinearVelocity + mLinearAcceleration * fixedTime);
+	//mLinearAcceleration = 0.0;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -68,17 +68,20 @@ Racecar::Real Racecar::RacecarBody::GetTotalMass(void) const
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RacecarBody::ApplyForce(const Real& forceInNewtons)
+void Racecar::RacecarBody::ApplyLinearImpulse(const Real& linearImpulse)
 {
 	const Real totalMass(GetTotalMass());
-	mLinearAcceleration += forceInNewtons / totalMass;
+	error_if(totalMass < 0.001, "Total Mass is too small.");
+	SetLinearVelocity(mLinearVelocity + linearImpulse / totalMass);
+
+	//mLinearAcceleration += forceInNewtons / totalMass;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RacecarBody::OnApplyLinearAcceleration(const Real& changeInAcceleration)
+void Racecar::RacecarBody::OnLinearVelocityChange(const Real& changeInLinearVelocity)
 {
-	mLinearAcceleration += changeInAcceleration;
+	SetLinearVelocity(mLinearVelocity + changeInLinearVelocity);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
