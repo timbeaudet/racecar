@@ -67,7 +67,9 @@ namespace Racecar
 	protected:
 
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
+		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
 		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
 
 	private:
 		static Real ClutchPedalToClutchForce(const float pedalInput);

@@ -119,14 +119,9 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
-	if (this == &fromSource)
-	{
-		return RotatingBody::ComputeDownstreamInertia(fromSource);
-	}
-
 	//When not engaged: return 0
 	//When completely engaged: return RotatingBody::ComputeDownstreamInertia()
-	//When partially engaged: Do black magic!
+	//When partially engaged: Do black magic! ????
 
 	if (mClutchEngagement < Racecar::PercentTo(0.5f))
 	{
@@ -134,27 +129,54 @@ Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& from
 	}
 	
 	//May we need to do something special if the clutch is partially engaged / spinning different speeds than input?
-	//else if (mClutchEngagement > Racecar::PercentTo(99.5f))
-
 	return RotatingBody::ComputeDownstreamInertia(fromSource);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::Clutch::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+{
+	if (mClutchEngagement < Racecar::PercentTo(0.5))
+	{
+		return GetInertia();
+	}
+
+	return RotatingBody::ComputeUpstreamInertia(fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 void Racecar::Clutch::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	if (this == &fromSource)
-	{
-		RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
-		return;
-	}
-
 	if (mClutchEngagement < Racecar::PercentTo(0.5))
 	{
 		return;
 	}
 
 	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Clutch::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+{
+	if (mClutchEngagement < Racecar::PercentTo(0.5))
+	{
+		//RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+		//RotatingBody* inputSource(GetInputSource());
+		//if (nullptr != inputSource)
+		//{	//Negate any changes we just passed upstream since they shouldn't go upstream in the first place.
+		//	//There is currently no way with the API to set inputSource to null, or modify velocity directly,
+		//	//so although this adds a bit of computation, and computational inaccuracies, it should work.
+		//	//inputSource->OnUpstreamAngularVelocityChange(-changeInAngularVelocity, fromSource);
+		//}
+
+		
+		SetAngularVelocity(GetAngularVelocity() + changeInAngularVelocity);
+		return;
+	}
+
+	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
