@@ -48,7 +48,6 @@ namespace Racecar
 	protected:
 		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
 		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
-		virtual void AddAngularAcceleration(const Real& angularAcceleration) override;
 		virtual void OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 		virtual void OnApplyUpstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource) override;
 

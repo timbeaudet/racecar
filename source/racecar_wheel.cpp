@@ -102,18 +102,6 @@ Racecar::Real Racecar::Wheel::ComputeUpstreamInertia(const RotatingBody& fromSou
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::AddAngularAcceleration(const Real& angularAcceleration)
-{
-	RotatingBody::AddAngularAcceleration(angularAcceleration);
-
-	if (true == mIsOnGround)
-	{
-		ApplyForceToGroundFrom(angularAcceleration);
-	}
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 void Racecar::Wheel::OnApplyDownstreamAcceleration(const Real& changeInAcceleration, const RotatingBody& fromSource)
 {
 	RotatingBody::OnApplyDownstreamAcceleration(changeInAcceleration, fromSource);

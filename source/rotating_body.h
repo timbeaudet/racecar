@@ -88,8 +88,6 @@ namespace Racecar
 		///
 		void SetInertia(const Real& inertia);
 
-		virtual void AddAngularAcceleration(const Real& angularAcceleration) { mAngularAcceleration += angularAcceleration; }
-
 		///
 		/// @details Changes the bodies acceleration.
 		///
@@ -119,7 +117,7 @@ namespace Racecar
 		void SetAngularAcceleration(const Real& angularAcceleration);
 
 		Real mInertia;             //Rotating inertia of all components in engine include flywheel and pressure plate.
-		Real mAngularAcceleration; //Radians / Second / Second
+		Real mAngularAcceleration;
 		Real mAngularVelocity;     //Radians / Second
 	};
 };	/* namespace Racecar */
