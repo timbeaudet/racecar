@@ -195,9 +195,9 @@ bool Racecar::UnitTests::WheelClutchAndEngineBrakingTest(void)
 	wheel.SetAngularVelocity(0.0); //rad/s
 	wheel.SetMaximumBrakingTorque(200.0); //Nm
 
-	racecarController.SetBrakePosition(1.0);
-	racecarController.SetClutchPosition(0.5);
-	racecarController.SetThrottlePosition(0.10);
+	racecarController.SetBrakePosition(1.0f);
+	racecarController.SetClutchPosition(0.5f);
+	racecarController.SetThrottlePosition(0.10f);
 
 	for (int timer(0); timer < 200000; timer += 10)
 	{

@@ -106,17 +106,17 @@ bool Racecar::UnitTests::SlippingClutchTest(void)
 {
 	Racecar::ProgrammaticController racecarController;
 	Racecar::ConstantEngine engine(10.0, 1000.0, 0.0);
-	Racecar::Clutch clutch(10, 100, 0.6, 0.4);
-	Racecar::Wheel wheel(1000, 1.0);
+	Racecar::Clutch clutch(10.0, 100, 0.6, 0.4);
+	Racecar::Wheel wheel(10.0, 1.0);
 
 	engine.AddOutputSource(&clutch);
 	clutch.SetInputSource(&engine);
 	clutch.AddOutputSource(&wheel);
 	wheel.SetInputSource(&clutch);
 
-	racecarController.SetThrottlePosition(1.0);
-	racecarController.SetClutchPosition(0.0);
-
+	racecarController.SetThrottlePosition(1.0f);
+	racecarController.SetBrakePosition(0.0f);
+	racecarController.SetClutchPosition(0.0f);
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		engine.Simulate(racecarController, 0.01);
@@ -128,6 +128,210 @@ bool Racecar::UnitTests::SlippingClutchTest(void)
 	if (fabs(engine.GetAngularVelocity() - wheel.GetAngularVelocity()) < UnitTests::kTestElipson)
 	{
 		return false;
+	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::EngineClutchWheelThrottleTest(void)
+{
+	Racecar::ProgrammaticController racecarController;
+	Racecar::ConstantEngine engine(10.0, 1000.0, 0.0);
+	Racecar::Clutch clutch(1.0, 100, 0.6, 0.4);
+	Racecar::Wheel wheel(10.0, 1.0);
+
+	wheel.SetMaximumBrakingTorque(500.0);
+
+	engine.AddOutputSource(&clutch);
+	clutch.SetInputSource(&engine);
+	clutch.AddOutputSource(&wheel);
+	wheel.SetInputSource(&clutch);
+
+	racecarController.SetThrottlePosition(1.0f);
+	racecarController.SetBrakePosition(0.0f);
+	racecarController.SetClutchPosition(0.0f);
+
+	//Simulate a single time step.
+	clutch.OnControllerChange(racecarController);
+
+	engine.Simulate(racecarController, 0.01);
+	clutch.Simulate(racecarController, 0.01);
+	wheel.Simulate(racecarController, 0.01);
+
+	const Racecar::Real expectedAngularVelocity(47.619047619);
+	const Racecar::Real expectedAngularVelocity1(expectedAngularVelocity * 0.01);
+	if (fabs(engine.GetAngularVelocity() - expectedAngularVelocity1) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+	if (fabs(clutch.GetAngularVelocity() - expectedAngularVelocity1) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+	if (fabs(wheel.GetAngularVelocity() - expectedAngularVelocity1) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+
+	for (int timer(10); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	
+	if (fabs(engine.GetAngularVelocity() - expectedAngularVelocity) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+	if (fabs(clutch.GetAngularVelocity() - expectedAngularVelocity) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+	if (fabs(wheel.GetAngularVelocity() - expectedAngularVelocity) > UnitTests::kTestElipson)
+	{
+		return false;
+	}
+
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
+{
+	Racecar::ProgrammaticController racecarController;
+	Racecar::ConstantEngine engine(10.0, 1000.0, 0.0);
+	Racecar::Clutch clutch(1.0, 100, 0.6, 0.4);
+	Racecar::Wheel wheel(10.0, 1.0);
+	
+	wheel.SetMaximumBrakingTorque(500.0);
+
+	engine.AddOutputSource(&clutch);
+	clutch.SetInputSource(&engine);
+	clutch.AddOutputSource(&wheel);
+	wheel.SetInputSource(&clutch);
+
+	racecarController.SetThrottlePosition(1.0f);
+	racecarController.SetBrakePosition(0.0f);
+	racecarController.SetClutchPosition(0.0f);
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	//TODO: DriveTrain: We could sit and compute how fast the wheel/engine got spinning, but, I don't want to right now!
+	{
+		//TODO: DriveTrain: It appears the first step after releasing the throttle things moved a bit faster. This will
+		//allow them to equalize, but why would that be the case? Is that an expected result?
+		//
+		//Does NOT appear to be the FIRST step after ...
+		//The first step appeared not to increase/decrease speed; as expected?
+		//The second step appears to increase speeds.
+		racecarController.SetThrottlePosition(0.0f);
+		racecarController.SetBrakePosition(0.0f);
+		racecarController.SetClutchPosition(0.0f);
+	
+		for (int timer(0); timer < 10; timer += 10)
+		{
+			engine.Simulate(racecarController, 0.01);
+			clutch.Simulate(racecarController, 0.01);
+			wheel.Simulate(racecarController, 0.01);
+		}
+	}
+	
+	const Racecar::Real engineAngularVelocity(engine.GetAngularVelocity());
+	const Racecar::Real clutchAngularVelocity(clutch.GetAngularVelocity());
+	const Racecar::Real wheelAngularVelocity(wheel.GetAngularVelocity());
+	
+	//Release the throttle, but don't yet hit the brakes, everything SHOULD be spinning the same velocities as the,
+	//ConstantEngine was setup without any resistance.
+	racecarController.SetThrottlePosition(0.0f);
+	racecarController.SetBrakePosition(0.0f);
+	racecarController.SetClutchPosition(0.0f);
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	{
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+	}
+
+	//Release the throttle and disengage the clutch, but don't yet hit the brakes.
+	//everything SHOULD be spinning the same velocities as the ConstantEngine was setup without any resistance.
+	racecarController.SetThrottlePosition(0.0f);
+	racecarController.SetBrakePosition(0.0f);
+	racecarController.SetClutchPosition(1.0f);
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	{
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+	}
+
+
+
+
+	//Press the brake. The wheel and clutch should slow down, keep their velocities matched- but the engine
+	//should remain identical speed it started at.
+	racecarController.SetThrottlePosition(0.0f);
+	racecarController.SetBrakePosition(1.0f);
+	racecarController.SetClutchPosition(1.0f);
+	for (int timer(0); timer < 1000; timer += 10)
+	{
+		engine.Simulate(racecarController, 0.01);
+		clutch.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, 0.01);
+	}
+
+	{
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(clutch.GetAngularVelocity() - (clutchAngularVelocity / 2.0f)) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
 	}
 
 	return true;
