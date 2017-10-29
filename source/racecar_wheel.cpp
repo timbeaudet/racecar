@@ -77,7 +77,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 Racecar::Real Racecar::Wheel::ComputeDownstreamInertia(const RotatingBody& fromSource) const
 {
 	if (true == mIsOnGround && nullptr != mRacecarBody)
-	{	//Minus our inertia because it is included in car mass.
+	{
 		const Real carInertia((mRacecarBody->GetMass() * mRadius * mRadius));
 		return RotatingBody::ComputeDownstreamInertia(fromSource) + carInertia;
 	}
@@ -90,7 +90,7 @@ Racecar::Real Racecar::Wheel::ComputeDownstreamInertia(const RotatingBody& fromS
 Racecar::Real Racecar::Wheel::ComputeUpstreamInertia(const RotatingBody& fromSource) const
 {
 	if (true == mIsOnGround && nullptr != mRacecarBody)
-	{	//Minus our inertia because it is included in car mass.
+	{
 		const Real carInertia((mRacecarBody->GetMass() * mRadius * mRadius));
 		return RotatingBody::ComputeUpstreamInertia(fromSource) + carInertia;
 	}
