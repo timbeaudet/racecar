@@ -64,7 +64,7 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 			}
 		}
 
-		//Simulate 1 seconds with the constant engine torque of 100Nm.
+		//Simulate 1 seconds with the constant engine torque.
 		racecarController.SetThrottlePosition(1.0f);
 		for (int timer(10); timer < 1000; timer += 10)
 		{
@@ -78,6 +78,177 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 				return false;
 			}
 			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+		}
+	}
+
+	return LockedDifferentialBrakingTest();
+	//return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+struct LockedDifferentialBrakingTestBlob
+{
+	Racecar::Real gearRatio;
+	Racecar::Real engineInertia;
+	Racecar::Real differentialInertia;
+	Racecar::Real wheelInertia;
+	Racecar::Real mExpectedEngineAngularVelocity[2]; //After a single step, after a full second of steps.
+	Racecar::Real mExpectedDifferentialAngularVelocity[2]; //After a single step, after a full second of steps.
+	Racecar::Real mExpectedWheelAngularVelocity[2]; //After a single step, after a full second of steps.
+};
+
+bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
+{
+	const Racecar::Real kTestTimeStep(0.01);
+
+	std::array<LockedDifferentialBrakingTestBlob, 2> tests{
+		LockedDifferentialBrakingTestBlob{ 1.0,   10.0, 10.0, 10.0, { 0.33333333, 33.33333333 }, { 0.33333333, 33.333333333 }, { 0.33333333, 33.33333333 } },
+		LockedDifferentialBrakingTestBlob{ 4.0,   10.0, 10.0, 10.0, { 0.66666666, 66.66666666 }, { 0.16666666, 16.666666666 }, { 0.16666666, 16.66666666 } },
+	};
+
+	for (const LockedDifferentialBrakingTestBlob& test : tests)
+	{
+		Racecar::ProgrammaticController racecarController;
+		Racecar::ConstantEngine engine(test.engineInertia, 1000.0, 0.0);
+		Racecar::LockedDifferential lockedDifferential(test.differentialInertia, test.gearRatio);
+		Racecar::Wheel wheel(test.wheelInertia / (0.25 * 0.25), 0.25);
+		wheel.SetMaximumBrakingTorque(500.0);
+
+		engine.AddOutputSource(&lockedDifferential);
+		lockedDifferential.SetInputSource(&engine);
+		lockedDifferential.AddOutputSource(&wheel);
+		wheel.SetInputSource(&lockedDifferential);
+
+		//Compute and test a single time-step of constant engine torque.
+		racecarController.SetThrottlePosition(1.0f);
+		engine.Simulate(racecarController, kTestTimeStep);
+		lockedDifferential.Simulate(racecarController, kTestTimeStep);
+		wheel.Simulate(racecarController, kTestTimeStep);
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[0]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[0]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+		}
+
+		//Simulate 1 seconds with the constant engine torque of 100Nm.
+		racecarController.SetThrottlePosition(1.0f);
+		racecarController.SetBrakePosition(0.0f);
+		for (int timer(10); timer < 1000; timer += 10)
+		{
+			engine.Simulate(racecarController, kTestTimeStep);
+			lockedDifferential.Simulate(racecarController, kTestTimeStep);
+			wheel.Simulate(racecarController, kTestTimeStep);
+		}
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1]) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+		}
+
+
+		//Compute and test a single time-step of constant braking torque.
+		racecarController.SetThrottlePosition(0.0f);
+		racecarController.SetBrakePosition(1.0f);
+		engine.Simulate(racecarController, kTestTimeStep);
+		lockedDifferential.Simulate(racecarController, kTestTimeStep);
+		wheel.Simulate(racecarController, kTestTimeStep);
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
+			const Real expectedEngineAngularVelocity(test.mExpectedEngineAngularVelocity[1] - test.mExpectedEngineAngularVelocity[0] / 2.0);
+			const Real expectedDifferentialAngularVelocity(test.mExpectedDifferentialAngularVelocity[1] - test.mExpectedDifferentialAngularVelocity[0] / 2.0);
+			const Real expectedWheelAngularVelocity(test.mExpectedWheelAngularVelocity[1] - test.mExpectedWheelAngularVelocity[0] / 2.0);
+
+			if (fabs(engine.GetAngularVelocity() - expectedEngineAngularVelocity) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - expectedDifferentialAngularVelocity) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - expectedWheelAngularVelocity) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+		}
+
+
+		//Simulate some time with the constant torque of braking from the wheel.
+		racecarController.SetThrottlePosition(0.0f);
+		racecarController.SetBrakePosition(1.0f);
+		for (int timer(10); timer < 1000; timer += 10)
+		{
+			engine.Simulate(racecarController, kTestTimeStep);
+			lockedDifferential.Simulate(racecarController, kTestTimeStep);
+			wheel.Simulate(racecarController, kTestTimeStep);
+		}
+
+		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			{
+				return false;
+			}
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
 			{
 				return false;
 			}

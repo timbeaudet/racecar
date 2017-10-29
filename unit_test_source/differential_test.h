@@ -14,6 +14,7 @@ namespace Racecar
 	namespace UnitTests
 	{
 		bool LockedDifferentialTest(void);
+		bool LockedDifferentialBrakingTest(void);
 	};
 };
 

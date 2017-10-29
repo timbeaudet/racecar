@@ -227,7 +227,15 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 		wheel.Simulate(racecarController, 0.01);
 	}
 
-	{	//TODO: DriveTrain: We could sit and compute how fast the wheel/engine got spinning, but, I don't want to right now!
+	{
+		if (fabs(engine.GetAngularVelocity() - 47.619047619) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(engine.GetAngularVelocity() - clutch.GetAngularVelocity()) > UnitTests::kTestElipson)
+		{
+			return false;
+		}
 		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
 		{
 			return false;

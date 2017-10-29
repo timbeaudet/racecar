@@ -51,13 +51,23 @@ Racecar::Real Racecar::LockedDifferential::ComputeDownstreamInertia(const Rotati
 
 Racecar::Real Racecar::LockedDifferential::ComputeUpstreamInertia(const RotatingBody& fromSource) const
 {
-	return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
+	const RotatingBody* inputSource(GetInputSource());
+	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia(fromSource));
+	return GetInertia() + upstreamInertia * mFinalDriveJoint.GetGearRatio();
+
+	//return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
 void Racecar::LockedDifferential::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
+	//const Real upstreamInertia((nullptr == GetInputSource()) ? 0.0 : GetInputSource()->ComputeUpstreamInertia(fromSource));
+	//const Real downstreamInertia(RotatingBody::ComputeDownstreamInertia(fromSource));
+	//const Real inputImpulse(changeInAngularVelocity * (upstreamInertia + (downstreamInertia / mFinalDriveJoint.GetGearRatio())));
+	//const Real outputAngularVelocityChange(inputImpulse / (upstreamInertia + (downstreamInertia * mFinalDriveJoint.GetGearRatio())));
+
+	//RotatingBody::OnDownstreamAngularVelocityChange(outputAngularVelocityChange, fromSource);
 	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity / mFinalDriveJoint.GetGearRatio(), fromSource);
 }
 
@@ -65,7 +75,28 @@ void Racecar::LockedDifferential::OnDownstreamAngularVelocityChange(const Real& 
 
 void Racecar::LockedDifferential::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
 {
-	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity * mFinalDriveJoint.GetGearRatio(), fromSource);
+	//const Real upstreamInertia((nullptr == GetInputSource()) ? 0.0 : GetInputSource()->ComputeUpstreamInertia(fromSource));
+	//const Real downstreamInertia(RotatingBody::ComputeDownstreamInertia(fromSource));
+	//const Real inputImpulse(changeInAngularVelocity * (upstreamInertia + (downstreamInertia * mFinalDriveJoint.GetGearRatio())));
+	//const Real outputAngularVelocityChange(inputImpulse / (upstreamInertia + (downstreamInertia / mFinalDriveJoint.GetGearRatio())));
+
+	//SetAngularVelocity(GetAngularVelocity() + changeInAngularVelocity);
+	//
+	//RotatingBody* inputSource(GetInputSource());
+	//if (nullptr != inputSource)
+	//{
+	//	inputSource->OnUpstreamAngularVelocityChange(outputAngularVelocityChange, fromSource);
+	//}
+
+
+
+	SetAngularVelocity(GetAngularVelocity() + changeInAngularVelocity);
+
+	RotatingBody* inputSource(GetInputSource());
+	if (nullptr != inputSource)
+	{
+		inputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity * mFinalDriveJoint.GetGearRatio(), fromSource);
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
