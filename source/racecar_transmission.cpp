@@ -35,14 +35,17 @@ constexpr Racecar::Gear DownshiftGear(const Racecar::Gear& gear)
 //--------------------------------------------------------------------------------------------------------------------//
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array<Real, 8>& gearRatios) :
+Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array<Real, 6>& gearRatios, const Real& reverseRatio) :
 	RotatingBody(momentOfInertia),
 	mInputShaftSpeed(0.0),
 	mOutputShaftSpeed(0.0),
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true),
-	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]), GearJoint(gearRatios[3]), 
-		GearJoint(gearRatios[4]), GearJoint(gearRatios[5]), GearJoint(gearRatios[6]), GearJoint(fabs(gearRatios[7]) < kElipson ? 100.0 : gearRatios[7]) }
+	//mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]), GearJoint(gearRatios[3]), 
+	//	GearJoint(gearRatios[4]), GearJoint(gearRatios[5]), GearJoint(gearRatios[6]), GearJoint(fabs(gearRatios[7]) < kElipson ? 100.0 : gearRatios[7]) }
+	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[0]), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]),
+		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kElipson ? 100.0 : gearRatios[5]),
+		GearJoint(reverseRatio > -kElipson ? 100.0 : reverseRatio) }
 {
 }
 
@@ -95,7 +98,9 @@ Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& 
 		return 0.0;
 	}
 
-	return RotatingBody::ComputeUpstreamInertia(fromSource) * GetSelectedGearRatio();
+	const RotatingBody* inputSource(GetInputSource());
+	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia(fromSource));
+	return GetInertia() + upstreamInertia * GetSelectedGearRatio();
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -114,7 +119,13 @@ void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeIn
 {
 	if (Gear::Neutral != mSelectedGear)
 	{
-		RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio(), fromSource);
+		SetAngularVelocity(GetAngularVelocity() + changeInAngularVelocity);
+
+		RotatingBody* inputSource(GetInputSource());
+		if (nullptr != inputSource)
+		{
+			inputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio(), fromSource);
+		}
 	}
 }
 

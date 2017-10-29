@@ -29,6 +29,13 @@ namespace Racecar
 		///   Wheel then after.
 		///
 		bool EngineClutchWheelBrakingTest(void);
+
+		///
+		/// @details This test will start the engine and clutch/wheel speeds at different speeds and see what happens
+		///   when the clutch attempts to match speeds.
+		///
+		bool EngineClutchWheelMismatchTest(void);
+
 	};
 };
 

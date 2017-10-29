@@ -15,11 +15,10 @@
 
 #define log_test(message, ...)   printf(message, ##__VA_ARGS__)
 #define perform_test(testFunction, testName) \
-	printf("%s: ", testName); \
 	if (testFunction) {       \
-		printf("Passed.\n");  \
+		printf("[  pass  ]  %s\n", testName);  \
 	} else {                  \
-		printf("Failed!\n");  \
+		printf("[!-FAIL-!]  %s\n", testName);  \
 		failedTest = true;    \
 	}
 

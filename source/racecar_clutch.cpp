@@ -98,7 +98,7 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	if (fabs(frictionalImpulse) > kElipson)	//Make sure not zero!
 	{
 		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse, *this);
-		ApplyUpstreamAngularImpulse(-frictionalImpulse, *this);
+		ApplyDownstreamAngularImpulse(-frictionalImpulse, *this);
 	}
 
 	////

@@ -84,8 +84,7 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 		}
 	}
 
-	return LockedDifferentialBrakingTest();
-	//return true;
+	return true;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

@@ -50,10 +50,12 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(WheelClutchAndEngineBrakingTest(), "Wheel Clutch And Engine Braking Test"); //Looking for potential NaN
 	perform_test(EngineClutchWheelThrottleTest(), "Engine, Clutch Wheel Throttle Test");     //Checking to ensure the clutch/wheel don't spin faster than engine.
 	perform_test(EngineClutchWheelBrakingTest(), "Engine, Clutch Wheel Braking Test");       //Checking if brakes slow engine with clutch disengaged.
+	perform_test(EngineClutchWheelMismatchTest(), "Engine, Clutch Wheel Mismatch Test");     //Ensures the wheel and clutch remain same speeds while trying to match engine speed.
 	perform_test(EngineWithConnectionTest(), "Engine With Connection Test");
 	perform_test(ClutchInputTest(), "Clutch Input Test");
 	perform_test(SlippingClutchTest(), "Slipping Clutch Test");
 	perform_test(LockedDifferentialTest(), "Locked Differential Test");
+	perform_test(LockedDifferentialBrakingTest(), "Locked Differential Braking Test");
 
 	if (false == failedTest)
 	{

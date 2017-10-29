@@ -47,7 +47,7 @@ namespace Racecar
 	class Transmission : public RotatingBody
 	{
 	public:
-		explicit Transmission(const Real momentOfInertia, const std::array<Real, 8>& gearRatios);
+		explicit Transmission(const Real momentOfInertia, const std::array<Real, 6>& gearRatios, const Real& reverseRatio);
 		virtual ~Transmission(void);
 
 		void Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
