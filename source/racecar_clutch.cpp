@@ -18,6 +18,8 @@ Racecar::ClutchJoint::ClutchJoint(Real staticFrictionCoefficient, Real kineticFr
 {
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 Racecar::ClutchJoint::~ClutchJoint(void)
 {
 }
