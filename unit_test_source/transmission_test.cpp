@@ -78,7 +78,7 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-bool Racecar::UnitTests::TransmissionBrakeInNeutraTest(void)
+bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 {
 	const std::array<Racecar::Real, 6> forwardGearRatios{ 4.0, 3.0, 2.0, 1.0, 0.5, 0.0 };
 

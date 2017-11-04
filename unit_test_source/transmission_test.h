@@ -19,7 +19,7 @@ namespace Racecar
 		/// @details This test will put the car into gear and accelerate a little, then shift to neutral and apply the
 		///   brakes. Expected: The AngularVelocity of the transmission to match the wheel at all times.
 		///
-		bool TransmissionBrakeInNeutraTest(void);
+		bool TransmissionBrakeInNeutralTest(void);
 	};
 };
 
