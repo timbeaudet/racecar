@@ -41,8 +41,6 @@ Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array
 	RotatingBody(momentOfInertia),
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true),
-	//mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]), GearJoint(gearRatios[3]), 
-	//	GearJoint(gearRatios[4]), GearJoint(gearRatios[5]), GearJoint(gearRatios[6]), GearJoint(fabs(gearRatios[7]) < kElipson ? 100.0 : gearRatios[7]) }
 	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[0]), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]),
 		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kElipson ? 100.0 : gearRatios[5]),
 		GearJoint(reverseRatio > -kElipson ? 100.0 : reverseRatio) }
@@ -63,77 +61,21 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 
 	SimulateShiftLogic(racecarController);
 
-	RotatingBody& inputSource(GetExpectedInputSource());
-//	mInputShaftSpeed = inputSource.GetAngularVelocity();
-//	mOutputShaftSpeed = GetAngularVelocity();
-
-	//if (false == GetOutputSources().empty())
-	//{
-	//	mOutputShaftSpeed = GetExpectedOutputSource(0).GetAngularVelocity();
-	//}
-
 	if (Gear::Neutral == mSelectedGear)
 	{
 		//Do nothing.
 	}
 	else
 	{
-		//mOutputShaftSpeed = mInputShaftSpeed / GetSelectedGearRatio();
-		//SetAngularVelocity(mOutputShaftSpeed);
+		RotatingBody& inputSource(GetExpectedInputSource());
+		GearJoint& currentGearJoint(mGearJoints[static_cast<size_t>(GetSelectedGear())]);
+		
+		Real matchImpulse = currentGearJoint.ComputeTorqueImpulse(inputSource, *this);
+		GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse, *this);
+		ApplyDownstreamAngularImpulse(-matchImpulse, *this);
 
-		//This may not be 100% accurate, the syncrhomesh friction should only happen prior to the gear being selected.
-		//In theory the output and input shaft speeds should be perfectly matched here after a shift is complete anyway,
-		//so likely this will be good enough for now.
-		//if (fabs(mOutputShaftSpeed - mInputShaftSpeed) > kElipson)
-		{
-			//RotatingBody input(ComputeUpstreamInertia(*this) * GetSelectedGearRatio());
-			//input.SetAngularVelocity(mInputShaftSpeed / GetSelectedGearRatio());
-
-			//Real outputInertia(0.0);
-			//const std::vector<RotatingBody*>& outputSource = GetOutputSources();
-			//for (RotatingBody* body : outputSource)
-			//{
-			//	outputInertia += body->ComputeDownstreamInertia(*this);
-			//}
-
-			//RotatingBody output(outputInertia);
-			//output.SetAngularVelocity(mOutputShaftSpeed);
-
-			//ClutchJoint synchromeshFrictionJoint(0.6, 0.4);
-			//synchromeshFrictionJoint.SetNormalForce(1000000.0);
-			//Real frictionalImpulse = synchromeshFrictionJoint.ComputeTorqueImpulse(input, output, fixedTime);
-			//ApplyUpstreamAngularImpulse(frictionalImpulse, *this);
-			//ApplyDownstreamAngularImpulse(-frictionalImpulse, *this);
-
-			//if (false == GetOutputSources().empty())
-			//{
-			//	mOutputShaftSpeed = GetExpectedOutputSource(0).GetAngularVelocity();
-			//	SetAngularVelocity(mOutputShaftSpeed);
-			//}
-
-
-
-			///The more correct way:
-			Real matchImpulse = mGearJoints[static_cast<size_t>(GetSelectedGear())].ComputeTorqueImpulse(GetExpectedInputSource(), *this);
-			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse, *this);
-			ApplyDownstreamAngularImpulse(-matchImpulse, *this);
-
-			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
-				"The output shaft is not rotating at the correct speed.");
-
-
-			///The absolute hack, this HAS TO WORK.
-			//const Real desiredOutputSpeed(mInputShaftSpeed / GetSelectedGearRatio());
-			//const Real differenceToDesired(desiredOutputSpeed - mOutputShaftSpeed); //rad / sec
-			//const Real downstreamInertia(ComputeDownstreamInertia(*this)); //kg*m^2
-			//ApplyDownstreamAngularImpulse(differenceToDesired * downstreamInertia, *this);
-
-			//This one doesn't work, what?
-			//const Real desiredInputSpeed(mOutputShaftSpeed * GetSelectedGearRatio());
-			//const Real differenceToDesired(desiredInputSpeed - mInputShaftSpeed); //rad / sec
-			//const Real upstreamInertia(ComputeUpstreamInertia(*this)); //kg*m^2
-			//ApplyUpstreamAngularImpulse(differenceToDesired * upstreamInertia, *this);
-		}
+		error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
+			"InternalError: The output shaft is not rotating at the correct speed.");
 	}
 }
 
@@ -241,9 +183,6 @@ Racecar::GearJoint::~GearJoint(void)
 
 Racecar::Real Racecar::GearJoint::ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep)
 {
-	//Wi = Wo / ratio
-	//input.ComputeUpstreamInertia();
-
 	((void)fixedTimeStep);
 	return ComputeTorqueImpulseToMatchVelocity(input, output);
 }
@@ -252,15 +191,20 @@ Racecar::Real Racecar::GearJoint::ComputeTorqueImpulse(const RotatingBody& input
 
 Racecar::Real Racecar::GearJoint::ComputeTorqueImpulseToMatchVelocity(const RotatingBody& input, const RotatingBody& output)
 {
-	//const Real angularVelocityDifference(output.GetAngularVelocity() - (input.GetAngularVelocity()));
+	//   J = (Io * Ii * (Wo * gr - Wi)) / (Io + Ii * gr)
+	//
+	// where J is an angular impulse (kg*m^s / s)
+	//       Io / Ii is Inertia of output / input bodies respectively.
+	//       Wo / Wi is Angular Velocity (rad/sec) of output / input bodies.
+	//       gr is the gear ratio.
+	//
+	//See: gear_ratio_impulse_proof.png for actual train of thought.
 	const Real inputInertia(input.ComputeUpstreamInertia(output));
 	const Real outputInertia(output.ComputeDownstreamInertia(output) * GetGearRatio());
 
 	const Real ratio(GetGearRatio());
 	const Real numerator = (inputInertia * outputInertia) * (ratio * output.GetAngularVelocity() - input.GetAngularVelocity()); //Io*Ii*(r*Wo - Wi)
-	const Real denominator = outputInertia + inputInertia * ratio; //Io = Ii * r^3
-
-	//const Real denominator = outputInertia - inputInertia * (ratio * ratio * ratio); //Io = Ii * r^3
+	const Real denominator = outputInertia + inputInertia * ratio; //Io + Ii * gr
 	const Real torqueImpulse = numerator / denominator;
 	return torqueImpulse;
 }
