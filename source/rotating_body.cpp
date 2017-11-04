@@ -91,16 +91,16 @@ void Racecar::RotatingBody::AddOutputSource(RotatingBody* output)
 
 const Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex) const
 {
-	error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
-	return *mInputSource;
+	error_if(sourceIndex >= mOutputSources.size(), "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	return *(mOutputSources[sourceIndex]);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::RotatingBody& Racecar::RotatingBody::GetExpectedOutputSource(const size_t& sourceIndex)
 {
-	error_if(mOutputSources.size() >= sourceIndex, "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
-	return *mInputSource;
+	error_if(sourceIndex >= mOutputSources.size(), "RotatingBody was expecting to have an output source for use of index: %d.", sourceIndex);
+	return *(mOutputSources[sourceIndex]);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

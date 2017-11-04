@@ -24,7 +24,11 @@ namespace Racecar
 
 		const Real& GetGearRatio(void) const { return mGearRatio; }
 
+		Real ComputeTorqueImpulse(const RotatingBody& input, const RotatingBody& output, const Real& fixedTimeStep = Racecar::kFixedTimeStep);
+
 	private:
+		Real ComputeTorqueImpulseToMatchVelocity(const RotatingBody& input, const RotatingBody& output);
+
 		const Real mGearRatio;
 	};
 

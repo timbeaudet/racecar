@@ -56,6 +56,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(SlippingClutchTest(), "Slipping Clutch Test");
 	perform_test(LockedDifferentialTest(), "Locked Differential Test");
 	perform_test(LockedDifferentialBrakingTest(), "Locked Differential Braking Test");
+	perform_test(LockedDifferentialUsageTest(), "Locked Differential Usage Test");
 
 	if (false == failedTest)
 	{
