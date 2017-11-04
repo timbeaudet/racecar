@@ -60,8 +60,8 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 		racecarController.SetClutchPosition(1.0f); //Disengage the clutch!
 		for (int timer(10); timer < 2000; timer += 10)
 		{
-			clutch.Simulate(racecarController, 0.01);
-			inputBody.Simulate(0.01);
+			clutch.Simulate(racecarController, kTestFixedTimeStep);
+			inputBody.Simulate(kTestFixedTimeStep);
 		}
 
 		{	//Everything should be in the same state it started in initially.
@@ -81,8 +81,8 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 		racecarController.SetClutchPosition(0.0f); //Engage the clutch!
 		for (int timer(10); timer < 20000; timer += 10)
 		{
-			clutch.Simulate(racecarController, 0.01);
-			inputBody.Simulate(0.01);
+			clutch.Simulate(racecarController, kTestFixedTimeStep);
+			inputBody.Simulate(kTestFixedTimeStep);
 		}
 
 		{	//Everything should be in the same state it started in initially.
@@ -185,9 +185,9 @@ bool Racecar::UnitTests::EngineClutchWheelThrottleTest(void)
 		//Simulate a single time step.
 		clutch.OnControllerChange(racecarController);
 
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
 		{
 			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestElipson)
@@ -206,9 +206,9 @@ bool Racecar::UnitTests::EngineClutchWheelThrottleTest(void)
 
 		for (int timer(10); timer < 1000; timer += 10)
 		{
-			engine.Simulate(racecarController, 0.01);
-			clutch.Simulate(racecarController, 0.01);
-			wheel.Simulate(racecarController, 0.01);
+			engine.Simulate(racecarController, kTestFixedTimeStep);
+			clutch.Simulate(racecarController, kTestFixedTimeStep);
+			wheel.Simulate(racecarController, kTestFixedTimeStep);
 		}
 
 		{
@@ -252,9 +252,9 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		clutch.OnControllerChange(racecarController);
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	{
@@ -284,9 +284,9 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		clutch.OnControllerChange(racecarController);
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	{
@@ -316,9 +316,9 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		clutch.OnControllerChange(racecarController);
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	{
@@ -352,9 +352,9 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		clutch.OnControllerChange(racecarController);
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	{
@@ -421,9 +421,9 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		for (int timer(0); timer < 1000; timer += 10)
 		{
 			clutch.OnControllerChange(racecarController);
-			engine.Simulate(racecarController, 0.01);
-			clutch.Simulate(racecarController, 0.01);
-			wheel.Simulate(racecarController, 0.01);
+			engine.Simulate(racecarController, kTestFixedTimeStep);
+			clutch.Simulate(racecarController, kTestFixedTimeStep);
+			wheel.Simulate(racecarController, kTestFixedTimeStep);
 		}
 
 		{	//Just performed multiple time-steps with clutch disengaged, should remain in initial state.
@@ -448,9 +448,9 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		racecarController.SetClutchPosition(0.0f);
 
 		clutch.OnControllerChange(racecarController);
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
 		{	//A single time-step of the clutch being engaged has now occurred, engine should slow, clutch and wheel should move faster and matched speeds.
 			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
@@ -463,9 +463,9 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		for (int timer(10); timer < 2000; timer += 10)
 		{
 			clutch.OnControllerChange(racecarController);
-			engine.Simulate(racecarController, 0.01);
-			clutch.Simulate(racecarController, 0.01);
-			wheel.Simulate(racecarController, 0.01);
+			engine.Simulate(racecarController, kTestFixedTimeStep);
+			clutch.Simulate(racecarController, kTestFixedTimeStep);
+			wheel.Simulate(racecarController, kTestFixedTimeStep);
 		}
 
 		{

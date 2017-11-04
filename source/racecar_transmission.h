@@ -55,7 +55,6 @@ namespace Racecar
 		virtual ~Transmission(void);
 
 		void Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
 
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 		Real GetSelectedGearRatio(void) const;
@@ -68,8 +67,8 @@ namespace Racecar
 		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
 
 	private:
-		Real mInputShaftSpeed;
-		Real mOutputShaftSpeed;
+		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
+
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
 

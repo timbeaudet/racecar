@@ -12,6 +12,7 @@
 #include "clutch_test.h"
 #include "wheel_test.h"
 #include "differential_test.h"
+#include "transmission_test.h"
 #include "linear_motion_test.h"
 
 #include "../source/racecar.h"
@@ -22,6 +23,8 @@
 #include <cstdio>
 
 const Racecar::Real Racecar::UnitTests::kTestElipson(0.00001);
+const Racecar::Real Racecar::UnitTests::kTestFixedTimeStep(0.01); //Do not change without modifying tests, or many tests will fail.
+
 using Racecar::Real;
 using Racecar::UnitTests::kTestElipson;
 
@@ -57,6 +60,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(LockedDifferentialTest(), "Locked Differential Test");
 	perform_test(LockedDifferentialBrakingTest(), "Locked Differential Braking Test");
 	perform_test(LockedDifferentialUsageTest(), "Locked Differential Usage Test");
+	perform_test(TranmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
 
 	if (false == failedTest)
 	{

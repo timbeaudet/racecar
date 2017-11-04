@@ -69,6 +69,9 @@ namespace Racecar
 		inline void SetBrakePosition(const float brake) { RacecarControllerInterface::SetBrakePosition(brake); }
 		inline void SetClutchPosition(const float clutch) { RacecarControllerInterface::SetClutchPosition(clutch); }
 		inline void SetSteeringPosition(const float steering) { RacecarControllerInterface::SetSteeringPosition(steering); }
+		inline void SetUpshift(const bool upshift) { RacecarControllerInterface::SetUpshift(upshift); }
+		inline void SetDownshift(const bool downshift) { RacecarControllerInterface::SetDownshift(downshift); }
+
 	protected:
 		virtual void OnUpdateControls(void) override;
 	};
