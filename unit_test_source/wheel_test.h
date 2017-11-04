@@ -14,6 +14,7 @@ namespace Racecar
 	namespace UnitTests
 	{
 		bool WheelBrakingTest(void);
+		bool WheelNegativeBrakingTest(void);
 		bool WheelAndAxleBrakingTest(void);
 		bool WheelClutchAndEngineBrakingTest(void);
 	};

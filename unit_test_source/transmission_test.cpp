@@ -12,9 +12,11 @@
 #include "../source/racecar.h"
 #include "../source/racecar_controller.h"
 #include "../source/racecar_engine.h"
-#include "../source/racecar_locked_differential.h"
+#include "../source/racecar_clutch.h"
+#include "../source/racecar_transmission.h"
 #include "../source/racecar_wheel.h"
 
+#include <fstream>
 #include <array>
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -60,6 +62,10 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
+	if (Racecar::Gear::First != gearbox.GetSelectedGear())
+	{
+		return false;
+	}
 	if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * forwardGearRatios[0]) > kTestElipson)
 	{
 		return false;
@@ -155,6 +161,147 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 
 	{
 		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
+{
+	const std::array<Racecar::Real, 6> forwardGearRatios{ 4.0, 3.0, 2.0, 1.0, 0.5, 0.0 };
+	const Real reverseGearRatio(-2.5);
+
+	ProgrammaticController racecarController;
+	ConstantEngine engine(10.0, 700.0, 0.0);
+	Clutch clutch(10.0, 100.0, 0.6, 0.4);
+	Transmission gearbox(10.0, forwardGearRatios, reverseGearRatio);
+	Wheel wheel(50.0 / (0.25 * 0.25), 0.25);
+	wheel.SetMaximumBrakingTorque(6000.0); //600Nm should take 1s to stop gearbox and wheel if their speed was 10rad/s
+
+	engine.AddOutputSource(&clutch);
+	clutch.SetInputSource(&engine);
+	clutch.AddOutputSource(&gearbox);
+	gearbox.SetInputSource(&engine);
+	gearbox.AddOutputSource(&wheel);
+	wheel.SetInputSource(&gearbox);
+
+	engine.SetAngularVelocity(100.0);
+
+	racecarController.SetThrottlePosition(0.0);
+	racecarController.SetBrakePosition(0.0);
+	racecarController.SetDownshift(true);
+	engine.Simulate(racecarController, kTestFixedTimeStep);
+	clutch.Simulate(racecarController, kTestFixedTimeStep);
+	gearbox.Simulate(racecarController, kTestFixedTimeStep);
+	wheel.Simulate(racecarController, kTestFixedTimeStep);
+	racecarController.SetUpshift(false);
+
+	const Real reverseWheelSpeed(fabs(wheel.GetAngularVelocity()));
+
+	{
+		if (Racecar::Gear::Reverse != gearbox.GetSelectedGear())
+		{
+			return false;
+		}
+		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		{
+			return false;
+		}
+	}
+
+	std::ofstream outFile("data/outputs/wheel_braking.txt");
+
+	racecarController.SetBrakePosition(1.0f);
+	for (int timer(0); timer < 200; timer += 10)
+	{
+		const Real previousWheelVelocity(wheel.GetAngularVelocity());
+
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterEngine(wheel.GetAngularVelocity());
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterClutch(wheel.GetAngularVelocity());
+		gearbox.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterGearbox(wheel.GetAngularVelocity());
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
+
+		outFile << timer << "\t" << afterEngine << "\t" << afterClutch << "\t" << afterGearbox << "\t" << wheel.GetAngularVelocity() << "\n";
+
+		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
+		{	//The wheel is sped up, NOT slowing down.
+			//return false;
+			rand();
+		}
+	}
+
+	{
+		if (Racecar::Gear::Reverse != gearbox.GetSelectedGear())
+		{
+			return false;
+		}
+		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		{
+			return false;
+		}
+		if (reverseWheelSpeed < fabs(wheel.GetAngularVelocity()))
+		{	//The wheel is speeding up, NOT slowing down.
+			return false;
+		}
+	}
+
+	//This should be enough time to stop the wheel and transmission, (and engine since we are in gear!)
+	for (int timer(0); timer < 20000; timer += 10)
+	{
+		const Real previousWheelVelocity(wheel.GetAngularVelocity());
+
+		engine.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterEngine(wheel.GetAngularVelocity());
+		clutch.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterClutch(wheel.GetAngularVelocity());
+		gearbox.Simulate(racecarController, kTestFixedTimeStep);
+		const Real afterGearbox(wheel.GetAngularVelocity());
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
+
+		outFile << timer << "\t" << afterEngine << "\t" << afterClutch << "\t" << afterGearbox << "\t" << wheel.GetAngularVelocity() << "\n";
+
+		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
+		{	//The wheel is sped up, NOT slowing down.
+			return false;
+		}
+	}
+
+	outFile.close();
+
+	{
+		if (Racecar::Gear::Reverse != gearbox.GetSelectedGear())
+		{
+			return false;
+		}
+		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		{
+			return false;
+		}
+		if (reverseWheelSpeed < fabs(wheel.GetAngularVelocity()))
+		{	//The wheel is speeding up, NOT slowing down.
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity()) > kTestElipson)
 		{
 			return false;
 		}

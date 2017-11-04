@@ -49,6 +49,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 
 	perform_test(BasicEngineTest(), "Basic Engine Test");
 	perform_test(WheelBrakingTest(), "Wheel Braking Test");
+	perform_test(WheelNegativeBrakingTest(), "Wheel Negative Braking Test");
 	perform_test(WheelAndAxleBrakingTest(), "Wheel And Axle Braking Test");	
 	perform_test(WheelClutchAndEngineBrakingTest(), "Wheel Clutch And Engine Braking Test"); //Looking for potential NaN
 	perform_test(EngineClutchWheelThrottleTest(), "Engine, Clutch Wheel Throttle Test");     //Checking to ensure the clutch/wheel don't spin faster than engine.
@@ -62,6 +63,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(LockedDifferentialUsageTest(), "Locked Differential Usage Test");
 	perform_test(TransmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
 	perform_test(TransmissionBrakeInNeutralTest(), "Transmission Brake in Neutral Test");
+	perform_test(TransmissionBrakeInReverseTest(), "Transmission Brake in Reverse Test");
 
 	if (false == failedTest)
 	{

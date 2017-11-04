@@ -20,6 +20,12 @@ namespace Racecar
 		///   brakes. Expected: The AngularVelocity of the transmission to match the wheel at all times.
 		///
 		bool TransmissionBrakeInNeutralTest(void);
+
+		///
+		/// @details This test will get the engine and such spinning a little, shift into reverse, and then apply
+		///   the brakes. Expected: The AngularVelocity of the transmission and wheel to return to 0, and stay matched.
+		///
+		bool TransmissionBrakeInReverseTest(void);
 	};
 };
 
