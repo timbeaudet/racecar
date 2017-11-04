@@ -60,7 +60,8 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(LockedDifferentialTest(), "Locked Differential Test");
 	perform_test(LockedDifferentialBrakingTest(), "Locked Differential Braking Test");
 	perform_test(LockedDifferentialUsageTest(), "Locked Differential Usage Test");
-	perform_test(TranmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
+	perform_test(TransmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
+	perform_test(TransmissionBrakeInNeutraTest(), "Transmission Brake in Neutral Test");
 
 	if (false == failedTest)
 	{
