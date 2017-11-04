@@ -48,7 +48,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	///actual impulse that would be applied based on braking torque, use the lower of those values in the
 	///correct direction, and apply the upstream torque to slow the wheel + connections.
 	const Real totalInertia(ComputeUpstreamInertia(*this));
-	const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
+	const Real maximumImpulse(totalInertia * fabs(GetAngularVelocity())); //kg*m^2 / s
 	const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
 	const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
 	if (appliedImpulse > kElipson)

@@ -186,7 +186,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	engine.AddOutputSource(&clutch);
 	clutch.SetInputSource(&engine);
 	clutch.AddOutputSource(&gearbox);
-	gearbox.SetInputSource(&engine);
+	gearbox.SetInputSource(&clutch);
 	gearbox.AddOutputSource(&wheel);
 	wheel.SetInputSource(&gearbox);
 
@@ -208,7 +208,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{
 			return false;
 		}
-		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
 		{
 			return false;
 		}
@@ -217,9 +217,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 			return false;
 		}
 	}
-
-	std::ofstream outFile("data/outputs/wheel_braking.txt");
-
+	
 	racecarController.SetBrakePosition(1.0f);
 	for (int timer(0); timer < 200; timer += 10)
 	{
@@ -233,12 +231,9 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		const Real afterGearbox(wheel.GetAngularVelocity());
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
-		outFile << timer << "\t" << afterEngine << "\t" << afterClutch << "\t" << afterGearbox << "\t" << wheel.GetAngularVelocity() << "\n";
-
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.
-			//return false;
-			rand();
+			return false;
 		}
 	}
 
@@ -247,7 +242,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{
 			return false;
 		}
-		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
 		{
 			return false;
 		}
@@ -274,15 +269,11 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		const Real afterGearbox(wheel.GetAngularVelocity());
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
-		outFile << timer << "\t" << afterEngine << "\t" << afterClutch << "\t" << afterGearbox << "\t" << wheel.GetAngularVelocity() << "\n";
-
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.
 			return false;
 		}
 	}
-
-	outFile.close();
 
 	{
 		if (Racecar::Gear::Reverse != gearbox.GetSelectedGear())

@@ -88,7 +88,7 @@ Racecar::Real Racecar::Transmission::ComputeDownstreamInertia(const RotatingBody
 		return 0.0;
 	}
 
-	return RotatingBody::ComputeDownstreamInertia(fromSource) / GetSelectedGearRatio();
+	return RotatingBody::ComputeDownstreamInertia(fromSource) / fabs(GetSelectedGearRatio());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -102,7 +102,7 @@ Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& 
 
 	const RotatingBody* inputSource(GetInputSource());
 	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia(fromSource));
-	return GetInertia() + upstreamInertia * GetSelectedGearRatio();
+	return GetInertia() + upstreamInertia * fabs(GetSelectedGearRatio());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

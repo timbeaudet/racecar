@@ -70,6 +70,9 @@ Racecar::Clutch::Clutch(const Real& momentOfInertia, const Real& maximumNormalFo
 	mMaximumNormalForce(maximumNormalForce),
 	mClutchJoint(staticFrictionCoefficient, kineticFrictionCoefficient)
 {
+	error_if(mMaximumNormalForce <= 0.0, "Expected a positive normal force value.");
+	error_if(staticFrictionCoefficient <= 0.0, "Expected a positive staticFrictionCoefficient value.");
+	error_if(kineticFrictionCoefficient <= 0.0, "Expected a positive kineticFrictionCoefficient value.");
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
