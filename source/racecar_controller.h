@@ -10,6 +10,8 @@
 #ifndef _Racecar_RacecarController_h_
 #define _Racecar_RacecarController_h_
 
+#include "racecar_transmission.h" //For the Racecar::Gear definitions.
+
 namespace Racecar
 {
 
@@ -25,8 +27,12 @@ namespace Racecar
 		inline float GetBrakePosition(void) const { return mBrakePosition; }
 		inline float GetClutchPosition(void) const { return mClutchPosition; }
 		inline float GetSteeringPosition(void) const { return mSteeringPosition; }
+		
+		//In case the user has no H-shifter, this provides a method of shifting!
 		inline bool IsUpshift(void) const { return mIsUpshift; }
 		inline bool IsDownshift(void) const { return mIsDownshift; }
+
+		inline Racecar::Gear GetShifterPosition(void) const { return mShifterPosition; }
 
 	protected:
 		virtual void OnUpdateControls(void) = 0;
@@ -38,12 +44,13 @@ namespace Racecar
 
 		inline void SetUpshift(const bool upshift) { mIsUpshift = upshift; }
 		inline void SetDownshift(const bool downshift) { mIsDownshift = downshift; }
-
+		inline void SetShifterPosition(const Gear& shifterPosition) { mShifterPosition = shifterPosition; }
 	private:
 		float mThrottlePosition;
 		float mBrakePosition;
 		float mClutchPosition;
 		float mSteeringPosition;
+		Gear mShifterPosition;
 		bool mIsUpshift;
 		bool mIsDownshift;
 	};

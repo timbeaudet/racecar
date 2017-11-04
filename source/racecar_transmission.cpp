@@ -41,6 +41,7 @@ Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array
 	RotatingBody(momentOfInertia),
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true),
+	mIsSynchromeshBox(false),
 	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[0]), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]),
 		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kElipson ? 100.0 : gearRatios[5]),
 		GearJoint(reverseRatio > -kElipson ? 100.0 : reverseRatio) }
@@ -70,12 +71,21 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 		RotatingBody& inputSource(GetExpectedInputSource());
 		GearJoint& currentGearJoint(mGearJoints[static_cast<size_t>(GetSelectedGear())]);
 		
-		Real matchImpulse = currentGearJoint.ComputeTorqueImpulse(inputSource, *this);
-		GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse, *this);
-		ApplyDownstreamAngularImpulse(-matchImpulse, *this);
-
-		error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
-			"InternalError: The output shaft is not rotating at the correct speed.");
+		const Real matchImpulse = currentGearJoint.ComputeTorqueImpulse(inputSource, *this);
+		if (true == mIsSynchromeshBox)
+		{
+			const Real frictionImpulse = 10 * 0.45 * fixedTime;
+			const Real appliedImpulse((fabs(matchImpulse) > frictionImpulse) ? frictionImpulse * Sign(matchImpulse) : matchImpulse);
+			GetExpectedInputSource().ApplyUpstreamAngularImpulse(appliedImpulse, *this);
+			ApplyDownstreamAngularImpulse(-appliedImpulse, *this);
+		}
+		else
+		{	//It appears the "dog collar" boxes just slam into required speeds.
+			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse, *this);
+			ApplyDownstreamAngularImpulse(-matchImpulse, *this);
+			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
+				"InternalError: The output shaft is not rotating at the correct speed.");
+		}
 	}
 }
 
@@ -135,25 +145,38 @@ void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeIn
 
 void Racecar::Transmission::SimulateShiftLogic(const RacecarControllerInterface& racecarController)
 {
-	if (true == mHasClearedShift)
-	{		
-		if (true == racecarController.IsUpshift())
-		{	//Upshift
-			mSelectedGear = UpshiftGear(mSelectedGear);
-			mHasClearedShift = false;
+	static bool hackeryIsShifter(false);
+	if (racecarController.GetShifterPosition() != Gear::Neutral)
+	{
+		hackeryIsShifter = true;
+	}
+
+	if (false == hackeryIsShifter)
+	{
+		if (true == mHasClearedShift)
+		{
+			if (true == racecarController.IsUpshift())
+			{	//Upshift
+				mSelectedGear = UpshiftGear(mSelectedGear);
+				mHasClearedShift = false;
+			}
+			else if (true == racecarController.IsDownshift())
+			{	//Downshift
+				mSelectedGear = DownshiftGear(mSelectedGear);
+				mHasClearedShift = false;
+			}
 		}
-		else if (true == racecarController.IsDownshift())
-		{	//Downshift
-			mSelectedGear = DownshiftGear(mSelectedGear);
-			mHasClearedShift = false;
+		else
+		{
+			if (false == racecarController.IsUpshift() && false == racecarController.IsDownshift())
+			{
+				mHasClearedShift = true;
+			}
 		}
 	}
 	else
 	{
-		if (false == racecarController.IsUpshift() && false == racecarController.IsDownshift())
-		{
-			mHasClearedShift = true;
-		}
+		mSelectedGear = racecarController.GetShifterPosition();
 	}
 }
 

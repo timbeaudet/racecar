@@ -16,6 +16,7 @@ Racecar::RacecarControllerInterface::RacecarControllerInterface(void) :
 	mBrakePosition(0.0f),
 	mClutchPosition(0.0f),
 	mSteeringPosition(0.0f),
+	mShifterPosition(Gear::Neutral),
 	mIsUpshift(false),
 	mIsDownshift(false)
 {

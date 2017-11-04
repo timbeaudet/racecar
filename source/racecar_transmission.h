@@ -59,6 +59,8 @@ namespace Racecar
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 		Real GetSelectedGearRatio(void) const;
 
+		void SetSynchromeshBox(const bool synchromeshBox) { mIsSynchromeshBox = synchromeshBox; }
+
 		virtual Racecar::Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
 		virtual Racecar::Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
 
@@ -71,7 +73,7 @@ namespace Racecar
 
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
-
+		bool mIsSynchromeshBox;
 		std::array<GearJoint, 8> mGearJoints;
 	};
 
