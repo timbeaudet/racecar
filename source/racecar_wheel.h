@@ -25,7 +25,10 @@ namespace Racecar
 		virtual ~Wheel(void);
 
 		///
+		/// @details Computes the speed of the wheel in miles per hour, from the rate at which it is spinning at.
 		///
+		/// @note This is NOT connected to linear velocity, it is connected with angular velocity. If the car was 
+		///   sitting still on ice, and the driver hit the throttle, the wheels could spin while remaining stationary.
 		///
 		Real GetWheelSpeedMPH(void) const;
 

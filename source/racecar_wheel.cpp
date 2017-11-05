@@ -256,8 +256,9 @@ void Racecar::Wheel::SetOnGround(bool isOnGround, const Real& frictionCoefficien
 
 Racecar::Real Racecar::Wheel::GetWheelSpeedMPH(void) const
 {
-	const Real speedFeetPerSecond(GetAngularVelocity() * (22.0 / 2.0) / 12.0);
-	const Real speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0);
+	const Real speedMetersPerSecond(GetAngularVelocity() * mRadius);
+	const Real speedFeetPerSecond(speedMetersPerSecond * 3.28084); //3.28084 is feet in a meter.
+	const Real speedMPH(speedFeetPerSecond * 60 * 60 / 5280.0);    //5280.0 is feet per mile,  60*60 is seconds per hour.
 	return fabs(speedMPH);
 }
 
