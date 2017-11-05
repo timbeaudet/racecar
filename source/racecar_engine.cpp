@@ -172,8 +172,9 @@ Racecar::Real Racecar::TorqueCurve::GetOutputValue(const Real engineSpeedRPM) co
 			continue;
 		}
 
+		const Real& previousRPM(previousPoint.first);
 		const Real& previousTorque(previousPoint.second);
-		const Real percentage = 1.0 - ((currentRPM - engineSpeedRPM) / 500.0);		
+		const Real percentage = 1.0 - ((currentRPM - engineSpeedRPM) / (currentRPM - previousRPM));
 		return previousTorque + ((currentTorque - previousTorque) * percentage);
 	}
 

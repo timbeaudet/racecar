@@ -195,8 +195,52 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 
 bool Racecar::UnitTests::EngineTorqueTest(void)
 {
-	//Racecar::Engine engine;
+	Racecar::TorqueCurve torqueCurve;
+	torqueCurve.AddPlotPoint(0.0, 100.0);
+	torqueCurve.AddPlotPoint(10000.1, 10100.0);
+	torqueCurve.NormalizeTorqueCurve();
 
+	for (int rpm = 0; rpm < 10000; ++rpm)
+	{
+		const Real expectedTorque((rpm * 1.0) + 100.0);
+		const Real actualTorque = torqueCurve.GetOutputTorque(rpm * 1.0);
+		if (fabs(expectedTorque - actualTorque) > 0.1)
+		{
+			return false;
+		}
+	}
+
+	Racecar::TorqueCurve torqueLine;
+	torqueLine.AddPlotPoint(0.0, 100.0);
+	torqueLine.AddPlotPoint(10000.1, 100.0);
+	torqueLine.NormalizeTorqueCurve();
+
+	for (int rpm = 0; rpm < 10000; ++rpm)
+	{
+		const Real expectedTorque(100.0);
+		const Real actualTorque = torqueLine.GetOutputTorque(rpm * 1.0);
+		if (fabs(expectedTorque - actualTorque) > 0.1)
+		{
+			return false;
+		}
+	}
+
+	//Racecar::ProgrammaticController racecarController;
+	//racecarController.SetThrottlePosition(1.0);
+
+	//Racecar::Engine engine(100, torqueLine); //100kg*m^2 inertia with 100Nm torque engine.
+	//for (int timer(0); timer < 10000; timer += 10)
+	//{
+	//	engine.ControllerChange(racecarController);
+	//	engine.Simulate(kTestFixedTimeStep);
+	//}
+
+	//{
+	//	if (fabs(engine.GetAngularVelocity() - 10.0) > UnitTests::kTestEpsilon)
+	//	{
+	//		return false;
+	//	}
+	//}
 
 	return true;
 }
