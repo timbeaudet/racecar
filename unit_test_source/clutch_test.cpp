@@ -65,11 +65,11 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 		}
 
 		{	//Everything should be in the same state it started in initially.
-			if (fabs(inputBody.GetAngularVelocity() - test.inputAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(inputBody.GetAngularVelocity() - test.inputAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - test.outputAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - test.outputAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -86,11 +86,11 @@ bool Racecar::UnitTests::ClutchInputTest(void)
 		}
 
 		{	//Everything should be in the same state it started in initially.
-			if (fabs(inputBody.GetAngularVelocity() - test.mExpectedInputAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(inputBody.GetAngularVelocity() - test.mExpectedInputAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -190,15 +190,15 @@ bool Racecar::UnitTests::EngineClutchWheelThrottleTest(void)
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
 		{
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - test.mExpectedClutchAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - test.mExpectedClutchAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -212,15 +212,15 @@ bool Racecar::UnitTests::EngineClutchWheelThrottleTest(void)
 		}
 
 		{
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - test.mExpectedClutchAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - test.mExpectedClutchAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -258,15 +258,15 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	}
 
 	{
-		if (fabs(engine.GetAngularVelocity() - 47.619047619) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 47.619047619) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(engine.GetAngularVelocity() - clutch.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - clutch.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -290,19 +290,19 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	}
 
 	{
-		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -322,23 +322,23 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	}
 
 	{
-		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - clutchAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - wheelAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -358,15 +358,15 @@ bool Racecar::UnitTests::EngineClutchWheelBrakingTest(void)
 	}
 
 	{
-		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - engineAngularVelocity) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - (clutchAngularVelocity - 9.09090909)) > UnitTests::kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - (clutchAngularVelocity - 9.09090909)) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -427,15 +427,15 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		}
 
 		{	//Just performed multiple time-steps with clutch disengaged, should remain in initial state.
-			if (fabs(engine.GetAngularVelocity() - test.mEngineAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mEngineAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - test.mClutchAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - test.mClutchAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -453,7 +453,7 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 
 		{	//A single time-step of the clutch being engaged has now occurred, engine should slow, clutch and wheel should move faster and matched speeds.
-			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -469,11 +469,11 @@ bool Racecar::UnitTests::EngineClutchWheelMismatchTest(void)
 		}
 
 		{
-			if (fabs(clutch.GetAngularVelocity() - engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(clutch.GetAngularVelocity() - wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}

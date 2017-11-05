@@ -31,7 +31,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	}
 
 	{	//Everything should be in the same state it started in initially.
-		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -42,7 +42,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	engine.Simulate(racecarController, 0.01);
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
-		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -56,7 +56,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	}
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-		if (fabs(engine.GetAngularVelocity() - 10.0) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 10.0) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -67,7 +67,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	engine.Simulate(racecarController, 0.01);
 
 	{	//Should slow down the engine a little bit.
-		if (fabs(engine.GetAngularVelocity() - 9.95) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 9.95) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -81,7 +81,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	}
 
 	{	//Engine should be slowed down a lot.
-		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -89,7 +89,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 		//Get the engine to hit a zero velocity state.
 		engine.Simulate(racecarController, 0.01);
 		engine.Simulate(racecarController, 0.01);
-		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -99,7 +99,7 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 		engine.Simulate(racecarController, 0.01);
 		engine.Simulate(racecarController, 0.01);
 
-		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -127,11 +127,11 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 	}
 
 	{	//Everything should be in the same state it started in initially.
-		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestElipson)
+		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -143,11 +143,11 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 	wheel.Simulate(racecarController, 0.01);
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
-		if (fabs(engine.GetAngularVelocity() - 0.05) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 0.05) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - 0.05) > UnitTests::kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - 0.05) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
@@ -162,15 +162,25 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 	}
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-		if (fabs(engine.GetAngularVelocity() - 5.0) > UnitTests::kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - 5.0) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - 5.0) > UnitTests::kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - 5.0) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
 	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::EngineTorqueTest(void)
+{
+	//Racecar::Engine engine;
+
 
 	return true;
 }

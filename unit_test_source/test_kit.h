@@ -26,7 +26,7 @@ namespace Racecar
 {
 	namespace UnitTests
 	{
-		extern const Racecar::Real kTestElipson;
+		extern const Racecar::Real kTestEpsilon;
 		extern const Racecar::Real kTestFixedTimeStep;
 	};
 };

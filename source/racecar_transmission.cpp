@@ -43,8 +43,8 @@ Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array
 	mHasClearedShift(true),
 	mIsSynchromeshBox(false),
 	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[0]), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]),
-		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kElipson ? 100.0 : gearRatios[5]),
-		GearJoint(reverseRatio > -kElipson ? 100.0 : reverseRatio) }
+		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kEpsilon ? 100.0 : gearRatios[5]),
+		GearJoint(reverseRatio > -kEpsilon ? 100.0 : reverseRatio) }
 {
 }
 
@@ -83,7 +83,7 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 		{	//It appears the "dog collar" boxes just slam into required speeds.
 			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse);
 			ApplyDownstreamAngularImpulse(-matchImpulse);
-			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
+			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kEpsilon,
 				"InternalError: The output shaft is not rotating at the correct speed.");
 		}
 	}

@@ -100,7 +100,7 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	mClutchJoint.SetNormalForce(actualNormalForce);
 
 	const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
-	if (fabs(frictionalImpulse) > kElipson)	//Make sure not zero!
+	if (fabs(frictionalImpulse) > kEpsilon)	//Make sure not zero!
 	{
 		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse);
 		ApplyDownstreamAngularImpulse(-frictionalImpulse);

@@ -32,13 +32,26 @@ namespace Racecar
 		const Real mResistanceTorque;   //Applied if throttle is less than 0.1, and angular velocity > 0.
 	};
 
-	class Engine : public RotatingBody
+//--------------------------------------------------------------------------------------------------------------------//
+
+	class TorqueCurve
 	{
 	public:
-		static const size_t kTorqueTableSize = 16;
+		TorqueCurve(void);
+		~TorqueCurve(void);
 
-		explicit Engine(const Real& momentOfInertia);
-		virtual ~Engine(void);
+		static TorqueCurve MiataTorqueCurve(void);
+
+		///
+		///
+		///
+		void AddPlotPoint(const Real engineSpeedRPM, const Real torque);
+
+		///
+		///
+		///
+		void NormalizeTorqueCurve(void);
+
 
 		///
 		/// @details Returns the maximum amount of torque in Nm (Newton-meters) of the engine.
@@ -55,6 +68,23 @@ namespace Racecar
 		///
 		Real GetOutputValue(const Real engineSpeedRPM) const;
 
+	private:
+		static const size_t kTorqueTableSize = 16;
+
+		typedef std::pair<Real, Real> PlotPoint; //RPM, NormalizedTorque
+		std::vector<PlotPoint> mTorqueTable;
+		Real mMaximumTorque;  //In Nm
+		bool mIsNormalized;
+	};
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+	class Engine : public RotatingBody
+	{
+	public:
+		explicit Engine(const Real& momentOfInertia, const TorqueCurve& torqueCurve);
+		virtual ~Engine(void);
+
 		///
 		///
 		///
@@ -68,10 +98,7 @@ namespace Racecar
 	protected:
 
 	private:
-		void InitializeTorqueTableToMiata(void);
-
-		std::array<Real, kTorqueTableSize> mTorqueTable; //500, 1000 ... 8000  (normalized 0 .. 1, where 1 = maximum torque.
-		Real mMaximumTorque;  //In Nm
+		const TorqueCurve mTorqueCurve;
 	};
 };	/* namespace Racecar */
 

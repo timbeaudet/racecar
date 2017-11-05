@@ -17,7 +17,7 @@ namespace Racecar
 	typedef double Real;
 
 	static const Real kFixedTimeStep(0.01);
-	static const Real kElipson(0.00001);
+	static const Real kEpsilon(0.00001);
 	extern Real kGravityConstant;
 
 	inline constexpr Real ComputeInertiaMetric(const Real& massInKilograms, const Real& radiusInMeters)
@@ -33,7 +33,13 @@ namespace Racecar
 		return (Type(0) < value) - (value < Type(0));
 	}
 
+#ifndef warning_if
+#define warning_if(test, message, ...)  if(test) { printf(message, ##__VA_ARGS__); }
+#endif
+
+#ifndef error_if
 #define error_if(test, message, ...)  if(test) { printf(message, ##__VA_ARGS__); throw std::runtime_error(message); }
+#endif
 
 } /* namespace Racecar */
 

@@ -51,7 +51,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	const Real maximumImpulse(totalInertia * fabs(GetAngularVelocity())); //kg*m^2 / s
 	const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
 	const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
-	if (appliedImpulse > kElipson)
+	if (appliedImpulse > kEpsilon)
 	{
 		ApplyUpstreamAngularImpulse(appliedImpulse * -Racecar::Sign(GetAngularVelocity()));
 	}
@@ -211,7 +211,7 @@ void Racecar::Wheel::ApplyGroundFriction(const Real& fixedTime)
 		const Real appliedImpulse((fabs(impulse) <= fabs(frictionImpulse) || mGroundFrictionCoefficient <= 0.0) ?
 			impulse : frictionImpulse);
 		
-		if (fabs(appliedImpulse) > kElipson)
+		if (fabs(appliedImpulse) > kEpsilon)
 		{	//Ensure there is some amount of frictional impulse, to avoid NaN.
 			ApplyUpstreamAngularImpulse(-appliedImpulse * mRadius);
 

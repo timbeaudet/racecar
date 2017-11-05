@@ -15,6 +15,8 @@ namespace Racecar
 	{
 		bool BasicEngineTest(void);
 		bool EngineWithConnectionTest(void);
+
+		bool EngineTorqueTest(void);
 	};
 };
 

@@ -54,11 +54,11 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 		lockedDifferential.Simulate(racecarController, 0.01);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -73,11 +73,11 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedOutputAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -129,23 +129,23 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		wheel.Simulate(racecarController, kTestTimeStep);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[0]) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[0]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -162,23 +162,23 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1]) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1]) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -197,23 +197,23 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 			const Real expectedDifferentialAngularVelocity(test.mExpectedDifferentialAngularVelocity[1] - test.mExpectedDifferentialAngularVelocity[0] / 2.0);
 			const Real expectedWheelAngularVelocity(test.mExpectedWheelAngularVelocity[1] - test.mExpectedWheelAngularVelocity[0] / 2.0);
 
-			if (fabs(engine.GetAngularVelocity() - expectedEngineAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - expectedEngineAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - expectedDifferentialAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - expectedDifferentialAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - expectedWheelAngularVelocity) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - expectedWheelAngularVelocity) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -231,23 +231,23 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
-			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[1] / 2.0) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			if (fabs(lockedDifferential.GetAngularVelocity() - test.mExpectedDifferentialAngularVelocity[1] / 2.0) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1] / 2.0) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedWheelAngularVelocity[1] / 2.0) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestElipson)
+			if (fabs(engine.GetAngularVelocity() - lockedDifferential.GetAngularVelocity() * test.gearRatio) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
-			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - lockedDifferential.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 			{
 				return false;
 			}

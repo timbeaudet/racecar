@@ -37,7 +37,7 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 
 	const Real expectedLinearVelocity(100.0);  //100m/s
 	const Real& finalLinearVelocity(wheel.GetLinearVelocity());
-	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestElipson)
+	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
 	{
 		return false;
 	}
@@ -70,7 +70,7 @@ bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 
 	const Real expectedLinearVelocity(8.0);  //m/s
 	const Real& finalLinearVelocity(wheel.GetLinearVelocity());
-	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestElipson)
+	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
 	{
 		return false;
 	}
@@ -128,17 +128,17 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		outFile.flush();
 
 		{	//Check for results after a single time step, should be matched for infinite friction.
-			if (fabs(wheel.GetLinearVelocity() - carBody.GetLinearVelocity()) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - carBody.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
 			{	//The wheel and car body should move linearly at the same rate!
 				return false;
 			}
 
-			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[0]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[0]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
 
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[0]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[0]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -159,17 +159,17 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		outFile.flush();
 
 		{	//Check for results after all time steps.
-			if (fabs(wheel.GetLinearVelocity() - carBody.GetLinearVelocity()) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - carBody.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
 			{	//The wheel and car body should move linearly at the same rate!
 				return false;
 			}
 
-			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[1]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[1]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
 
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[1]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[1]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -218,12 +218,12 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 
 		{	//Check that the car and wheel are in identical states as when we started the test, (haven't touched ground yet!)
 			const Real& finalLinearVelocity(wheel.GetLinearVelocity());
-			if (fabs(finalLinearVelocity - initialLinearVelocity) > Racecar::UnitTests::kTestElipson)
+			if (fabs(finalLinearVelocity - initialLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
 
-			if (fabs(wheel.GetAngularVelocity()) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity()) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -235,17 +235,17 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		racecarBody.Simulate(racecarController, 0.01);
 
 		{	//Check for results after a single time step, should be matched for infinite friction.
-			if (fabs(wheel.GetLinearVelocity() - racecarBody.GetLinearVelocity()) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - racecarBody.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
 			{	//The wheel and car body should move linearly at the same rate!
 				return false;
 			}
 
-			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[0]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[0]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
 
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[0]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[0]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
@@ -259,17 +259,17 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		}
 
 		{	//Check for results after a single time step, should be matched for infinite friction.
-			if (fabs(wheel.GetLinearVelocity() - racecarBody.GetLinearVelocity()) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - racecarBody.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
 			{	//The wheel and car body should move linearly at the same rate!
 				return false;
 			}
 
-			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[1]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity[1]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}
 
-			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[1]) > Racecar::UnitTests::kTestElipson)
+			if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity[1]) > Racecar::UnitTests::kTestEpsilon)
 			{
 				return false;
 			}

@@ -22,11 +22,11 @@
 
 #include <cstdio>
 
-const Racecar::Real Racecar::UnitTests::kTestElipson(0.00001);
+const Racecar::Real Racecar::UnitTests::kTestEpsilon(0.00001);
 const Racecar::Real Racecar::UnitTests::kTestFixedTimeStep(0.01); //Do not change without modifying tests, or many tests will fail.
 
 using Racecar::Real;
-using Racecar::UnitTests::kTestElipson;
+using Racecar::UnitTests::kTestEpsilon;
 
 bool ConstructionTest(void);
 bool ConstantTorqueTest(void);
@@ -48,6 +48,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(FlyingCarHitsTrack(), "Flying Car Hits Track");
 
 	perform_test(BasicEngineTest(), "Basic Engine Test");
+	perform_test(EngineTorqueTest(), "Engine Torque Test");
 	perform_test(WheelBrakingTest(), "Wheel Braking Test");
 	perform_test(WheelNegativeBrakingTest(), "Wheel Negative Braking Test");
 	perform_test(WheelAndAxleBrakingTest(), "Wheel And Axle Braking Test");	
@@ -82,21 +83,21 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 bool ConstructionTest(void)
 {
 	Racecar::RotatingBody rotatingMass(10.0); //10kg-m^2.
-	if (fabs(rotatingMass.GetInertia() - 10.0) > kTestElipson)
+	if (fabs(rotatingMass.GetInertia() - 10.0) > kTestEpsilon)
 	{
 		log_test("Failed accessing expected moments of inertia.");
 		return false;
 	}
 
 	Racecar::RotatingBody rotatingMass2(Racecar::ComputeInertiaMetric(10.0, 1.0));
-	if (fabs(rotatingMass.GetInertia() - rotatingMass2.GetInertia()) > kTestElipson)
+	if (fabs(rotatingMass.GetInertia() - rotatingMass2.GetInertia()) > kTestEpsilon)
 	{
 		log_test("Failed accessing expected moments of inertia.");
 		return false;
 	}
 
 	const Real startingVelocity(rotatingMass.GetAngularVelocity());
-	if (fabs(startingVelocity) > kTestElipson)
+	if (fabs(startingVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: Expected rotating body to have no angular velocity upon construction. Found: %f\n", startingVelocity);
 		return false;
@@ -121,7 +122,7 @@ bool ConstantTorqueTest(void)
 
 	const Real expectedDownVelocity(400.0);
 	const Real finalDownVelocity(wheel.GetAngularVelocity());
-	if (fabs(finalDownVelocity - expectedDownVelocity) > kTestElipson)
+	if (fabs(finalDownVelocity - expectedDownVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant downstream torque, expected 400 rad/sec finalVelocity.\n");
 		return false;
@@ -135,7 +136,7 @@ bool ConstantTorqueTest(void)
 	}
 
 	const Real negativeDownVelocity(wheel.GetAngularVelocity());
-	if (fabs(negativeDownVelocity) > kTestElipson)
+	if (fabs(negativeDownVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant downstream torque, expected 400 rad/sec finalVelocity.\n");
 		return false;
@@ -151,7 +152,7 @@ bool ConstantTorqueTest(void)
 
 	const Real expectedUpVelocity(400.0);
 	const Real finalUpVelocity(wheel.GetAngularVelocity());
-	if (fabs(finalUpVelocity - expectedUpVelocity) > kTestElipson)
+	if (fabs(finalUpVelocity - expectedUpVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant upstream torque, expected 400 rad/sec finalVelocity.\n");
 		return false;
@@ -165,7 +166,7 @@ bool ConstantTorqueTest(void)
 	}
 
 	const Real negativeUpVelocity(wheel.GetAngularVelocity());
-	if (fabs(negativeUpVelocity) > kTestElipson)
+	if (fabs(negativeUpVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant upstream torque, expected 400 rad/sec finalVelocity.\n");
 		return false;
@@ -203,8 +204,8 @@ bool GearReductionTest(void)
 	const Real finalDownEngineVelocity(engineMass.GetAngularVelocity());
 	const Real expectedDownWheelVelocity(expectedDownEngineVelocity / kGearReduction);
 	const Real finalDownWheelVelocity(wheelMass.GetAngularVelocity());
-	if (fabs(finalDownWheelVelocity - expectedDownWheelVelocity) > kTestElipson ||
-		fabs(finalDownEngineVelocity - expectedDownEngineVelocity) > kTestElipson)
+	if (fabs(finalDownWheelVelocity - expectedDownWheelVelocity) > kTestEpsilon ||
+		fabs(finalDownEngineVelocity - expectedDownEngineVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
 		return false;
@@ -221,7 +222,7 @@ bool GearReductionTest(void)
 
 	const Racecar::Real negativeDownEngineVelocity(engineMass.GetAngularVelocity());
 	const Racecar::Real negativeDownWheelVelocity(wheelMass.GetAngularVelocity());
-	if (fabs(negativeDownEngineVelocity) > kTestElipson || fabs(negativeDownWheelVelocity) > kTestElipson)
+	if (fabs(negativeDownEngineVelocity) > kTestEpsilon || fabs(negativeDownWheelVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
 		return false;
@@ -242,8 +243,8 @@ bool GearReductionTest(void)
 	const Real finalUpEngineVelocity(engineMass.GetAngularVelocity());
 	const Real expectedUpWheelVelocity(expectedUpEngineVelocity / kGearReduction);
 	const Real finalUpWheelVelocity(wheelMass.GetAngularVelocity());
-	if (fabs(finalUpWheelVelocity - expectedUpWheelVelocity) > kTestElipson ||
-		fabs(finalUpEngineVelocity - expectedUpEngineVelocity) > kTestElipson)
+	if (fabs(finalUpWheelVelocity - expectedUpWheelVelocity) > kTestEpsilon ||
+		fabs(finalUpEngineVelocity - expectedUpEngineVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
 		return false;
@@ -260,7 +261,7 @@ bool GearReductionTest(void)
 
 	const Racecar::Real negativeUpEngineVelocity(engineMass.GetAngularVelocity());
 	const Racecar::Real negativeUpWheelVelocity(wheelMass.GetAngularVelocity());
-	if (fabs(negativeUpEngineVelocity) > kTestElipson || fabs(negativeUpWheelVelocity) > kTestElipson)
+	if (fabs(negativeUpEngineVelocity) > kTestEpsilon || fabs(negativeUpWheelVelocity) > kTestEpsilon)
 	{
 		log_test("Failed: 1 second constant torque, expected 1rad/sec finalVelocity.\n");
 		return false;

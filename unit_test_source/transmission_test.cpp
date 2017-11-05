@@ -48,7 +48,7 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
-	if (fabs(engine.GetAngularVelocity() - 70.0) > kTestElipson)
+	if (fabs(engine.GetAngularVelocity() - 70.0) > kTestEpsilon)
 	{
 		return false;
 	}
@@ -66,11 +66,11 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 	{
 		return false;
 	}
-	if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * forwardGearRatios[0]) > kTestElipson)
+	if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * forwardGearRatios[0]) > kTestEpsilon)
 	{
 		return false;
 	}
-	if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+	if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 	{
 		return false;
 	}
@@ -116,11 +116,11 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	}
 
 	{
-		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * forwardGearRatios[0]) > kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * forwardGearRatios[0]) > kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -140,7 +140,7 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	}
 
 	{
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -160,7 +160,7 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	}
 
 	{
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -208,11 +208,11 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -242,11 +242,11 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{
 			return false;
 		}
-		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		if (fabs(clutch.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -280,11 +280,11 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{
 			return false;
 		}
-		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestElipson)
+		if (fabs(engine.GetAngularVelocity() - gearbox.GetAngularVelocity() * reverseGearRatio) > kTestEpsilon)
 		{
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity() - gearbox.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}
@@ -292,7 +292,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 		{	//The wheel is speeding up, NOT slowing down.
 			return false;
 		}
-		if (fabs(wheel.GetAngularVelocity()) > kTestElipson)
+		if (fabs(wheel.GetAngularVelocity()) > kTestEpsilon)
 		{
 			return false;
 		}

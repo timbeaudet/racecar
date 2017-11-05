@@ -35,7 +35,7 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 	{
 		ApplyDownstreamAngularImpulse(mConstantTorque * fixedTime);
 	}
-	else if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kElipson)
+	else if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kEpsilon)
 	{
 		const Real totalInertia(ComputeDownstreamInertia());
 		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
@@ -60,13 +60,148 @@ Racecar::Real Racecar::ConstantEngine::GetEngineSpeedRPM(void) const
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Engine::Engine(const Real& momentOfInertia) :
-	RotatingBody(momentOfInertia),
+Racecar::TorqueCurve::TorqueCurve(void) :
 	mTorqueTable(),
-	mMaximumTorque(162.0)
+	mMaximumTorque(0.0),
+	mIsNormalized(false)
 {
-	InitializeTorqueTableToMiata();
+}
 
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::TorqueCurve::~TorqueCurve(void)
+{
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::TorqueCurve::AddPlotPoint(const Racecar::Real engineSpeedRPM, const Racecar::Real torque)
+{
+	error_if(true == mIsNormalized, "Cannot add more plot points to a table that is already normalized.");
+
+	auto findItr = std::find_if(mTorqueTable.begin(), mTorqueTable.end(), [engineSpeedRPM](PlotPoint& pt) { return fabs(pt.first - engineSpeedRPM) < kEpsilon; });
+	error_if(mTorqueTable.end() != findItr, "Cannot plot a point on top of another point!");
+
+//	for (const PlotPoint& pt : mTorqueTable) { if (pt.first )
+
+	PlotPoint pt(engineSpeedRPM, torque);
+	mTorqueTable.push_back(pt);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::TorqueCurve::NormalizeTorqueCurve(void)
+{
+	error_if(true == mTorqueTable.empty(), "Cannot normalize a table without plotted points. Call AddPlotPoint() to make it interesting.");
+
+	std::sort(mTorqueTable.begin(), mTorqueTable.end(), [](PlotPoint& a, PlotPoint& b) { return a.second < b.second; });
+	mMaximumTorque = mTorqueTable.back().second;
+
+	std::sort(mTorqueTable.begin(), mTorqueTable.end(), [](PlotPoint& a, PlotPoint& b) { return a.first < b.first; });
+	std::for_each(mTorqueTable.begin(), mTorqueTable.end(), [this](PlotPoint& pt) { pt.second /= mMaximumTorque; });
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+//void Racecar::TorqueCurve::InitializeTorqueTableToMiata(void)
+Racecar::TorqueCurve Racecar::TorqueCurve::MiataTorqueCurve(void)
+{	//http://www.automobile-catalog.com/curve/1999/1667030/mazda_mx-5_1_9.html
+	//mTorqueTable[0] = 25.0;   //500rpm
+	//mTorqueTable[1] = 75.0;   //1000rpm
+	//mTorqueTable[2] = 112.0;
+	//mTorqueTable[3] = 130.0;  //2000rpm
+	//mTorqueTable[4] = 137.0;
+	//mTorqueTable[5] = 150.0;  //3000rpm
+	//mTorqueTable[6] = 155.0;
+	//mTorqueTable[7] = 158.0;  //4000rpm
+	//mTorqueTable[8] = 162.0;
+	//mTorqueTable[9] = 160.0;  //5000rpm
+	//mTorqueTable[10] = 159.0;
+	//mTorqueTable[11] = 156.5; //6000rpm
+	//mTorqueTable[12] = 151.0;
+	//mTorqueTable[13] = 127.0; //7000rpm
+	//mTorqueTable[14] = 25.0;
+	//mTorqueTable[15] = 0.0;  //8000rpm
+
+	//error_if(mTorqueTable.size() != 16, "Error: Expected table size to be 16, may need to change step size or something.");
+	//error_if(mTorqueTable.size() != kTorqueTableSize, "Error: Expected table size to be 16, may need to change step size or something.");
+
+	//mMaximumTorque = 162.0; //If unknown a search could find it...
+	//for (size_t index(0); index < mTorqueTable.size(); ++index)
+	//{	//Normalize the curve so it fits in range 0 to 1, from no to max torque??
+	//	mTorqueTable[index] /= mMaximumTorque;
+	//}
+
+	TorqueCurve curve;
+	curve.AddPlotPoint(500,  25.0);
+	curve.AddPlotPoint(1000, 75.0);
+	curve.AddPlotPoint(1500, 112.0);
+	curve.AddPlotPoint(2000, 130.0);
+	curve.AddPlotPoint(2500, 137.0);
+	curve.AddPlotPoint(3000, 150.0);
+	curve.AddPlotPoint(3500, 155.0);
+	curve.AddPlotPoint(4000, 158.0);
+	curve.AddPlotPoint(4500, 162.0);
+	curve.AddPlotPoint(5000, 160.0);
+	curve.AddPlotPoint(5500, 159.0);
+	curve.AddPlotPoint(6000, 156.5);
+	curve.AddPlotPoint(6500, 151.0);
+	curve.AddPlotPoint(7000, 127.0);
+	curve.AddPlotPoint(7500, 25.0);
+	curve.AddPlotPoint(8000, 0.0);
+	return curve;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::TorqueCurve::GetMaximumTorque(void) const
+{
+	return mMaximumTorque;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::TorqueCurve::GetOutputTorque(const Real engineSpeedRPM) const
+{
+	return GetOutputValue(engineSpeedRPM) * mMaximumTorque;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::TorqueCurve::GetOutputValue(const Real engineSpeedRPM) const
+{
+	error_if(false == mIsNormalized, "Cannot get output of a TorqueCurve that has not been normalized. Call NormalizeTorqueCurve().");
+
+	PlotPoint previousPoint = mTorqueTable.front();
+	for (size_t index(0); index < kTorqueTableSize; ++index)
+	{
+		const PlotPoint& currentPoint(mTorqueTable[index]);
+		const Real& currentRPM(currentPoint.first);
+		const Real& currentTorque(currentPoint.second);
+
+		if (engineSpeedRPM > currentRPM)
+		{
+			previousPoint = currentPoint;
+			continue;
+		}
+
+		const Real& previousTorque(previousPoint.second);
+		const Real percentage = 1.0 - ((currentRPM - engineSpeedRPM) / 500.0);		
+		return previousTorque + ((currentTorque - previousTorque) * percentage);
+	}
+
+	warning_if(true, "Value not found for RPM: %f in torque table.", engineSpeedRPM);
+	return mTorqueTable.back().second;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Engine::Engine(const Real& momentOfInertia, const TorqueCurve& torqueCurve) :
+	RotatingBody(momentOfInertia),
+	mTorqueCurve(torqueCurve)
+{
 	SetAngularVelocity(Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
 }
 
@@ -78,80 +213,12 @@ Racecar::Engine::~Engine(void)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Engine::InitializeTorqueTableToMiata(void)
-{	//http://www.automobile-catalog.com/curve/1999/1667030/mazda_mx-5_1_9.html
-	mTorqueTable[0] = 25.0;   //500rpm
-	mTorqueTable[1] = 75.0;   //1000rpm
-	mTorqueTable[2] = 112.0;
-	mTorqueTable[3] = 130.0;  //2000rpm
-	mTorqueTable[4] = 137.0;
-	mTorqueTable[5] = 150.0;  //3000rpm
-	mTorqueTable[6] = 155.0;
-	mTorqueTable[7] = 158.0;  //4000rpm
-	mTorqueTable[8] = 162.0;
-	mTorqueTable[9] = 160.0;  //5000rpm
-	mTorqueTable[10] = 159.0;
-	mTorqueTable[11] = 156.5; //6000rpm
-	mTorqueTable[12] = 151.0;
-	mTorqueTable[13] = 127.0; //7000rpm
-	mTorqueTable[14] = 25.0;
-	mTorqueTable[15] = 0.0;  //8000rpm
-
-	error_if(mTorqueTable.size() != 16, "Error: Expected table size to be 16, may need to change step size or something.");
-	error_if(mTorqueTable.size() != kTorqueTableSize, "Error: Expected table size to be 16, may need to change step size or something.");
-
-	mMaximumTorque = 162.0; //If unknown a search could find it...
-	for (size_t index(0); index < mTorqueTable.size(); ++index)
-	{	//Normalize the curve so it fits in range 0 to 1, from no to max torque??
-		mTorqueTable[index] /= mMaximumTorque;
-	}
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-Racecar::Real Racecar::Engine::GetMaximumTorque(void) const
-{
-	return mMaximumTorque;
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-Racecar::Real Racecar::Engine::GetOutputTorque(const Real engineSpeedRPM) const
-{
-	return GetOutputValue(engineSpeedRPM) * mMaximumTorque;
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-Racecar::Real Racecar::Engine::GetOutputValue(const Real engineSpeedRPM) const
-{
-	Real previous = mTorqueTable.front();
-	for (size_t index(0); index < kTorqueTableSize; ++index)
-	{
-		Real currentRPM((index) * 500.0);
-		if (engineSpeedRPM > currentRPM)
-		{
-			previous = mTorqueTable[index];
-			continue;
-		}
-
-		//0.2 = (1500 - 1400) / 500.0f
-
-		Real percentage = 1.0 - ((currentRPM - engineSpeedRPM) / 500.0);
-		return previous + ((mTorqueTable[index] - previous) * percentage);
-	}
-
-	return mTorqueTable.back();
-}
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
 {
 	if (GetEngineSpeedRPM() < 6500)
 	{
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
-		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
+		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
 		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 	}
