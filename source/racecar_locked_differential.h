@@ -25,12 +25,12 @@ namespace Racecar
 
 		void Simulate(RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
 
-		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
-		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+		virtual Real ComputeDownstreamInertia(void) const override;
+		virtual Real ComputeUpstreamInertia(void) const override;
 
 	protected:
-		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
-		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 
 	private:
 		GearJoint mFinalDriveJoint;

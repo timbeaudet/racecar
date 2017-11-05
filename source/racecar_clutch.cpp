@@ -52,8 +52,8 @@ Racecar::Real Racecar::ClutchJoint::ComputeTorqueImpulseFromFriction(const Rotat
 Racecar::Real Racecar::ClutchJoint::ComputeTorqueImpulseToMatchVelocity(const RotatingBody& input, const RotatingBody& output)
 {
 	const Real angularVelocityDifference(output.GetAngularVelocity() - input.GetAngularVelocity());
-	const Real inputInertia(input.ComputeUpstreamInertia(output));
-	const Real outputInertia(output.ComputeDownstreamInertia(output));
+	const Real inputInertia(input.ComputeUpstreamInertia());
+	const Real outputInertia(output.ComputeDownstreamInertia());
 
 	const Real torqueImpulse = (inputInertia * outputInertia * angularVelocityDifference) / (inputInertia + outputInertia);
 	return torqueImpulse;
@@ -102,8 +102,8 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 	const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
 	if (fabs(frictionalImpulse) > kElipson)	//Make sure not zero!
 	{
-		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse, *this);
-		ApplyDownstreamAngularImpulse(-frictionalImpulse, *this);
+		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse);
+		ApplyDownstreamAngularImpulse(-frictionalImpulse);
 	}
 
 	RotatingBody::Simulate(fixedTime);
@@ -111,7 +111,7 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(void) const
 {
 	//When not engaged: return 0
 	//When completely engaged: return RotatingBody::ComputeDownstreamInertia()
@@ -123,36 +123,36 @@ Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(const RotatingBody& from
 	}
 	
 	//May we need to do something special if the clutch is partially engaged / spinning different speeds than input?
-	return RotatingBody::ComputeDownstreamInertia(fromSource);
+	return RotatingBody::ComputeDownstreamInertia();
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::Clutch::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::Clutch::ComputeUpstreamInertia(void) const
 {
 	if (mClutchEngagement < Racecar::PercentTo(0.5))
 	{
 		return GetInertia();
 	}
 
-	return RotatingBody::ComputeUpstreamInertia(fromSource);
+	return RotatingBody::ComputeUpstreamInertia();
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Clutch::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::Clutch::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	if (mClutchEngagement < Racecar::PercentTo(0.5))
 	{
 		return;
 	}
 
-	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+	RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Clutch::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::Clutch::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	if (mClutchEngagement < Racecar::PercentTo(0.5))
 	{
@@ -160,7 +160,7 @@ void Racecar::Clutch::OnUpstreamAngularVelocityChange(const Real& changeInAngula
 		return;
 	}
 
-	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+	RotatingBody::OnUpstreamAngularVelocityChange(changeInAngularVelocity);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

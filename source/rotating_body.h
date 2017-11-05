@@ -56,8 +56,8 @@ namespace Racecar
 		///
 		/// @details Applies a torque in Newton-meters, Nm, to the body.
 		///
-		void ApplyDownstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource);
-		void ApplyUpstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource);
+		void ApplyDownstreamAngularImpulse(const Real& angularImpulse);
+		void ApplyUpstreamAngularImpulse(const Real& angularImpulse);
 
 		///
 		/// @details Returns the angular velocity of the body in degrees/second.
@@ -75,12 +75,12 @@ namespace Racecar
 		///
 		///
 		///
-		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
+		virtual Real ComputeDownstreamInertia(void) const;
 
 		///
 		///
 		///
-		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
+		virtual Real ComputeUpstreamInertia(void) const;
 
 	protected:
 		///
@@ -95,8 +95,8 @@ namespace Racecar
 		///
 	
 		//TODO: DriveTrain: FIX: HACK: These methods should be protected, they are not so that the differential can work.
-	public: virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource);
-	public: virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource);
+	public: virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity);
+	public: virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity);
 	protected:
 		///
 		/// @details Returns the input source for the rotating body, in a way that forces can be transmitted back.

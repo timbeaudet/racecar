@@ -76,13 +76,13 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 		{
 			const Real frictionImpulse = 10 * 0.45 * fixedTime;
 			const Real appliedImpulse((fabs(matchImpulse) > frictionImpulse) ? frictionImpulse * Sign(matchImpulse) : matchImpulse);
-			GetExpectedInputSource().ApplyUpstreamAngularImpulse(appliedImpulse, *this);
-			ApplyDownstreamAngularImpulse(-appliedImpulse, *this);
+			GetExpectedInputSource().ApplyUpstreamAngularImpulse(appliedImpulse);
+			ApplyDownstreamAngularImpulse(-appliedImpulse);
 		}
 		else
 		{	//It appears the "dog collar" boxes just slam into required speeds.
-			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse, *this);
-			ApplyDownstreamAngularImpulse(-matchImpulse, *this);
+			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse);
+			ApplyDownstreamAngularImpulse(-matchImpulse);
 			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kElipson,
 				"InternalError: The output shaft is not rotating at the correct speed.");
 		}
@@ -91,19 +91,19 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::Transmission::ComputeDownstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::Transmission::ComputeDownstreamInertia(void) const
 {
 	if (Gear::Neutral == mSelectedGear)
 	{
 		return 0.0;
 	}
 
-	return RotatingBody::ComputeDownstreamInertia(fromSource) / fabs(GetSelectedGearRatio());
+	return RotatingBody::ComputeDownstreamInertia() / fabs(GetSelectedGearRatio());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(void) const
 {
 	if (Gear::Neutral == mSelectedGear)
 	{
@@ -111,23 +111,23 @@ Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(const RotatingBody& 
 	}
 
 	const RotatingBody* inputSource(GetInputSource());
-	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia(fromSource));
+	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia());
 	return GetInertia() + upstreamInertia * fabs(GetSelectedGearRatio());
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Transmission::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::Transmission::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	if (Gear::Neutral != mSelectedGear)
 	{
-		RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity / GetSelectedGearRatio(), fromSource);
+		RotatingBody::OnDownstreamAngularVelocityChange(changeInAngularVelocity / GetSelectedGearRatio());
 	}
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	SetAngularVelocity(GetAngularVelocity() + changeInAngularVelocity);
 
@@ -136,7 +136,7 @@ void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeIn
 		RotatingBody* inputSource(GetInputSource());
 		if (nullptr != inputSource)
 		{
-			inputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio(), fromSource);
+			inputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio());
 		}
 	}
 }
@@ -222,8 +222,8 @@ Racecar::Real Racecar::GearJoint::ComputeTorqueImpulseToMatchVelocity(const Rota
 	//       gr is the gear ratio.
 	//
 	//See: gear_ratio_impulse_proof.png for actual train of thought.
-	const Real inputInertia(input.ComputeUpstreamInertia(output));
-	const Real outputInertia(output.ComputeDownstreamInertia(output) * GetGearRatio());
+	const Real inputInertia(input.ComputeUpstreamInertia());
+	const Real outputInertia(output.ComputeDownstreamInertia() * GetGearRatio());
 
 	const Real ratio(GetGearRatio());
 	const Real numerator = (inputInertia * outputInertia) * (ratio * output.GetAngularVelocity() - input.GetAngularVelocity()); //Io*Ii*(r*Wo - Wi)

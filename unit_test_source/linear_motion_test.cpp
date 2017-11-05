@@ -31,8 +31,8 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01, wheel); //200nm torque
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	const Real expectedLinearVelocity(100.0);  //100m/s
@@ -63,9 +63,9 @@ bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01, wheel); //200nm torque
-		wheel.Simulate(racecarController, 0.01);
-		carBody.Simulate(racecarController, 0.01);
+		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
+		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		carBody.Simulate(racecarController, kTestFixedTimeStep);
 	}
 
 	const Real expectedLinearVelocity(8.0);  //m/s
@@ -121,8 +121,8 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		wheel.SetOnGround(true, test.mFrictionCoefficient); //0.05 for ice friction, 0.7 for pavement friction.
 
 		//Simulate a time step, with infinite friction this should be all that is needed.
-		wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
-		carBody.Simulate(racecarController, 0.01);
+		wheel.Simulate(racecarController, kTestFixedTimeStep); //Simulates 10ms of action.
+		carBody.Simulate(racecarController, kTestFixedTimeStep);
 
 		outFile << "10\t" << wheel.GetLinearVelocity() << "\t" << wheel.GetAngularVelocity() << "\n";
 		outFile.flush();
@@ -147,8 +147,8 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 		//Simulate the time steps for the remainder of the test, when complete the car/wheel should be in equilibrium from friction.
 		for (int timer(10); timer < test.mTestTime; timer += 10)
 		{
-			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
-			carBody.Simulate(racecarController, 0.01);
+			wheel.Simulate(racecarController, kTestFixedTimeStep); //Simulates 10ms of action.
+			carBody.Simulate(racecarController, kTestFixedTimeStep);
 
 			outFile << timer + 10 << "\t" << wheel.GetLinearVelocity() << "\t" << wheel.GetAngularVelocity() << "\n";
 			outFile.flush();
@@ -212,8 +212,8 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		//Simulate 500ms of the car flying through the air, the car has NOT landed on the ground, and should have identical state.
 		for (int timer(10); timer < 500; timer += 10)
 		{
-			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
-			racecarBody.Simulate(racecarController, 0.01);
+			wheel.Simulate(racecarController, kTestFixedTimeStep); //Simulates 10ms of action.
+			racecarBody.Simulate(racecarController, kTestFixedTimeStep);
 		}
 
 		{	//Check that the car and wheel are in identical states as when we started the test, (haven't touched ground yet!)
@@ -254,8 +254,8 @@ bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 		//Simulate the time steps for the remainder of the test, when complete the car/wheel should be in equilibrium from friction.
 		for (int timer(10); timer < test.mTestTime; timer += 10)
 		{
-			wheel.Simulate(racecarController, 0.01); //Simulates 10ms of action.
-			racecarBody.Simulate(racecarController, 0.01);
+			wheel.Simulate(racecarController, kTestFixedTimeStep); //Simulates 10ms of action.
+			racecarBody.Simulate(racecarController, kTestFixedTimeStep);
 		}
 
 		{	//Check for results after a single time step, should be matched for infinite friction.

@@ -46,10 +46,10 @@ namespace Racecar
 		inline void SetMaximumBrakingTorque(const Real& maximumBrakingTorque) { mMaximumBrakingTorque = maximumBrakingTorque; }
 
 	protected:
-		virtual Real ComputeDownstreamInertia(const RotatingBody& fromSource) const;
-		virtual Real ComputeUpstreamInertia(const RotatingBody& fromSource) const;
-		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
-		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual Real ComputeDownstreamInertia(void) const;
+		virtual Real ComputeUpstreamInertia(void) const;
+		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 
 		//void ApplyForceToGroundFrom(const Real& angularAcceleration);
 		void ApplyGroundFriction(const Real& fixedTime);

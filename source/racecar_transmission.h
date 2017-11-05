@@ -61,12 +61,12 @@ namespace Racecar
 
 		void SetSynchromeshBox(const bool synchromeshBox) { mIsSynchromeshBox = synchromeshBox; }
 
-		virtual Racecar::Real ComputeDownstreamInertia(const RotatingBody& fromSource) const override;
-		virtual Racecar::Real ComputeUpstreamInertia(const RotatingBody& fromSource) const override;
+		virtual Racecar::Real ComputeDownstreamInertia(void) const override;
+		virtual Racecar::Real ComputeUpstreamInertia(void) const override;
 
 	protected:
-		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
-		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource) override;
+		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
+		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 
 	private:
 		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);

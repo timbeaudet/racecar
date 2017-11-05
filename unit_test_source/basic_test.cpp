@@ -115,7 +115,7 @@ bool ConstantTorqueTest(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01, wheel); //200nm torque
+		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
 		wheel.Simulate(racecarController, 0.01);
 	}
 
@@ -130,7 +130,7 @@ bool ConstantTorqueTest(void)
 	//Simulate 1 second of applying a negative 200Nm torque to the rotating body, to stop the wheel.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyDownstreamAngularImpulse(-200.0 * 0.01, wheel);
+		wheel.ApplyDownstreamAngularImpulse(-200.0 * 0.01);
 		wheel.Simulate(racecarController, 0.01);
 	}
 
@@ -145,7 +145,7 @@ bool ConstantTorqueTest(void)
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyUpstreamAngularImpulse(200.0 * 0.01, wheel);
+		wheel.ApplyUpstreamAngularImpulse(200.0 * 0.01);
 		wheel.Simulate(racecarController, 0.01);
 	}
 
@@ -160,7 +160,7 @@ bool ConstantTorqueTest(void)
 	//Simulate 1 second of applying a negative 10Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.ApplyUpstreamAngularImpulse(-200.0 * 0.01, wheel);
+		wheel.ApplyUpstreamAngularImpulse(-200.0 * 0.01);
 		wheel.Simulate(racecarController, 0.01);
 	}
 
@@ -193,7 +193,7 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engineMass.ApplyDownstreamAngularImpulse(30.0 * 0.01, engineMass);
+		engineMass.ApplyDownstreamAngularImpulse(30.0 * 0.01);
 		engineMass.Simulate(0.01);
 		lockedDifferential.Simulate(racecarController, 0.01);
 		wheelMass.Simulate(0.01);
@@ -213,7 +213,7 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engineMass.ApplyDownstreamAngularImpulse(-30.0 * 0.01, engineMass);
+		engineMass.ApplyDownstreamAngularImpulse(-30.0 * 0.01);
 		engineMass.Simulate(0.01); //Simulates 10ms of action.
 		lockedDifferential.Simulate(racecarController, 0.01);
 		wheelMass.Simulate(0.01);
@@ -232,7 +232,7 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheelMass.ApplyUpstreamAngularImpulse(30.0 * 0.01, wheelMass);
+		wheelMass.ApplyUpstreamAngularImpulse(30.0 * 0.01);
 		engineMass.Simulate(0.01);
 		lockedDifferential.Simulate(racecarController, 0.01);
 		wheelMass.Simulate(0.01);
@@ -252,7 +252,7 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheelMass.ApplyUpstreamAngularImpulse(-30.0 * 0.01, wheelMass);
+		wheelMass.ApplyUpstreamAngularImpulse(-30.0 * 0.01);
 		engineMass.Simulate(0.01); //Simulates 10ms of action.
 		lockedDifferential.Simulate(racecarController, 0.01);
 		wheelMass.Simulate(0.01);

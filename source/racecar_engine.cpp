@@ -33,21 +33,16 @@ void Racecar::ConstantEngine::Simulate(const Racecar::RacecarControllerInterface
 
 	if (racecarController.GetThrottlePosition() > 0.5)
 	{
-		ApplyDownstreamAngularImpulse(mConstantTorque * fixedTime, *this);
+		ApplyDownstreamAngularImpulse(mConstantTorque * fixedTime);
 	}
-	if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kElipson)
+	else if (racecarController.GetThrottlePosition() < 0.1 && mResistanceTorque > kElipson)
 	{
-		const Real totalInertia(ComputeDownstreamInertia(*this));
+		const Real totalInertia(ComputeDownstreamInertia());
 		const Real maximumImpulse(totalInertia * GetAngularVelocity()); //kg*m^2 / s
 		const Real actualImpulse(mResistanceTorque * fixedTime); //kg*m^2 / s
 		const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
 		//The /fixedTime is to apply this as an impulse, deeper down it will *fixedTime.
-		ApplyDownstreamAngularImpulse(appliedImpulse * -Racecar::Sign(GetAngularVelocity()), *this);
-	}
-
-	{	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
-//		const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
-//		ApplyDownstreamTorque(-engineResistanceTorque, *this);
+		ApplyDownstreamAngularImpulse(appliedImpulse * -Racecar::Sign(GetAngularVelocity()));
 	}
 
 	//Now that all torques have been applied to the engine, step it forward in time.
@@ -158,12 +153,12 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(GetOutputTorque(GetEngineSpeedRPM()) * racecarController.GetThrottlePosition());
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
-		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime, *this);
+		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 	}
 
 	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
 	const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
-	ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime, *this);
+	ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime);
 
 	//Now that all torques have been applied to the engine, step it forward in time.
 	RotatingBody::Simulate(fixedTime);
@@ -175,8 +170,8 @@ void Racecar::Engine::Simulate(const Racecar::RacecarControllerInterface& raceca
 	//const Real differenceTo1000(GetAngularVelocity() - Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
 	if (differenceTo1000 < 0.0)
 	{
-		const Real totalInertia(ComputeDownstreamInertia(*this));
-		ApplyDownstreamAngularImpulse(-differenceTo1000 * fixedTime * totalInertia, *this);
+		const Real totalInertia(ComputeDownstreamInertia());
+		ApplyDownstreamAngularImpulse(-differenceTo1000 * fixedTime * totalInertia);
 	}
 }
 

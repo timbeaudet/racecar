@@ -119,12 +119,12 @@ std::vector<Racecar::RotatingBody*>& Racecar::RotatingBody::GetOutputSources(voi
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::RotatingBody::ComputeDownstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::RotatingBody::ComputeDownstreamInertia(void) const
 {
 	Real downstreamInertia(GetInertia());
 	for (RotatingBody* output : mOutputSources)
 	{
-		downstreamInertia += output->ComputeDownstreamInertia(fromSource);
+		downstreamInertia += output->ComputeDownstreamInertia();
 	}
 
 	return downstreamInertia;
@@ -132,12 +132,12 @@ Racecar::Real Racecar::RotatingBody::ComputeDownstreamInertia(const RotatingBody
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Racecar::Real Racecar::RotatingBody::ComputeUpstreamInertia(const RotatingBody& fromSource) const
+Racecar::Real Racecar::RotatingBody::ComputeUpstreamInertia(void) const
 {
 	Real upstreamInertia(GetInertia());
 	if (nullptr != mInputSource)
 	{
-		upstreamInertia += mInputSource->ComputeUpstreamInertia(fromSource);
+		upstreamInertia += mInputSource->ComputeUpstreamInertia();
 	}
 
 	return upstreamInertia;
@@ -152,39 +152,39 @@ void Racecar::RotatingBody::Simulate(const Real& fixedTime)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::ApplyDownstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource)
+void Racecar::RotatingBody::ApplyDownstreamAngularImpulse(const Real& angularImpulse)
 {
-	const Real totalInertia(ComputeDownstreamInertia(fromSource));
-	OnDownstreamAngularVelocityChange(angularImpulse / totalInertia, fromSource);
+	const Real totalInertia(ComputeDownstreamInertia());
+	OnDownstreamAngularVelocityChange(angularImpulse / totalInertia);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::ApplyUpstreamAngularImpulse(const Real& angularImpulse, const RotatingBody& fromSource)
+void Racecar::RotatingBody::ApplyUpstreamAngularImpulse(const Real& angularImpulse)
 {
-	const Real totalInertia(ComputeUpstreamInertia(fromSource));
-	OnUpstreamAngularVelocityChange(angularImpulse / totalInertia, fromSource);
+	const Real totalInertia(ComputeUpstreamInertia());
+	OnUpstreamAngularVelocityChange(angularImpulse / totalInertia);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::RotatingBody::OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	mAngularVelocity += changeInAngularVelocity;
 	for (RotatingBody* output : mOutputSources)
 	{
-		output->OnDownstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+		output->OnDownstreamAngularVelocityChange(changeInAngularVelocity);
 	}
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::RotatingBody::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity, const RotatingBody& fromSource)
+void Racecar::RotatingBody::OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity)
 {
 	mAngularVelocity += changeInAngularVelocity;
 	if (nullptr != mInputSource)
 	{
-		mInputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity, fromSource);
+		mInputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity);
 	}
 }
 
