@@ -54,7 +54,7 @@ Racecar::Real Racecar::ClutchJoint::ComputeTorqueImpulseToMatchVelocity(const Ro
 	const Real angularVelocityDifference(output.GetAngularVelocity() - input.GetAngularVelocity());
 	const Real inputInertia(input.ComputeUpstreamInertia());
 	const Real outputInertia(output.ComputeDownstreamInertia());
-
+	error_if(inputInertia < kEpsilon || outputInertia < kEpsilon, "Expected input and output inertia to be greater than zero.");
 	const Real torqueImpulse = (inputInertia * outputInertia * angularVelocityDifference) / (inputInertia + outputInertia);
 	return torqueImpulse;
 }
@@ -66,7 +66,7 @@ Racecar::Real Racecar::ClutchJoint::ComputeTorqueImpulseToMatchVelocity(const Ro
 Racecar::Clutch::Clutch(const Real& momentOfInertia, const Real& maximumNormalForce, 
 	const Real& staticFrictionCoefficient, const Real& kineticFrictionCoefficient) :
 	RotatingBody(momentOfInertia),
-	mClutchEngagement(0.0),
+	mClutchEngagement(1.0),
 	mMaximumNormalForce(maximumNormalForce),
 	mClutchJoint(staticFrictionCoefficient, kineticFrictionCoefficient)
 {
@@ -92,16 +92,19 @@ void Racecar::Clutch::OnControllerChange(const Racecar::RacecarControllerInterfa
 
 void Racecar::Clutch::OnSimulate(const Real& fixedTime)
 {
-	RotatingBody& inputSource(GetExpectedInputSource());
-
-	const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
-	mClutchJoint.SetNormalForce(actualNormalForce);
-
-	const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
-	if (fabs(frictionalImpulse) > kEpsilon)	//Make sure not zero!
+	if (mClutchEngagement >= Racecar::PercentTo(0.5))
 	{
-		inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse);
-		ApplyDownstreamAngularImpulse(-frictionalImpulse);
+		RotatingBody& inputSource(GetExpectedInputSource());
+
+		const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
+		mClutchJoint.SetNormalForce(actualNormalForce);
+
+		const Real frictionalImpulse = mClutchJoint.ComputeTorqueImpulse(inputSource, *this, fixedTime);
+		if (fabs(frictionalImpulse) > kEpsilon)	//Make sure not zero!
+		{
+			inputSource.ApplyUpstreamAngularImpulse(frictionalImpulse);
+			ApplyDownstreamAngularImpulse(-frictionalImpulse);
+		}
 	}
 
 	RotatingBody::OnSimulate(fixedTime);
@@ -115,7 +118,7 @@ Racecar::Real Racecar::Clutch::ComputeDownstreamInertia(void) const
 	//When completely engaged: return RotatingBody::ComputeDownstreamInertia()
 	//When partially engaged: Do black magic! ????
 
-	if (mClutchEngagement < Racecar::PercentTo(0.5f))
+	if (mClutchEngagement < Racecar::PercentTo(0.5))
 	{
 		return 0.0;
 	}

@@ -367,7 +367,7 @@ bool Racecar::UnitTests::WheelClutchAndEngineBrakingTest(void)
 		clutch.Simulate(kTestFixedTimeStep);
 		wheel.Simulate(kTestFixedTimeStep);
 
-		if (wheel.GetAngularVelocity() < 0.0 || engine.GetAngularVelocity() < 0.0 || clutch.GetAngularVelocity() < 0.0 ||
+		if (wheel.GetAngularVelocity() < -kTestEpsilon || engine.GetAngularVelocity() < -kTestEpsilon || clutch.GetAngularVelocity() < -kTestEpsilon ||
 			wheel.GetAngularVelocity() > 10000.0 || engine.GetAngularVelocity() > 10000.0 || clutch.GetAngularVelocity() > 10000.0)
 		{	//This was causing a 0.0 / 0.01 issue that resulted in NaN to be generated.
 			return false;

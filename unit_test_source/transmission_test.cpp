@@ -165,7 +165,6 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	//Do it again for a long time- should stop the wheel entirely, including gearbox output shaft.
 	racecarController.SetThrottlePosition(0.0);
 	racecarController.SetBrakePosition(1.0);
-	racecarController.SetDownshift(true);
 	for (int timer(0); timer < 5000; timer += 10)
 	{
 		engine.ControllerChange(racecarController);
@@ -176,7 +175,6 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 		gearbox.Simulate(kTestFixedTimeStep);
 		wheel.Simulate(kTestFixedTimeStep);
 
-		racecarController.SetDownshift(false);
 	}
 
 	{

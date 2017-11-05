@@ -14,11 +14,13 @@
 #include "differential_test.h"
 #include "transmission_test.h"
 #include "linear_motion_test.h"
+#include "racecar_test.h"
 
 #include "../source/racecar.h"
 #include "../source/racecar_controller.h"
 #include "../source/racecar_wheel.h"
 #include "../source/racecar_locked_differential.h"
+
 
 #include <cstdio>
 
@@ -66,6 +68,8 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(TransmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
 	perform_test(TransmissionBrakeInNeutralTest(), "Transmission Brake in Neutral Test");
 	perform_test(TransmissionBrakeInReverseTest(), "Transmission Brake in Reverse Test");
+
+	perform_test(RacecarAccelerationTest(), "Racecar Acceleration Test");
 
 	if (false == failedTest)
 	{

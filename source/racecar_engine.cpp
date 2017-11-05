@@ -117,7 +117,7 @@ void Racecar::TorqueCurve::AddPlotPoint(const Racecar::Real engineSpeedRPM, cons
 	error_if(engineSpeedRPM < 0.0, "Cannot add plot point for engine speeds less than zero.");
 	error_if(torque < 0.0, "Cannot add plot point for torque amounts that are less than zero.");
 
-	auto findItr = std::find_if(mTorqueTable.begin(), mTorqueTable.end(), [engineSpeedRPM](PlotPoint& pt) { return fabs(pt.first - engineSpeedRPM) < kEpsilon; });
+	auto findItr = std::find_if(mTorqueTable.begin(), mTorqueTable.end(), [engineSpeedRPM](PlotPoint& pt) { return fabs(pt.first - engineSpeedRPM) < 0.1; });
 	error_if(mTorqueTable.end() != findItr, "Cannot plot a point on top of another point!");
 
 	PlotPoint pt(engineSpeedRPM, torque);
@@ -160,7 +160,12 @@ Racecar::Real Racecar::TorqueCurve::GetOutputValue(const Real engineSpeedRPM) co
 	error_if(false == mIsNormalized, "Cannot get output of a TorqueCurve that has not been normalized. Call NormalizeTorqueCurve().");
 
 	PlotPoint previousPoint = mTorqueTable.front();
-	for (size_t index(0); index < kTorqueTableSize; ++index)
+	if (engineSpeedRPM < previousPoint.first)
+	{	//The RPM of the engine is lower than the lowest in torque table.
+		return previousPoint.second;
+	}
+
+	for (size_t index(1); index < kTorqueTableSize; ++index)
 	{
 		const PlotPoint& currentPoint(mTorqueTable[index]);
 		const Real& currentRPM(currentPoint.first);
@@ -217,6 +222,7 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * mThrottlePosition);
 		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
+		//const Real appliedEngineTorque(onThrottleTorque);
 		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 	}
 
