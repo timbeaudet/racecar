@@ -24,12 +24,9 @@ Racecar::LockedDifferential::~LockedDifferential(void)
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::LockedDifferential::Simulate(RacecarControllerInterface& racecarController, const Real& fixedTime)
+void Racecar::LockedDifferential::OnSimulate(const Real& fixedTime)
 {
-	((void)racecarController);
-	((void)fixedTime);
-
-	RotatingBody::Simulate(fixedTime);
+	RotatingBody::OnSimulate(fixedTime);
 
 	//const RotatingBody* inputSource(GetInputSource());
 	//if (nullptr != inputSource)

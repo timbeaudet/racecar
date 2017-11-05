@@ -56,12 +56,47 @@ Racecar::Transmission::~Transmission(void)
 
 //--------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime)
+void Racecar::Transmission::OnControllerChange(const RacecarControllerInterface& racecarController)
 {
-	((void)fixedTime);
+	static bool hackeryIsShifter(false);
+	if (racecarController.GetShifterPosition() != Gear::Neutral)
+	{
+		hackeryIsShifter = true;
+	}
 
-	SimulateShiftLogic(racecarController);
+	if (false == hackeryIsShifter)
+	{
+		if (true == mHasClearedShift)
+		{
+			if (true == racecarController.IsUpshift())
+			{	//Upshift
+				mSelectedGear = UpshiftGear(mSelectedGear);
+				mHasClearedShift = false;
+			}
+			else if (true == racecarController.IsDownshift())
+			{	//Downshift
+				mSelectedGear = DownshiftGear(mSelectedGear);
+				mHasClearedShift = false;
+			}
+		}
+		else
+		{
+			if (false == racecarController.IsUpshift() && false == racecarController.IsDownshift())
+			{
+				mHasClearedShift = true;
+			}
+		}
+	}
+	else
+	{
+		mSelectedGear = racecarController.GetShifterPosition();
+	}
+}
 
+//--------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Transmission::OnSimulate(const Real& fixedTime)
+{
 	if (Gear::Neutral == mSelectedGear)
 	{
 		//Do nothing.
@@ -87,6 +122,8 @@ void Racecar::Transmission::Simulate(const RacecarControllerInterface& racecarCo
 				"InternalError: The output shaft is not rotating at the correct speed.");
 		}
 	}
+
+	RotatingBody::OnSimulate(fixedTime);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -138,45 +175,6 @@ void Racecar::Transmission::OnUpstreamAngularVelocityChange(const Real& changeIn
 		{
 			inputSource->OnUpstreamAngularVelocityChange(changeInAngularVelocity * GetSelectedGearRatio());
 		}
-	}
-}
-
-//--------------------------------------------------------------------------------------------------------------------//
-
-void Racecar::Transmission::SimulateShiftLogic(const RacecarControllerInterface& racecarController)
-{
-	static bool hackeryIsShifter(false);
-	if (racecarController.GetShifterPosition() != Gear::Neutral)
-	{
-		hackeryIsShifter = true;
-	}
-
-	if (false == hackeryIsShifter)
-	{
-		if (true == mHasClearedShift)
-		{
-			if (true == racecarController.IsUpshift())
-			{	//Upshift
-				mSelectedGear = UpshiftGear(mSelectedGear);
-				mHasClearedShift = false;
-			}
-			else if (true == racecarController.IsDownshift())
-			{	//Downshift
-				mSelectedGear = DownshiftGear(mSelectedGear);
-				mHasClearedShift = false;
-			}
-		}
-		else
-		{
-			if (false == racecarController.IsUpshift() && false == racecarController.IsDownshift())
-			{
-				mHasClearedShift = true;
-			}
-		}
-	}
-	else
-	{
-		mSelectedGear = racecarController.GetShifterPosition();
 	}
 }
 

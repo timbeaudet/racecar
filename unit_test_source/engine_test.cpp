@@ -27,7 +27,8 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	racecarController.SetThrottlePosition(0.0f);
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
 	}
 
 	{	//Everything should be in the same state it started in initially.
@@ -39,7 +40,8 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 
 	//Compute and test a single time-step of constant engine torque.
 	racecarController.SetThrottlePosition(1.0f);
-	engine.Simulate(racecarController, 0.01);
+	engine.ControllerChange(racecarController);
+	engine.Simulate(kTestFixedTimeStep);
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
 		if (fabs(engine.GetAngularVelocity() - 0.1) > UnitTests::kTestEpsilon)
@@ -52,7 +54,8 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	racecarController.SetThrottlePosition(1.0f);
 	for (int timer(10); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
 	}
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
@@ -64,7 +67,8 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 
 	//Compute and test a single time-step of constant engine resistance torque.
 	racecarController.SetThrottlePosition(0.0f);
-	engine.Simulate(racecarController, 0.01);
+	engine.ControllerChange(racecarController);
+	engine.Simulate(kTestFixedTimeStep);
 
 	{	//Should slow down the engine a little bit.
 		if (fabs(engine.GetAngularVelocity() - 9.95) > UnitTests::kTestEpsilon)
@@ -77,7 +81,8 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 	racecarController.SetThrottlePosition(0.0f);
 	for (int timer(10); timer < 1980; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
 	}
 
 	{	//Engine should be slowed down a lot.
@@ -87,17 +92,22 @@ bool Racecar::UnitTests::BasicEngineTest(void)
 		}
 
 		//Get the engine to hit a zero velocity state.
-		engine.Simulate(racecarController, 0.01);
-		engine.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
 		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
 
 		//Finally ensure that over simulating won't bounce back and forth, and should remain 0.
-		engine.Simulate(racecarController, 0.01);
-		engine.Simulate(racecarController, 0.01);
-		engine.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
 
 		if (fabs(engine.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
@@ -122,8 +132,10 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 	racecarController.SetThrottlePosition(0.0f);
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	{	//Everything should be in the same state it started in initially.
@@ -139,8 +151,10 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 
 	//Compute and test a single time-step of constant engine torque.
 	racecarController.SetThrottlePosition(1.0f);
-	engine.Simulate(racecarController, 0.01);
-	wheel.Simulate(racecarController, 0.01);
+	engine.ControllerChange(racecarController);
+	wheel.ControllerChange(racecarController);
+	engine.Simulate(kTestFixedTimeStep);
+	wheel.Simulate(kTestFixedTimeStep);
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
 		if (fabs(engine.GetAngularVelocity() - 0.05) > UnitTests::kTestEpsilon)
@@ -157,8 +171,10 @@ bool Racecar::UnitTests::EngineWithConnectionTest(void)
 	racecarController.SetThrottlePosition(1.0f);
 	for (int timer(10); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.

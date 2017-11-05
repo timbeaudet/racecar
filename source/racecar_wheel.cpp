@@ -21,6 +21,7 @@ Racecar::Wheel::Wheel(const Real& massInKilograms, const Real& radiusInMeters) :
 	mLinearVelocity(0.0),
 	mGroundFrictionCoefficient(-1.0),
 	mMaximumBrakingTorque(100.0), //Nm
+	mBrakePedalPosition(0.0),
 	mRacecarBody(nullptr),
 	mIsOnGround(false)
 {
@@ -42,14 +43,21 @@ void Racecar::Wheel::SetRacecarBody(RacecarBody* racecarBody)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
+void Racecar::Wheel::OnControllerChange(const RacecarControllerInterface& racecarController)
+{
+	mBrakePedalPosition = racecarController.GetBrakePosition();
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Wheel::OnSimulate(const Real& fixedTime)
 {
 	///Compute the impulse it would take to stop the wheel / car + connections, compare that against the
 	///actual impulse that would be applied based on braking torque, use the lower of those values in the
 	///correct direction, and apply the upstream torque to slow the wheel + connections.
 	const Real totalInertia(ComputeUpstreamInertia());
 	const Real maximumImpulse(totalInertia * fabs(GetAngularVelocity())); //kg*m^2 / s
-	const Real actualImpulse(mMaximumBrakingTorque * racecarController.GetBrakePosition() * fixedTime); //kg*m^2 / s
+	const Real actualImpulse(mMaximumBrakingTorque * mBrakePedalPosition * fixedTime); //kg*m^2 / s
 	const Real appliedImpulse((actualImpulse > maximumImpulse) ? maximumImpulse : actualImpulse);
 	if (appliedImpulse > kEpsilon)
 	{
@@ -61,7 +69,7 @@ void Racecar::Wheel::Simulate(const Racecar::RacecarControllerInterface& racecar
 	///when making contact with the ground that has infinite friction!
 	ApplyGroundFriction(fixedTime);
 
-	RotatingBody::Simulate();
+	RotatingBody::OnSimulate(fixedTime);
 
 	//const RotatingBody* inputSource(GetInputSource());
 	//if (nullptr != inputSource)

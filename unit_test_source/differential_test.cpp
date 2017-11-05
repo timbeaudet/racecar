@@ -50,8 +50,11 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 
 		//Compute and test a single time-step of constant engine torque.
 		racecarController.SetThrottlePosition(1.0f);
-		engine.Simulate(racecarController, 0.01);
-		lockedDifferential.Simulate(racecarController, 0.01);
+
+		engine.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		engine.Simulate(kTestFixedTimeStep);
+		lockedDifferential.Simulate(kTestFixedTimeStep);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
 			if (fabs(engine.GetAngularVelocity() - test.mExpectedInputAngularVelocity[0]) > UnitTests::kTestEpsilon)
@@ -68,8 +71,11 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 		racecarController.SetThrottlePosition(1.0f);
 		for (int timer(10); timer < 1000; timer += 10)
 		{
-			engine.Simulate(racecarController, 0.01);
-			lockedDifferential.Simulate(racecarController, 0.01);
+			engine.ControllerChange(racecarController);
+			lockedDifferential.ControllerChange(racecarController);
+
+			engine.Simulate(kTestFixedTimeStep);
+			lockedDifferential.Simulate(kTestFixedTimeStep);
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
@@ -124,9 +130,12 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 
 		//Compute and test a single time-step of constant engine torque.
 		racecarController.SetThrottlePosition(1.0f);
-		engine.Simulate(racecarController, kTestTimeStep);
-		lockedDifferential.Simulate(racecarController, kTestTimeStep);
-		wheel.Simulate(racecarController, kTestTimeStep);
+		engine.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+		engine.Simulate(kTestTimeStep);
+		lockedDifferential.Simulate(kTestTimeStep);
+		wheel.Simulate(kTestTimeStep);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
 			if (fabs(engine.GetAngularVelocity() - test.mExpectedEngineAngularVelocity[0]) > UnitTests::kTestEpsilon)
@@ -156,9 +165,13 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		racecarController.SetBrakePosition(0.0f);
 		for (int timer(10); timer < 1000; timer += 10)
 		{
-			engine.Simulate(racecarController, kTestTimeStep);
-			lockedDifferential.Simulate(racecarController, kTestTimeStep);
-			wheel.Simulate(racecarController, kTestTimeStep);
+			engine.ControllerChange(racecarController);
+			lockedDifferential.ControllerChange(racecarController);
+			wheel.ControllerChange(racecarController);
+
+			engine.Simulate(kTestTimeStep);
+			lockedDifferential.Simulate(kTestTimeStep);
+			wheel.Simulate(kTestTimeStep);
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.
@@ -188,9 +201,13 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		//Compute and test a single time-step of constant braking torque.
 		racecarController.SetThrottlePosition(0.0f);
 		racecarController.SetBrakePosition(1.0f);
-		engine.Simulate(racecarController, kTestTimeStep);
-		lockedDifferential.Simulate(racecarController, kTestTimeStep);
-		wheel.Simulate(racecarController, kTestTimeStep);
+
+		engine.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+		engine.Simulate(kTestTimeStep);
+		lockedDifferential.Simulate(kTestTimeStep);
+		wheel.Simulate(kTestTimeStep);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
 			const Real expectedEngineAngularVelocity(test.mExpectedEngineAngularVelocity[1] - test.mExpectedEngineAngularVelocity[0] / 2.0);
@@ -225,9 +242,12 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		racecarController.SetBrakePosition(1.0f);
 		for (int timer(10); timer < 1000; timer += 10)
 		{
-			engine.Simulate(racecarController, kTestTimeStep);
-			lockedDifferential.Simulate(racecarController, kTestTimeStep);
-			wheel.Simulate(racecarController, kTestTimeStep);
+			engine.ControllerChange(racecarController);
+			lockedDifferential.ControllerChange(racecarController);
+			wheel.ControllerChange(racecarController);
+			engine.Simulate(kTestTimeStep);
+			lockedDifferential.Simulate(kTestTimeStep);
+			wheel.Simulate(kTestTimeStep);
 		}
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Multiple-steps.

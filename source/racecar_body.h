@@ -27,7 +27,12 @@ namespace Racecar
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real fixedTime = Racecar::kFixedTimeStep);
+		void ControllerChange(const Racecar::RacecarControllerInterface& racecarController);
+
+		///
+		///
+		///
+		void Simulate(const Real fixedTime = Racecar::kFixedTimeStep);
 
 		///
 		/// @details Applies an impulse to the body of the car, which will effect the velocity immediately.

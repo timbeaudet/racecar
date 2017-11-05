@@ -22,6 +22,8 @@ namespace Racecar
 	
 	extern Real kGravityConstant;
 
+	class RacecarControllerInterface;
+
 	class RotatingBody
 	{
 	public:
@@ -47,6 +49,11 @@ namespace Racecar
 		///
 		///
 		void AddOutputSource(RotatingBody* outputSource);
+		
+		///
+		/// @details Should be called whenever the racecar controller changes.
+		///
+		void ControllerChange(const RacecarControllerInterface& racecarController);
 
 		///
 		///
@@ -87,6 +94,9 @@ namespace Racecar
 		/// @details Set the inertia of the body in kg-m^2.
 		///
 		void SetInertia(const Real& inertia);
+
+		virtual void OnControllerChange(const RacecarControllerInterface& racecarController);
+		virtual void OnSimulate(const Real& fixedTime);
 
 		///
 		/// @details Changes the bodies acceleration.

@@ -43,9 +43,13 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 	racecarController.SetThrottlePosition(1.0);
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	if (fabs(engine.GetAngularVelocity() - 70.0) > kTestEpsilon)
@@ -57,9 +61,13 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 	racecarController.SetUpshift(true);
 	//for (int timer(0); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	if (Racecar::Gear::First != gearbox.GetSelectedGear())
@@ -108,9 +116,13 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	racecarController.SetUpshift(true);
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		racecarController.SetUpshift(false);
 	}
@@ -132,9 +144,13 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	racecarController.SetDownshift(true);
 	for (int timer(0); timer < 50; timer += 10)
 	{
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		racecarController.SetDownshift(false);
 	}
@@ -152,9 +168,13 @@ bool Racecar::UnitTests::TransmissionBrakeInNeutralTest(void)
 	racecarController.SetDownshift(true);
 	for (int timer(0); timer < 5000; timer += 10)
 	{
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		racecarController.SetDownshift(false);
 	}
@@ -195,10 +215,16 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	racecarController.SetThrottlePosition(0.0);
 	racecarController.SetBrakePosition(0.0);
 	racecarController.SetDownshift(true);
-	engine.Simulate(racecarController, kTestFixedTimeStep);
-	clutch.Simulate(racecarController, kTestFixedTimeStep);
-	gearbox.Simulate(racecarController, kTestFixedTimeStep);
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
+
+	engine.ControllerChange(racecarController);
+	clutch.ControllerChange(racecarController);
+	gearbox.ControllerChange(racecarController);
+	wheel.ControllerChange(racecarController);
+
+	engine.Simulate(kTestFixedTimeStep);
+	clutch.Simulate(kTestFixedTimeStep);
+	gearbox.Simulate(kTestFixedTimeStep);
+	wheel.Simulate(kTestFixedTimeStep);
 	racecarController.SetUpshift(false);
 
 	const Real reverseWheelSpeed(fabs(wheel.GetAngularVelocity()));
@@ -223,13 +249,15 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	{
 		const Real previousWheelVelocity(wheel.GetAngularVelocity());
 
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterEngine(wheel.GetAngularVelocity());
-		clutch.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterClutch(wheel.GetAngularVelocity());
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterGearbox(wheel.GetAngularVelocity());
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		clutch.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		clutch.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.
@@ -261,13 +289,15 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	{
 		const Real previousWheelVelocity(wheel.GetAngularVelocity());
 
-		engine.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterEngine(wheel.GetAngularVelocity());
-		clutch.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterClutch(wheel.GetAngularVelocity());
-		gearbox.Simulate(racecarController, kTestFixedTimeStep);
-		const Real afterGearbox(wheel.GetAngularVelocity());
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		engine.ControllerChange(racecarController);
+		clutch.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		clutch.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.

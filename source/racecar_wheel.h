@@ -27,11 +27,6 @@ namespace Racecar
 		///
 		///
 		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
-		///
-		///
-		///
 		Real GetWheelSpeedMPH(void) const;
 
 		inline bool IsOnGround(void) const { return mIsOnGround; }
@@ -46,6 +41,9 @@ namespace Racecar
 		inline void SetMaximumBrakingTorque(const Real& maximumBrakingTorque) { mMaximumBrakingTorque = maximumBrakingTorque; }
 
 	protected:
+		virtual void OnControllerChange(const RacecarControllerInterface& racecarController) override;
+		virtual void OnSimulate(const Real& fixedTime) override;
+
 		virtual Real ComputeDownstreamInertia(void) const;
 		virtual Real ComputeUpstreamInertia(void) const;
 		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
@@ -62,6 +60,7 @@ namespace Racecar
 		Real mLinearVelocity;
 		Real mGroundFrictionCoefficient; //If <= 0.0 assume infinite friction!
 		Real mMaximumBrakingTorque;
+		Real mBrakePedalPosition;
 		RacecarBody* mRacecarBody;
 		bool mIsOnGround;
 	};

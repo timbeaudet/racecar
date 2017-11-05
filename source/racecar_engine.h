@@ -23,13 +23,16 @@ namespace Racecar
 		explicit ConstantEngine(const Real& momentOfInertia, const Real& constantTorque, const Real& resistanceTorque);
 		virtual ~ConstantEngine(void);
 
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
 		Real GetEngineSpeedRPM(void) const;
+
+	protected:
+		virtual void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController) override;
+		virtual void OnSimulate(const Real& fixedTime) override;
 
 	private:
 		const Real mConstantTorque;     //Applied if throttle is greater than 0.5
 		const Real mResistanceTorque;   //Applied if throttle is less than 0.1, and angular velocity > 0.
+		float mThrottlePosition;
 	};
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -37,21 +40,30 @@ namespace Racecar
 	class TorqueCurve
 	{
 	public:
+		static TorqueCurve MiataTorqueCurve(void);
+
 		TorqueCurve(void);
 		~TorqueCurve(void);
 
-		static TorqueCurve MiataTorqueCurve(void);
-
 		///
+		/// @details Inserts a point for the curve to follow a more realistic torque/power curve of an internal combustion engine.
 		///
+		/// @param engineSpeedRPM Must be a positive value representing the speed of the engine in revolutions-per-minute.
+		/// @param torque Must be a positive value representing the torque produced at engineSpeedRPM.
+		///
+		/// @note Cannot be called once the TorqueCurve object has been normalized or an error condition will be triggered.
 		///
 		void AddPlotPoint(const Real engineSpeedRPM, const Real torque);
 
 		///
-		///
+		/// @details Finds the maximum torque value in the table and normalizes all values to be within 0.0 to 1.0.
 		///
 		void NormalizeTorqueCurve(void);
 
+		///
+		/// @details Will return true if the TorqueTable has been normalized, "set in stone."
+		///
+		inline bool IsNormalized(void) const { return mIsNormalized; }
 
 		///
 		/// @details Returns the maximum amount of torque in Nm (Newton-meters) of the engine.
@@ -86,19 +98,17 @@ namespace Racecar
 		virtual ~Engine(void);
 
 		///
-		///
-		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
-		///
 		/// @details Returns the speed of the engine in revolutions per minute.
 		///
 		Real GetEngineSpeedRPM(void) const;
 
 	protected:
+		virtual void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController) override;
+		virtual void OnSimulate(const Real& fixedTime);
 
 	private:
 		const TorqueCurve mTorqueCurve;
+		float mThrottlePosition;
 	};
 };	/* namespace Racecar */
 

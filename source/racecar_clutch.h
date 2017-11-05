@@ -48,23 +48,23 @@ namespace Racecar
 		virtual ~Clutch(void);
 
 		///
-		/// @details Set the clutch engagement before any Simulate calls since the Engine / other components could
-		///   depend on ComputeDownstreamInertia() or ComputeUpstreamInertia() and those functions would need to know
-		///   the engagement of the clutch disks, which is dependent on the RacecarControllerInterface.
-		///
-		void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController);
-
-		///
-		///
-		///
-		void Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
-		///
 		///
 		///
 		Real GetClutchEngagement(void) const { return mClutchEngagement; }
 
 	protected:
+
+		///
+		/// @details Set the clutch engagement before any Simulate calls since the Engine / other components could
+		///   depend on ComputeDownstreamInertia() or ComputeUpstreamInertia() and those functions would need to know
+		///   the engagement of the clutch disks, which is dependent on the RacecarControllerInterface.
+		///
+		virtual void OnControllerChange(const RacecarControllerInterface& racecarController) override;
+
+		///
+		///
+		///
+		virtual void OnSimulate(const Real& fixedTime);
 
 		virtual Real ComputeDownstreamInertia(void) const override;
 		virtual Real ComputeUpstreamInertia(void) const override;

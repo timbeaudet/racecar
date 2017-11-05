@@ -23,12 +23,11 @@ namespace Racecar
 		explicit LockedDifferential(const Real& momentOfInertia, const Real& finalDriveRatio);
 		virtual ~LockedDifferential(void);
 
-		void Simulate(RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
 		virtual Real ComputeDownstreamInertia(void) const override;
 		virtual Real ComputeUpstreamInertia(void) const override;
 
 	protected:
+		virtual void OnSimulate(const Real& fixedTime) override;
 		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 

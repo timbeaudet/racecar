@@ -27,6 +27,7 @@ const Racecar::Real Racecar::UnitTests::kTestFixedTimeStep(0.01); //Do not chang
 
 using Racecar::Real;
 using Racecar::UnitTests::kTestEpsilon;
+using Racecar::UnitTests::kTestFixedTimeStep;
 
 bool ConstructionTest(void);
 bool ConstantTorqueTest(void);
@@ -117,7 +118,8 @@ bool ConstantTorqueTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real expectedDownVelocity(400.0);
@@ -132,7 +134,8 @@ bool ConstantTorqueTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyDownstreamAngularImpulse(-200.0 * 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real negativeDownVelocity(wheel.GetAngularVelocity());
@@ -147,7 +150,8 @@ bool ConstantTorqueTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyUpstreamAngularImpulse(200.0 * 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real expectedUpVelocity(400.0);
@@ -162,7 +166,8 @@ bool ConstantTorqueTest(void)
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyUpstreamAngularImpulse(-200.0 * 0.01);
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real negativeUpVelocity(wheel.GetAngularVelocity());
@@ -194,10 +199,14 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
+		engineMass.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheelMass.ControllerChange(racecarController);
+
 		engineMass.ApplyDownstreamAngularImpulse(30.0 * 0.01);
-		engineMass.Simulate(0.01);
-		lockedDifferential.Simulate(racecarController, 0.01);
-		wheelMass.Simulate(0.01);
+		engineMass.Simulate(kTestFixedTimeStep);
+		lockedDifferential.Simulate(kTestFixedTimeStep);
+		wheelMass.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real expectedDownEngineVelocity(1.0);
@@ -214,10 +223,14 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
+		engineMass.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheelMass.ControllerChange(racecarController);
+
 		engineMass.ApplyDownstreamAngularImpulse(-30.0 * 0.01);
-		engineMass.Simulate(0.01); //Simulates 10ms of action.
-		lockedDifferential.Simulate(racecarController, 0.01);
-		wheelMass.Simulate(0.01);
+		engineMass.Simulate(kTestFixedTimeStep); //Simulates 10ms of action.
+		lockedDifferential.Simulate(kTestFixedTimeStep);
+		wheelMass.Simulate(kTestFixedTimeStep);
 	}
 
 	const Racecar::Real negativeDownEngineVelocity(engineMass.GetAngularVelocity());
@@ -233,10 +246,14 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
+		engineMass.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheelMass.ControllerChange(racecarController);
+
 		wheelMass.ApplyUpstreamAngularImpulse(30.0 * 0.01);
-		engineMass.Simulate(0.01);
-		lockedDifferential.Simulate(racecarController, 0.01);
-		wheelMass.Simulate(0.01);
+		engineMass.Simulate(kTestFixedTimeStep);
+		lockedDifferential.Simulate(kTestFixedTimeStep);
+		wheelMass.Simulate(kTestFixedTimeStep);
 	}
 
 	const Real expectedUpEngineVelocity(1.0);
@@ -253,10 +270,14 @@ bool GearReductionTest(void)
 	//Simulate 1 second of applying a 30Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
+		engineMass.ControllerChange(racecarController);
+		lockedDifferential.ControllerChange(racecarController);
+		wheelMass.ControllerChange(racecarController);
+
 		wheelMass.ApplyUpstreamAngularImpulse(-30.0 * 0.01);
-		engineMass.Simulate(0.01); //Simulates 10ms of action.
-		lockedDifferential.Simulate(racecarController, 0.01);
-		wheelMass.Simulate(0.01);
+		engineMass.Simulate(kTestFixedTimeStep); //Simulates 10ms of action.
+		lockedDifferential.Simulate(kTestFixedTimeStep);
+		wheelMass.Simulate(kTestFixedTimeStep);
 	}
 
 	const Racecar::Real negativeUpEngineVelocity(engineMass.GetAngularVelocity());

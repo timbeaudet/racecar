@@ -54,8 +54,6 @@ namespace Racecar
 		explicit Transmission(const Real momentOfInertia, const std::array<Real, 6>& gearRatios, const Real& reverseRatio);
 		virtual ~Transmission(void);
 
-		void Simulate(const RacecarControllerInterface& racecarController, const Real& fixedTime = Racecar::kFixedTimeStep);
-
 		const Gear& GetSelectedGear(void) const { return mSelectedGear; }
 		Real GetSelectedGearRatio(void) const;
 
@@ -65,12 +63,13 @@ namespace Racecar
 		virtual Racecar::Real ComputeUpstreamInertia(void) const override;
 
 	protected:
+		virtual void OnControllerChange(const RacecarControllerInterface& racecarController) override;
+		virtual void OnSimulate(const Real& fixedTime) override;
+
 		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 
 	private:
-		void SimulateShiftLogic(const RacecarControllerInterface& racecarController);
-
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
 		bool mIsSynchromeshBox;

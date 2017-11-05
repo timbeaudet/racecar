@@ -90,11 +90,9 @@ void Racecar::Clutch::OnControllerChange(const Racecar::RacecarControllerInterfa
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& racecarController, const Real& fixedTime)
+void Racecar::Clutch::OnSimulate(const Real& fixedTime)
 {
 	RotatingBody& inputSource(GetExpectedInputSource());
-
-	mClutchEngagement = ClutchPedalToClutchForce(racecarController.GetClutchPosition());
 
 	const Real actualNormalForce(mClutchEngagement * mMaximumNormalForce); //N //See above comment for where this comes from!
 	mClutchJoint.SetNormalForce(actualNormalForce);
@@ -106,7 +104,7 @@ void Racecar::Clutch::Simulate(const Racecar::RacecarControllerInterface& raceca
 		ApplyDownstreamAngularImpulse(-frictionalImpulse);
 	}
 
-	RotatingBody::Simulate(fixedTime);
+	RotatingBody::OnSimulate(fixedTime);
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

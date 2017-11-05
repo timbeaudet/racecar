@@ -145,7 +145,28 @@ Racecar::Real Racecar::RotatingBody::ComputeUpstreamInertia(void) const
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+void Racecar::RotatingBody::ControllerChange(const RacecarControllerInterface& racecarController)
+{
+	OnControllerChange(racecarController);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RotatingBody::OnControllerChange(const RacecarControllerInterface& racecarController)
+{
+	((void)racecarController);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 void Racecar::RotatingBody::Simulate(const Real& fixedTime)
+{
+	OnSimulate(fixedTime);
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::RotatingBody::OnSimulate(const Real& fixedTime)
 {
 	((void)fixedTime);
 }

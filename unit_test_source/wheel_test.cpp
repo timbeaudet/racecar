@@ -29,7 +29,8 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 
 	//5Nm, should lose 0.1rad/s per time step.
 	racecarController.SetBrakePosition(0.25);
-	wheel.Simulate(racecarController, 0.01);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.9) > UnitTests::kTestEpsilon)
 		{
@@ -43,7 +44,8 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 
 	//10Nm, should lose 0.2rad/s per time step.
 	racecarController.SetBrakePosition(0.5);
-	wheel.Simulate(racecarController, 0.01);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.7) > UnitTests::kTestEpsilon)
 		{
@@ -57,7 +59,8 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 
 	//20Nm, should lose 0.4rad/s per time step.
 	racecarController.SetBrakePosition(1.0);
-	wheel.Simulate(racecarController, 0.01);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 - 0.4 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.3) > UnitTests::kTestEpsilon)
 		{
@@ -72,7 +75,8 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 	//After 0.99 seconds the wheel should be going .4 + .3 + .2 rad/s due to above tests.
 	for (int timer(30); timer < 1010; timer += 10)
 	{
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 	{	//Wheel speed should now be  .1 rad/s due to above tests and 1.01 second simulation time.
 		if (fabs(wheel.GetAngularVelocity() - 0.1) > UnitTests::kTestEpsilon)
@@ -85,8 +89,10 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 		}
 	}
 
-	wheel.Simulate(racecarController, 0.01);
-	wheel.Simulate(racecarController, 0.01);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should stay at 0.
 		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
@@ -100,7 +106,8 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.Simulate(racecarController, 0.01);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 	{	//Wheel speed should stay at 0.
 		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
@@ -128,7 +135,8 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 
 	//5Nm, should lose 0.1rad/s per time step.
 	racecarController.SetBrakePosition(0.25);
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 rad/sec
 		if (fabs(wheel.GetAngularVelocity() + 39.9) > UnitTests::kTestEpsilon)
 		{
@@ -142,7 +150,8 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 
 	//10Nm, should lose 0.2rad/s per time step.
 	racecarController.SetBrakePosition(0.5);
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 rad/sec
 		if (fabs(wheel.GetAngularVelocity() + 39.7) > UnitTests::kTestEpsilon)
 		{
@@ -156,7 +165,8 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 
 	//20Nm, should lose 0.4rad/s per time step.
 	racecarController.SetBrakePosition(1.0);
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 - 0.4 rad/sec
 		if (fabs(wheel.GetAngularVelocity() + 39.3) > UnitTests::kTestEpsilon)
 		{
@@ -171,7 +181,8 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 	//After 0.99 seconds the wheel should be going .4 + .3 + .2 rad/s due to above tests.
 	for (int timer(30); timer < 1010; timer += 10)
 	{
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 	{	//Wheel speed should now be  .1 rad/s due to above tests and 1.01 second simulation time.
 		if (fabs(wheel.GetAngularVelocity() + 0.1) > UnitTests::kTestEpsilon)
@@ -184,8 +195,10 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 		}
 	}
 
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
-	wheel.Simulate(racecarController, kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should stay at 0.
 		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
@@ -195,7 +208,8 @@ bool Racecar::UnitTests::WheelNegativeBrakingTest(void)
 
 	for (int timer(0); timer < 1000; timer += 10)
 	{
-		wheel.Simulate(racecarController, kTestFixedTimeStep);
+		wheel.ControllerChange(racecarController);
+		wheel.Simulate(kTestFixedTimeStep);
 	}
 	{	//Wheel speed should stay at 0.
 		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
@@ -224,8 +238,10 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 
 	//5Nm, should lose 0.1rad/s per time step.
 	racecarController.SetBrakePosition(0.25);
-	wheel.Simulate(racecarController, 0.01);
-	axle.Simulate(0.01);
+	wheel.ControllerChange(racecarController);
+	axle.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	axle.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.9) > UnitTests::kTestEpsilon)
 		{
@@ -239,8 +255,11 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 
 	//10Nm, should lose 0.2rad/s per time step.
 	racecarController.SetBrakePosition(0.5);
-	wheel.Simulate(racecarController, 0.01);
-	axle.Simulate(0.01);
+
+	wheel.ControllerChange(racecarController);
+	axle.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	axle.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.7) > UnitTests::kTestEpsilon)
 		{
@@ -254,8 +273,11 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 
 	//20Nm, should lose 0.4rad/s per time step.
 	racecarController.SetBrakePosition(1.0);
-	wheel.Simulate(racecarController, 0.01);
-	axle.Simulate(0.01);
+
+	wheel.ControllerChange(racecarController);
+	axle.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	axle.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 - 0.2 - 0.4 rad/sec
 		if (fabs(wheel.GetAngularVelocity() - 39.3) > UnitTests::kTestEpsilon)
 		{
@@ -270,8 +292,11 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 	//After 0.99 seconds the wheel should be going .4 + .3 + .2 rad/s due to above tests.
 	for (int timer(30); timer < 1010; timer += 10)
 	{
-		wheel.Simulate(racecarController, 0.01);
-		axle.Simulate(0.01);
+		wheel.ControllerChange(racecarController);
+		axle.ControllerChange(racecarController);
+
+		wheel.Simulate(kTestFixedTimeStep);
+		axle.Simulate(kTestFixedTimeStep);
 	}
 	{	//Wheel speed should now be  .1 rad/s due to above tests and 1.01 second simulation time.
 		if (fabs(wheel.GetAngularVelocity() - 0.1) > UnitTests::kTestEpsilon)
@@ -284,10 +309,17 @@ bool Racecar::UnitTests::WheelAndAxleBrakingTest(void)
 		}
 	}
 
-	wheel.Simulate(racecarController, 0.01);
-	axle.Simulate(0.01);
-	wheel.Simulate(racecarController, 0.01);
-	axle.Simulate(0.01);
+
+	wheel.ControllerChange(racecarController);
+	axle.ControllerChange(racecarController);
+	wheel.Simulate(kTestFixedTimeStep);
+	axle.Simulate(kTestFixedTimeStep);
+
+	wheel.Simulate(kTestFixedTimeStep);
+	axle.Simulate(kTestFixedTimeStep);
+	wheel.ControllerChange(racecarController);
+	axle.ControllerChange(racecarController);
+
 	{	//Wheel speed should stay at 0.
 		if (fabs(wheel.GetAngularVelocity()) > UnitTests::kTestEpsilon)
 		{
@@ -327,9 +359,13 @@ bool Racecar::UnitTests::WheelClutchAndEngineBrakingTest(void)
 
 	for (int timer(0); timer < 200000; timer += 10)
 	{
-		engine.Simulate(racecarController, 0.01);
-		clutch.Simulate(racecarController, 0.0);
-		wheel.Simulate(racecarController, 0.01);
+		engine.ControllerChange(racecarController);
+		clutch.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
+
+		engine.Simulate(kTestFixedTimeStep);
+		clutch.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
 
 		if (wheel.GetAngularVelocity() < 0.0 || engine.GetAngularVelocity() < 0.0 || clutch.GetAngularVelocity() < 0.0 ||
 			wheel.GetAngularVelocity() > 10000.0 || engine.GetAngularVelocity() > 10000.0 || clutch.GetAngularVelocity() > 10000.0)
