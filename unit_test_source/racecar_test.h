@@ -14,6 +14,7 @@ namespace Racecar
 	namespace UnitTests
 	{
 		bool RacecarAccelerationTest(void);
+		bool RacecarZeroToSixtyTest(void);
 	};
 };
 

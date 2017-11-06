@@ -102,12 +102,42 @@ namespace Racecar
 		///
 		Real GetEngineSpeedRPM(void) const;
 
+		///
+		/// @note This defaults to 0.0
+		///
+		void SetEngineFrictionResistance(const Real& resistance);
+
+		///
+		/// @details Sets the minimum speed the engine will try forcing itself to. This creates a FICTIONAL force and is
+		///   NOT SIMULATION QUALITY. This would prevent the engine from stalling below some point in rpm range.
+		///
+		/// @param speedRadiansPerSecond The speed at which the engine will begin applying this fictional force if the
+		///   engine speed is below. Radians / Second.
+		///
+		/// @note If this is set to below zero (-1.0) the engine will not perform the fictional force. This is default behavior.
+		///
+		void SetMinimumEngineSpeed(const Real& speedRadiansPerSecond);
+
+		///
+		/// @details Sets the maximums speed the engine will rotate at before getting an ignition cut, such as red-lining.
+		///   This may not be simulation quality, but prevents the engine from endlessly getting faster.
+		///
+		/// @param speedRadiansPerSecond The speed at which the engine will not apply any acceleration from throttle when
+		///   engine speed is already above. Radians / Second.
+		///
+		/// @note If this is set to below zero (-1.0) the engine will not perform the throttle-cut. This is default behavior.
+		///
+		void SetMaximumEngineSpeed(const Real& speedRadiansPerSecond);
+
 	protected:
 		virtual void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController) override;
 		virtual void OnSimulate(const Real& fixedTime);
 
 	private:
 		const TorqueCurve mTorqueCurve;
+		Real mFrictionResistance;
+		Real mMinimumEngineSpeed;
+		Real mMaximumEngineSpeed;
 		float mThrottlePosition;
 	};
 };	/* namespace Racecar */

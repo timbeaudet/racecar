@@ -32,6 +32,11 @@ namespace Racecar
 		///
 		Real GetWheelSpeedMPH(void) const;
 
+		///
+		/// @details Returns the radius of the wheel in meters.
+		///
+		inline Real GetRadius(void) const { return mRadius; }
+
 		inline bool IsOnGround(void) const { return mIsOnGround; }
 		void SetOnGround(bool isOnGround, const Real& frictionCoefficient);
 

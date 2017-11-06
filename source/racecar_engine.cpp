@@ -194,7 +194,10 @@ Racecar::Real Racecar::TorqueCurve::GetOutputValue(const Real engineSpeedRPM) co
 Racecar::Engine::Engine(const Real& momentOfInertia, const TorqueCurve& torqueCurve) :
 	RotatingBody(momentOfInertia),
 	mTorqueCurve(torqueCurve),
-	mThrottlePosition(0.0)
+	mFrictionResistance(0.0),
+	mMinimumEngineSpeed(-1.0),
+	mMaximumEngineSpeed(-1.0),
+	mThrottlePosition(0.0f)
 {
 	error_if(false == mTorqueCurve.IsNormalized(), "Engine expects the TorqueCurve to be normalized / finalized.");
 	SetAngularVelocity(Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
@@ -217,17 +220,17 @@ void Racecar::Engine::OnControllerChange(const Racecar::RacecarControllerInterfa
 
 void Racecar::Engine::OnSimulate(const Real& fixedTime)
 {
-	if (GetEngineSpeedRPM() < 6500)
+	if (mMaximumEngineSpeed < 0.0 || GetAngularVelocity() < mMaximumEngineSpeed)
 	{
 		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * mThrottlePosition);
-		const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
-		//const Real appliedEngineTorque(onThrottleTorque);
+		//const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
+		const Real appliedEngineTorque(onThrottleTorque);
 		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 	}
 
-	//Resistance of 1Nm for every 32 rad/s <-- THIS COMMENT MIGHT NOT BE TRUE ANYMORE...
-	const Real engineResistanceTorque(GetAngularVelocity() * 0.0625);
+	//
+	const Real engineResistanceTorque(GetAngularVelocity() * mFrictionResistance);
 	ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime);
 
 	//Now that all torques have been applied to the engine, step it forward in time.
@@ -236,11 +239,14 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 	//
 	//Create a fictional force to keep the engine from stalling out. This is NOT simulation quality here...
 	//          divide 2pi to go to rev, multiply 60 to go min.
-	const Real differenceTo1000((GetAngularVelocity() - Racecar::RevolutionsMinuteToRadiansSecond(1000.0)) / 6.28 * 60);
-	if (differenceTo1000 < 0.0)
+	if (mMinimumEngineSpeed > 0.0)
 	{
-		const Real totalInertia(ComputeDownstreamInertia());
-		ApplyDownstreamAngularImpulse(-differenceTo1000 * fixedTime * totalInertia);
+		const Real differenceTo1000((GetAngularVelocity() - mMinimumEngineSpeed) / 6.28 * 60);
+		if (differenceTo1000 < 0.0)
+		{
+			const Real totalInertia(ComputeDownstreamInertia());
+			ApplyDownstreamAngularImpulse(-differenceTo1000 * fixedTime * totalInertia);
+		}
 	}
 }
 
@@ -249,6 +255,28 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 Racecar::Real Racecar::Engine::GetEngineSpeedRPM(void) const
 {
 	return Racecar::RadiansSecondToRevolutionsMinute(GetAngularVelocity());
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Engine::SetEngineFrictionResistance(const Real& frictionResistance)
+{
+	error_if(frictionResistance < 0.0, "Expected resistance to be a positive value.");
+	mFrictionResistance = frictionResistance;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Engine::SetMinimumEngineSpeed(const Real& speedRadiansPerSecond)
+{
+	mMinimumEngineSpeed = speedRadiansPerSecond;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Engine::SetMaximumEngineSpeed(const Real& speedRadiansPerSecond)
+{
+	mMaximumEngineSpeed = speedRadiansPerSecond;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
