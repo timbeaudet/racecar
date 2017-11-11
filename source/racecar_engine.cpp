@@ -227,11 +227,27 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 		//const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
 		const Real appliedEngineTorque(onThrottleTorque);
 		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
-	}
 
-	//
-	const Real engineResistanceTorque(GetAngularVelocity() * mFrictionResistance);
-	ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime);
+		//if (GetAngularVelocity() < 1.0)
+		//{
+		//	ApplyDownstreamAngularImpulse(appliedEngineTorque);
+		//}
+		//else
+		//{
+		//	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
+		//	//Nm * 1/s = kg*m^2/s^3
+		//	const Real power = appliedEngineTorque * (GetAngularVelocity());
+		//	//Work = Nm,  Power * time = kg*m^2/s^3 * s = kg*m^2/s^2 = Nm
+		//	const Real work = power * fixedTime;
+		//	ApplyDownstreamAngularImpulse(work * fixedTime); //Finally Nm * time = impulse
+		//}
+	}
+	
+	//if (mThrottlePosition < 0.01)
+	{
+		const Real engineResistanceTorque(GetAngularVelocity() * mFrictionResistance);
+		ApplyDownstreamAngularImpulse(-engineResistanceTorque * fixedTime);
+	}
 
 	//Now that all torques have been applied to the engine, step it forward in time.
 	RotatingBody::OnSimulate(fixedTime);

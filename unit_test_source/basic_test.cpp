@@ -70,6 +70,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	perform_test(TransmissionBrakeInReverseTest(), "Transmission Brake in Reverse Test");
 
 	perform_test(RacecarAccelerationTest(), "Racecar Acceleration Test");
+	perform_test(RacecarZeroToSixtyTest(), "Racecar Zero To Sixty Test");
 
 	if (false == failedTest)
 	{

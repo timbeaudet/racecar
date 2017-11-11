@@ -21,14 +21,11 @@
 
 bool Racecar::UnitTests::WheelWithLinearMotion(void)
 {
-	// This test is all about taking a wheel that is on the ground, from a stopped position and applying a torque to the
-	// wheel to convert angular motion to linear motion. - Assuming infinite friction, no resistances.
-
 	Racecar::DoNothingController racecarController;
 	Racecar::Wheel wheel(8.0, 0.25);
 	wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
 
-	//Simulate 1 second of applying a 200Nm torque to the rotating body.
+	//Simulate 1 second of applying a 200Nm torque to the wheel.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
 		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
@@ -38,8 +35,13 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 	}
 
 	const Real expectedLinearVelocity(100.0);  //100m/s
+	const Real expectedAngularVelocity(expectedLinearVelocity / wheel.GetRadius());
 	const Real& finalLinearVelocity(wheel.GetLinearVelocity());
 	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
+	{
+		return false;
+	}
+	if (fabs(wheel.GetAngularVelocity() - expectedAngularVelocity) > kTestEpsilon)
 	{
 		return false;
 	}
@@ -49,35 +51,53 @@ bool Racecar::UnitTests::WheelWithLinearMotion(void)
 
 //--------------------------------------------------------------------------------------------------------------------//
 
+struct RacecarLinearMotionBlob
+{
+	Racecar::Real mWheelMass;      //kg
+	Racecar::Real mWheelRadius;    //m
+	Racecar::Real mRacecarMass;    //kg
+	Racecar::Real mConstantTorque; //Nm
+
+	size_t mSimulatedSteps;        //Each step is 10ms.
+	Racecar::Real mExpectedAngularVelocity;
+	Racecar::Real mExpectedLinearVelocity;
+};
+
 bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 {
-	// This test is all about taking a racecar on the ground, from a stopped position and applying a torque to the drive
-	// wheel of the car to convert angular motion to linear motion on both the wheel and the car body. - Assuming infinite
-	// friction, no resistances.
+	std::array<RacecarLinearMotionBlob, 2> tests{
+		///                   wheel inertia, radius   car mass   torque   steps      exAngVel       exLinVel
+		RacecarLinearMotionBlob{  8.0000,    0.2500,   92.000,     200.0,   100,      32.000,         8.0000, },
+		RacecarLinearMotionBlob{ 18.1437,    0.2794,   1042.0,     110.0,   100,    1.329153517,     0.3713654926, },
+	};
 
-	Racecar::DoNothingController racecarController;
-	Racecar::RacecarBody carBody(92.0);
-	Racecar::Wheel wheel(8.0, 0.25);
-	carBody.SetWheel(0, &wheel);
-	wheel.SetRacecarBody(&carBody);
-	wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
-
-	//Simulate 1 second of applying a 200Nm torque to the rotating body.
-	for (int timer(0); timer < 1000; timer += 10)
+	for (const RacecarLinearMotionBlob& test : tests)
 	{
-		wheel.ControllerChange(racecarController);
-		carBody.ControllerChange(racecarController);
+		Racecar::DoNothingController racecarController;
+		Racecar::RacecarBody carBody(test.mRacecarMass);
+		Racecar::Wheel wheel(test.mWheelMass, test.mWheelRadius);
+		carBody.SetWheel(0, &wheel);
+		wheel.SetRacecarBody(&carBody);
+		wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
 
-		wheel.ApplyDownstreamAngularImpulse(200.0 * 0.01); //200nm torque
-		wheel.Simulate(kTestFixedTimeStep);
-		carBody.Simulate(kTestFixedTimeStep);
-	}
+		for (size_t timeStep(0); timeStep < test.mSimulatedSteps; ++timeStep)
+		{
+			wheel.ControllerChange(racecarController);
+			carBody.ControllerChange(racecarController);
 
-	const Real expectedLinearVelocity(8.0);  //m/s
-	const Real& finalLinearVelocity(wheel.GetLinearVelocity());
-	if (fabs(finalLinearVelocity - expectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
-	{
-		return false;
+			wheel.ApplyDownstreamAngularImpulse(test.mConstantTorque * 0.01);
+			wheel.Simulate(kTestFixedTimeStep);
+			carBody.Simulate(kTestFixedTimeStep);
+		}
+
+		if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -96,11 +116,6 @@ struct FrictionTestBlob
 
 bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 {
-	//Driver comes into a pit-stop, takes all four tires. The fronts and rears are on and off, and the front jack drops.
-	//The lollipop guy signals to GO, but the rear jack is stuck - rear tires hanging in the air. Driver floors the throttle
-	//rear wheels spin up to 40rad/s (approx 20-25mph). Finally the rear jack is freed and the car drops to ground with
-	//already spinning tires.
-
 	std::array<FrictionTestBlob, 3> tests{
 		FrictionTestBlob{ "Infinite Friction", -1.0, { 0.740740740740, 0.740740740740 }, { 2.962962962962, 2.962962962962 }, 10 },
 		FrictionTestBlob{ "Ice Friction",      0.05, { 0.005,          0.740740740740 }, { 39.75,          2.962962962962 }, 2000 },
@@ -193,10 +208,6 @@ bool Racecar::UnitTests::SpinningWheelsReleasedFromJack(void)
 
 bool Racecar::UnitTests::FlyingCarHitsTrack(void)
 {
-	//Driver is flying through the air in his rally car, he has hit the brakes to stop the wheels from spinning, though
-	//the car is still flying through the air at ~90mph (40m/s) and when it lands on the ground the wheels shall start
-	//spinning while taking some of the momentum away from the car.
-
 	std::array<FrictionTestBlob, 3> tests{
 		FrictionTestBlob{ "Infinite Friction", -1.0,{ 37.037037037, 37.037037037 },{ 148.148148148, 148.148148148 }, 10 },
 		FrictionTestBlob{ "Ice Friction",      0.05,{ 39.995,          37.037037037 },{ 0.25,          148.148148148 }, 10000 },
