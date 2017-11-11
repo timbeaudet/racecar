@@ -52,6 +52,9 @@ namespace Racecar
 		///
 		Real GetClutchEngagement(void) const { return mClutchEngagement; }
 
+		virtual Real ComputeDownstreamInertia(void) const override;
+		virtual Real ComputeUpstreamInertia(void) const override;
+
 	protected:
 
 		///
@@ -65,9 +68,6 @@ namespace Racecar
 		///
 		///
 		virtual void OnSimulate(const Real& fixedTime);
-
-		virtual Real ComputeDownstreamInertia(void) const override;
-		virtual Real ComputeUpstreamInertia(void) const override;
 		virtual void OnDownstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 		virtual void OnUpstreamAngularVelocityChange(const Real& changeInAngularVelocity) override;
 
