@@ -42,6 +42,7 @@ Racecar::Transmission::Transmission(const Real momentOfInertia, const std::array
 	mSelectedGear(Gear::Neutral),
 	mHasClearedShift(true),
 	mIsSynchromeshBox(false),
+	mHasUsedShifter(false),
 	mGearJoints{ GearJoint(100.0), GearJoint(gearRatios[0]), GearJoint(gearRatios[1]), GearJoint(gearRatios[2]),
 		GearJoint(gearRatios[3]), GearJoint(gearRatios[4]), GearJoint(fabs(gearRatios[5]) < kEpsilon ? 100.0 : gearRatios[5]),
 		GearJoint(reverseRatio > -kEpsilon ? 100.0 : reverseRatio) }
@@ -58,13 +59,12 @@ Racecar::Transmission::~Transmission(void)
 
 void Racecar::Transmission::OnControllerChange(const RacecarControllerInterface& racecarController)
 {
-	static bool hackeryIsShifter(false);
 	if (racecarController.GetShifterPosition() != Gear::Neutral)
 	{
-		hackeryIsShifter = true;
+		mHasUsedShifter = true;
 	}
 
-	if (false == hackeryIsShifter)
+	if (false == mHasUsedShifter)
 	{
 		if (true == mHasClearedShift)
 		{

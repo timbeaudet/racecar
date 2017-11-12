@@ -73,6 +73,7 @@ namespace Racecar
 		Racecar::Gear mSelectedGear;
 		bool mHasClearedShift;
 		bool mIsSynchromeshBox;
+		bool mHasUsedShifter;
 		std::array<GearJoint, 8> mGearJoints;
 	};
 
