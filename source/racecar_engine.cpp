@@ -222,9 +222,7 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 {
 	if (mMaximumEngineSpeed < 0.0 || GetAngularVelocity() < mMaximumEngineSpeed)
 	{
-		const Real minimumIdleTorque(5.2 * 1.3558179); //ft-lbs to Nm
 		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * mThrottlePosition);
-		//const Real appliedEngineTorque((minimumIdleTorque < onThrottleTorque) ? onThrottleTorque : minimumIdleTorque);
 		const Real appliedEngineTorque(onThrottleTorque);
 		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 
@@ -233,13 +231,10 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 		//	ApplyDownstreamAngularImpulse(appliedEngineTorque);
 		//}
 		//else
-		//{
-		//	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
-		//	//Nm * 1/s = kg*m^2/s^3
-		//	const Real power = appliedEngineTorque * (GetAngularVelocity());
-		//	//Work = Nm,  Power * time = kg*m^2/s^3 * s = kg*m^2/s^2 = Nm
-		//	const Real work = power * fixedTime;
-		//	ApplyDownstreamAngularImpulse(work * fixedTime); //Finally Nm * time = impulse
+		//{	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
+		//	const Real power = appliedEngineTorque * (GetAngularVelocity());  //Nm * 1/s = kg*m^2/s^3
+		//	const Real work = power * fixedTime;                              //Work = Nm,  Power * time = kg*m^2/s^3 * s = kg*m^2/s^2 = Nm
+		//	ApplyDownstreamAngularImpulse(work * fixedTime);                  //Finally Nm * time = impulse
 		//}
 	}
 	
