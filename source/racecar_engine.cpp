@@ -188,6 +188,14 @@ Racecar::Real Racecar::TorqueCurve::GetOutputValue(const Real engineSpeedRPM) co
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::Real Racecar::TorqueCurve::GetMaximumRPM(void) const
+{
+	error_if(false == mIsNormalized, "Cannot get the Maximum RPM of a TorqueCurve that has not been normalized. Call NormalizeTorqueCurve().");
+	return mTorqueTable.back().first;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -296,6 +304,13 @@ void Racecar::Engine::SetMaximumEngineSpeed(const Real& speedRadiansPerSecond)
 void Racecar::Engine::SetConstantPower(const bool constantPower)
 {
 	mConstantPower = constantPower;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+Racecar::TorqueCurve Racecar::Engine::GetTorqueCurve(void) const
+{
+	return mTorqueCurve;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//

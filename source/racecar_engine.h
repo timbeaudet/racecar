@@ -75,6 +75,7 @@ namespace Racecar
 		///
 		Real GetOutputTorque(const Real engineSpeedRPM) const;
 
+		Real GetMaximumRPM(void) const;
 
 	private:
 
@@ -137,6 +138,11 @@ namespace Racecar
 		///   otherwise it will produce an angular impulse based on the rotational speed and TorqueCurve.
 		///
 		void SetConstantPower(const bool constantPower);
+
+		///
+		/// 
+		///
+		TorqueCurve GetTorqueCurve(void) const;
 
 	protected:
 		virtual void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController) override;
