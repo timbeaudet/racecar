@@ -14,13 +14,6 @@
 #include <cstdio>
 
 #define log_test(message, ...)   printf(message, ##__VA_ARGS__)
-#define perform_test(testFunction, testName) \
-	if (testFunction) {       \
-		printf("[  pass  ]  %s\n", testName);  \
-	} else {                  \
-		printf("[!-FAIL-!]  %s\n", testName);  \
-		failedTest = true;    \
-	}
 
 namespace Racecar
 {
@@ -28,7 +21,43 @@ namespace Racecar
 	{
 		extern const Racecar::Real kTestEpsilon;
 		extern const Racecar::Real kTestFixedTimeStep;
+		extern bool sAllTestsPassed;
+		extern bool sAllExpectionsPassed;
+		extern std::string sTestMessageBuffer;
+
+		template <typename FunctionToCall> bool PerformTest(FunctionToCall testFunction, const std::string& testName);
+		bool ExpectedValue(Racecar::Real value, Racecar::Real expectedValue, const std::string formattedMessage, ...);
+
 	};
 };
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+template <typename FunctionToCall> bool Racecar::UnitTests::PerformTest(FunctionToCall testFunction, const std::string& testName)
+{
+	sAllExpectionsPassed = true;
+
+	const bool testResult(testFunction() && true == sAllExpectionsPassed);
+	if (true == testResult)
+	{
+		log_test("[  pass  ]  %s\n", testName.c_str());
+	}
+	else
+	{
+		log_test("[!-FAIL-!]  %s\n", testName.c_str());
+		sAllTestsPassed = false;
+	}
+
+	if (false == sTestMessageBuffer.empty())
+	{
+		log_test("%s", sTestMessageBuffer.c_str());
+		sTestMessageBuffer.clear();
+	}
+
+	sAllExpectionsPassed = true;
+	return testResult;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
 
 #endif /* _Racecar_TestKit_h_ */

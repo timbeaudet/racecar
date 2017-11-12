@@ -23,8 +23,7 @@
 
 #include <cstdio>
 
-const Racecar::Real Racecar::UnitTests::kTestEpsilon(0.00001);
-const Racecar::Real Racecar::UnitTests::kTestFixedTimeStep(0.01); //Do not change without modifying tests, or many tests will fail.
+//--------------------------------------------------------------------------------------------------------------------//
 
 using Racecar::Real;
 using Racecar::UnitTests::kTestEpsilon;
@@ -40,41 +39,40 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 {
 	log_test("\n\n...................\nWelcome to scrutineering\nIt is time to check over the components of your racecar...\nGood Luck!\n...................\n\n");
 
-	bool failedTest(false);
-	perform_test(ConstructionTest(), "Constructing a Rotating Body");
-	perform_test(ConstantTorqueTest(), "Applying Constant Torque");
-	//perform_test(GearReductionTest(), "Constant Torque through Gear Reduction");
-	perform_test(WheelWithLinearMotion(), "Wheel with Linear Motion");
-	perform_test(RacecarWithLinearMotion(), "Racecar with Linear Motion");
-	perform_test(EngineWheelCarLinearMotion(), "Engine Wheel Racecar Linear Motion");
-	perform_test(EngineGearboxWheelCarLinearMotion(), "Engine Gearbox Wheel Racecar Linear Motion");
+	PerformTest(ConstructionTest, "Constructing a Rotating Body");
+	PerformTest(ConstantTorqueTest, "Applying Constant Torque");
+	//PerformTest(GearReductionTest, "Constant Torque through Gear Reduction");
+	PerformTest(WheelWithLinearMotion, "Wheel with Linear Motion");
+	PerformTest(RacecarWithLinearMotion, "Racecar with Linear Motion");
+	PerformTest(EngineWheelCarLinearMotion, "Engine Wheel Racecar Linear Motion");
+	PerformTest(EngineGearboxWheelCarLinearMotion, "Engine Gearbox Wheel Racecar Linear Motion");
 
-	perform_test(SpinningWheelsReleasedFromJack(), "Spinning Wheels Released From Jack");
-	perform_test(FlyingCarHitsTrack(), "Flying Car Hits Track");
+	PerformTest(SpinningWheelsReleasedFromJack, "Spinning Wheels Released From Jack");
+	PerformTest(FlyingCarHitsTrack, "Flying Car Hits Track");
 
-	perform_test(BasicEngineTest(), "Basic Engine Test");
-	perform_test(EngineTorqueTest(), "Engine Torque Test");
-	perform_test(WheelBrakingTest(), "Wheel Braking Test");
-	perform_test(WheelNegativeBrakingTest(), "Wheel Negative Braking Test");
-	perform_test(WheelAndAxleBrakingTest(), "Wheel And Axle Braking Test");	
-	perform_test(WheelClutchAndEngineBrakingTest(), "Wheel Clutch And Engine Braking Test"); //Looking for potential NaN
-	perform_test(EngineClutchWheelThrottleTest(), "Engine, Clutch Wheel Throttle Test");     //Checking to ensure the clutch/wheel don't spin faster than engine.
-	perform_test(EngineClutchWheelBrakingTest(), "Engine, Clutch Wheel Braking Test");       //Checking if brakes slow engine with clutch disengaged.
-	perform_test(EngineClutchWheelMismatchTest(), "Engine, Clutch Wheel Mismatch Test");     //Ensures the wheel and clutch remain same speeds while trying to match engine speed.
-	perform_test(EngineWithConnectionTest(), "Engine With Connection Test");
-	perform_test(ClutchInputTest(), "Clutch Input Test");
-	perform_test(SlippingClutchTest(), "Slipping Clutch Test");
-	perform_test(LockedDifferentialTest(), "Locked Differential Test");
-	perform_test(LockedDifferentialBrakingTest(), "Locked Differential Braking Test");
-	perform_test(LockedDifferentialUsageTest(), "Locked Differential Usage Test");
-	perform_test(TransmissionNeutralToFirstTest(), "Transmission Neutral to First Test");
-	perform_test(TransmissionBrakeInNeutralTest(), "Transmission Brake in Neutral Test");
-	perform_test(TransmissionBrakeInReverseTest(), "Transmission Brake in Reverse Test");
+	PerformTest(BasicEngineTest, "Basic Engine Test");
+	PerformTest(EngineTorqueTest, "Engine Torque Test");
+	PerformTest(WheelBrakingTest, "Wheel Braking Test");
+	PerformTest(WheelNegativeBrakingTest, "Wheel Negative Braking Test");
+	PerformTest(WheelAndAxleBrakingTest, "Wheel And Axle Braking Test");
+	PerformTest(WheelClutchAndEngineBrakingTest, "Wheel Clutch And Engine Braking Test"); //Looking for potential NaN
+	PerformTest(EngineClutchWheelThrottleTest, "Engine, Clutch Wheel Throttle Test");     //Checking to ensure the clutch/wheel don't spin faster than engine.
+	PerformTest(EngineClutchWheelBrakingTest, "Engine, Clutch Wheel Braking Test");       //Checking if brakes slow engine with clutch disengaged.
+	PerformTest(EngineClutchWheelMismatchTest, "Engine, Clutch Wheel Mismatch Test");     //Ensures the wheel and clutch remain same speeds while trying to match engine speed.
+	PerformTest(EngineWithConnectionTest, "Engine With Connection Test");
+	PerformTest(ClutchInputTest, "Clutch Input Test");
+	PerformTest(SlippingClutchTest, "Slipping Clutch Test");
+	PerformTest(LockedDifferentialTest, "Locked Differential Test");
+	PerformTest(LockedDifferentialBrakingTest, "Locked Differential Braking Test");
+	PerformTest(LockedDifferentialUsageTest, "Locked Differential Usage Test");
+	PerformTest(TransmissionNeutralToFirstTest, "Transmission Neutral to First Test");
+	PerformTest(TransmissionBrakeInNeutralTest, "Transmission Brake in Neutral Test");
+	PerformTest(TransmissionBrakeInReverseTest, "Transmission Brake in Reverse Test");
 
-	//perform_test(RacecarAccelerationTest(), "Racecar Acceleration Test");
-	//perform_test(RacecarZeroToSixtyTest(), "Racecar Zero To Sixty Test");
+	//PerformTest(RacecarAccelerationTest, "Racecar Acceleration Test");
+	//PerformTest(RacecarZeroToSixtyTest, "Racecar Zero To Sixty Test");
 
-	if (false == failedTest)
+	if (true == Racecar::UnitTests::sAllTestsPassed)
 	{
 		log_test("Your racecar has successfully passed technical inspection.\nYou may now go racing!\n\n");
 	}
@@ -83,7 +81,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 		log_test("Your racecar has not passed technical inspection.\nYou must fix it proper before racing!\n\n");
 	}
 
-	return (false == failedTest);
+	return (true == sAllTestsPassed);
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -91,25 +89,15 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 bool ConstructionTest(void)
 {
 	Racecar::RotatingBody rotatingMass(10.0); //10kg-m^2.
-	if (fabs(rotatingMass.GetInertia() - 10.0) > kTestEpsilon)
-	{
-		log_test("Failed accessing expected moments of inertia.");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(rotatingMass.GetInertia(), 10.0, "Mass1 accessing expected moments of inertia.");
 
 	Racecar::RotatingBody rotatingMass2(Racecar::ComputeInertiaMetric(10.0, 1.0));
-	if (fabs(rotatingMass.GetInertia() - rotatingMass2.GetInertia()) > kTestEpsilon)
-	{
-		log_test("Failed accessing expected moments of inertia.");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(rotatingMass.GetInertia(), rotatingMass2.GetInertia(), "Mass2 accessing expected moments of inertia.");
 
 	const Real startingVelocity(rotatingMass.GetAngularVelocity());
-	if (fabs(startingVelocity) > kTestEpsilon)
-	{
-		log_test("Failed: Expected rotating body to have no angular velocity upon construction. Found: %f\n", startingVelocity);
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(startingVelocity, 0.0, "Rotating body has non-Zero angular velocity after construction. Was: %f\n", startingVelocity);
+
+	Racecar::UnitTests::ExpectedValue(42, 0, "This is expected to fail!");
 
 	return true;
 }
@@ -129,14 +117,9 @@ bool ConstantTorqueTest(void)
 		wheel.Simulate(kTestFixedTimeStep);
 	}
 
-	const Real expectedDownVelocity(400.0);
-	const Real finalDownVelocity(wheel.GetAngularVelocity());
-	if (fabs(finalDownVelocity - expectedDownVelocity) > kTestEpsilon)
-	{
-		log_test("Failed: 1 second constant downstream torque, expected 400 rad/sec finalVelocity.\n");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(wheel.GetAngularVelocity(), 400.0, "1s constant positive downstream torque.");
 	
+
 	//Simulate 1 second of applying a negative 200Nm torque to the rotating body, to stop the wheel.
 	for (int timer(0); timer < 1000; timer += 10)
 	{
@@ -145,12 +128,7 @@ bool ConstantTorqueTest(void)
 		wheel.Simulate(kTestFixedTimeStep);
 	}
 
-	const Real negativeDownVelocity(wheel.GetAngularVelocity());
-	if (fabs(negativeDownVelocity) > kTestEpsilon)
-	{
-		log_test("Failed: 1 second constant downstream torque, expected 400 rad/sec finalVelocity.\n");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(wheel.GetAngularVelocity(), 0.0, "1s constant negative downstream torque.");
 
 
 	//Simulate 1 second of applying a 200Nm torque to the rotating body.
@@ -161,13 +139,8 @@ bool ConstantTorqueTest(void)
 		wheel.Simulate(kTestFixedTimeStep);
 	}
 
-	const Real expectedUpVelocity(400.0);
-	const Real finalUpVelocity(wheel.GetAngularVelocity());
-	if (fabs(finalUpVelocity - expectedUpVelocity) > kTestEpsilon)
-	{
-		log_test("Failed: 1 second constant upstream torque, expected 400 rad/sec finalVelocity.\n");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(wheel.GetAngularVelocity(), 400.0, "1s constant positive upstream torque.");
+
 
 	//Simulate 1 second of applying a negative 10Nm torque to the rotating body.
 	for (int timer(0); timer < 1000; timer += 10)
@@ -177,12 +150,7 @@ bool ConstantTorqueTest(void)
 		wheel.Simulate(kTestFixedTimeStep);
 	}
 
-	const Real negativeUpVelocity(wheel.GetAngularVelocity());
-	if (fabs(negativeUpVelocity) > kTestEpsilon)
-	{
-		log_test("Failed: 1 second constant upstream torque, expected 400 rad/sec finalVelocity.\n");
-		return false;
-	}
+	Racecar::UnitTests::ExpectedValue(wheel.GetAngularVelocity(), 0.0, "1s constant negative upstream torque.");
 
 	return true;
 }
