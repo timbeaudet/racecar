@@ -36,7 +36,7 @@ bool Racecar::UnitTests::LockedDifferentialTest(void)
 {
 	std::array<LockedDifferentialTestBlob, 2> tests {
 		LockedDifferentialTestBlob{ 1.0,   10.0, 0.0,   10.0, 0.0,   { 0.1, 10.0 }, { 0.1, 10.0 } },
-		LockedDifferentialTestBlob{ 4.0,   10.0, 0.0,   10.0, 0.0,   { 0.16, 16.0 }, { 0.04, 4.0 } },
+		LockedDifferentialTestBlob{ 4.0,   10.0, 0.0,   10.0, 0.0,   { 0.1882352941, 18.82352941 }, { 0.04705882353, 4.705882353 } },
 	};
 
 	for (const LockedDifferentialTestBlob& test : tests)
@@ -112,7 +112,7 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 
 	std::array<LockedDifferentialBrakingTestBlob, 2> tests{
 		LockedDifferentialBrakingTestBlob{ 1.0,   10.0, 10.0, 10.0, { 0.33333333, 33.33333333 }, { 0.33333333, 33.333333333 }, { 0.33333333, 33.33333333 } },
-		LockedDifferentialBrakingTestBlob{ 4.0,   10.0, 10.0, 10.0, { 0.66666666, 66.66666666 }, { 0.16666666, 16.666666666 }, { 0.16666666, 16.66666666 } },
+		LockedDifferentialBrakingTestBlob{ 4.0,   10.0, 10.0, 10.0, { 0.8888888889, 88.88888889 }, { 0.2222222222, 22.22222222 }, { 0.22222222, 22.22222222 } },
 	};
 
 	for (const LockedDifferentialBrakingTestBlob& test : tests)
@@ -160,7 +160,7 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 			}
 		}
 
-		//Simulate 1 seconds with the constant engine torque of 100Nm.
+		//Simulate 1 seconds with the constant engine torque.
 		racecarController.SetThrottlePosition(1.0f);
 		racecarController.SetBrakePosition(0.0f);
 		for (int timer(10); timer < 1000; timer += 10)
@@ -210,6 +210,7 @@ bool Racecar::UnitTests::LockedDifferentialBrakingTest(void)
 		wheel.Simulate(kTestTimeStep);
 
 		{	//Make sure the engine is now spinning as fast as expected with given inertia / constant torque. Single step.
+			//(Divide by two for half braking vs engine Torque)
 			const Real expectedEngineAngularVelocity(test.mExpectedEngineAngularVelocity[1] - test.mExpectedEngineAngularVelocity[0] / 2.0);
 			const Real expectedDifferentialAngularVelocity(test.mExpectedDifferentialAngularVelocity[1] - test.mExpectedDifferentialAngularVelocity[0] / 2.0);
 			const Real expectedWheelAngularVelocity(test.mExpectedWheelAngularVelocity[1] - test.mExpectedWheelAngularVelocity[0] / 2.0);

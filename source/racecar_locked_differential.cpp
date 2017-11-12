@@ -41,7 +41,11 @@ void Racecar::LockedDifferential::OnSimulate(const Real& fixedTime)
 
 Racecar::Real Racecar::LockedDifferential::ComputeDownstreamInertia(void) const
 {
-	return RotatingBody::ComputeDownstreamInertia() / mFinalDriveJoint.GetGearRatio();
+	//return RotatingBody::ComputeDownstreamInertia() / mFinalDriveJoint.GetGearRatio();
+
+	//https://www.servo2go.com/support/files/Smart%20Motion%20Cheat%20Sheet%20Rev3.pdf
+	const Real oneOverRatioSquared((1 / mFinalDriveJoint.GetGearRatio()) * (1 / mFinalDriveJoint.GetGearRatio()));
+	return RotatingBody::ComputeDownstreamInertia() * oneOverRatioSquared;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -50,9 +54,10 @@ Racecar::Real Racecar::LockedDifferential::ComputeUpstreamInertia(void) const
 {
 	const RotatingBody* inputSource(GetInputSource());
 	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia());
-	return GetInertia() + upstreamInertia * mFinalDriveJoint.GetGearRatio();
+	//return GetInertia() + upstreamInertia * mFinalDriveJoint.GetGearRatio();
 
-	//return RotatingBody::ComputeUpstreamInertia(fromSource) * mFinalDriveJoint.GetGearRatio();
+	const Real ratioSquared(mFinalDriveJoint.GetGearRatio() * mFinalDriveJoint.GetGearRatio());
+	return RotatingBody::ComputeDownstreamInertia() * ratioSquared;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

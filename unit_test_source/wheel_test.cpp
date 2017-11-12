@@ -32,10 +32,7 @@ bool Racecar::UnitTests::WheelBrakingTest(void)
 	wheel.ControllerChange(racecarController);
 	wheel.Simulate(kTestFixedTimeStep);
 	{	//Wheel speed should now be 40.0 - 0.1 rad/sec
-		if (fabs(wheel.GetAngularVelocity() - 39.9) > UnitTests::kTestEpsilon)
-		{
-			return false;
-		}
+		ExpectedValue(wheel.GetAngularVelocity(), 39.9, "Single step braking speed mismatch.");
 		if (wheel.GetAngularVelocity() < 0.0)
 		{
 			return false;

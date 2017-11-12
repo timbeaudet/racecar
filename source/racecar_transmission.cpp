@@ -135,7 +135,11 @@ Racecar::Real Racecar::Transmission::ComputeDownstreamInertia(void) const
 		return 0.0;
 	}
 
-	return RotatingBody::ComputeDownstreamInertia() / fabs(GetSelectedGearRatio());
+	//return RotatingBody::ComputeDownstreamInertia() / fabs(GetSelectedGearRatio());
+
+	//https://www.servo2go.com/support/files/Smart%20Motion%20Cheat%20Sheet%20Rev3.pdf
+	const Real oneOverRatioSquared((1 / GetSelectedGearRatio()) * (1 / GetSelectedGearRatio()));
+	return RotatingBody::ComputeDownstreamInertia() * oneOverRatioSquared;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -147,9 +151,12 @@ Racecar::Real Racecar::Transmission::ComputeUpstreamInertia(void) const
 		return GetInertia();
 	}
 
+	//return GetInertia() + upstreamInertia * fabs(GetSelectedGearRatio());
+
 	const RotatingBody* inputSource(GetInputSource());
 	const Real upstreamInertia((nullptr == inputSource) ? 0.0 : inputSource->ComputeUpstreamInertia());
-	return GetInertia() + upstreamInertia * fabs(GetSelectedGearRatio());
+	const Real ratioSquared(GetSelectedGearRatio() * GetSelectedGearRatio());
+	return GetInertia() + upstreamInertia * ratioSquared;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//

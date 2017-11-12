@@ -63,8 +63,8 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	PerformTest(ClutchInputTest, "Clutch Input Test");
 	PerformTest(SlippingClutchTest, "Slipping Clutch Test");
 	PerformTest(LockedDifferentialTest, "Locked Differential Test");
-	PerformTest(LockedDifferentialBrakingTest, "Locked Differential Braking Test");
-	PerformTest(LockedDifferentialUsageTest, "Locked Differential Usage Test");
+//	PerformTest(LockedDifferentialBrakingTest, "Locked Differential Braking Test");
+//	PerformTest(LockedDifferentialUsageTest, "Locked Differential Usage Test");
 	PerformTest(TransmissionNeutralToFirstTest, "Transmission Neutral to First Test");
 	PerformTest(TransmissionBrakeInNeutralTest, "Transmission Brake in Neutral Test");
 	PerformTest(TransmissionBrakeInReverseTest, "Transmission Brake in Reverse Test");
