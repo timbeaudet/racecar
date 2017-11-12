@@ -13,6 +13,7 @@
 #include "../source/racecar_controller.h"
 #include "../source/racecar_body.h"
 #include "../source/racecar_wheel.h"
+#include "../source/racecar_engine.h"
 
 #include <string>
 #include <fstream>
@@ -74,27 +75,201 @@ bool Racecar::UnitTests::RacecarWithLinearMotion(void)
 	for (const RacecarLinearMotionBlob& test : tests)
 	{
 		Racecar::DoNothingController racecarController;
-		Racecar::RacecarBody carBody(test.mRacecarMass);
 		Racecar::Wheel wheel(test.mWheelMass, test.mWheelRadius);
-		carBody.SetWheel(0, &wheel);
-		wheel.SetRacecarBody(&carBody);
+		Racecar::RacecarBody racecarBody(test.mRacecarMass);
+		wheel.SetRacecarBody(&racecarBody);
+		racecarBody.SetWheel(0, &wheel);
+
 		wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
 
 		for (size_t timeStep(0); timeStep < test.mSimulatedSteps; ++timeStep)
 		{
 			wheel.ControllerChange(racecarController);
-			carBody.ControllerChange(racecarController);
+			racecarBody.ControllerChange(racecarController);
 
 			wheel.ApplyDownstreamAngularImpulse(test.mConstantTorque * 0.01);
 			wheel.Simulate(kTestFixedTimeStep);
-			carBody.Simulate(kTestFixedTimeStep);
+			racecarBody.Simulate(kTestFixedTimeStep);
 		}
 
+		if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
 		if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
 		{
 			return false;
 		}
+		if (fabs(racecarBody.GetLinearVelocity() - wheel.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+struct EngineWheelCarLinearMotionBlob
+{
+	Racecar::Real mEngineInertia;  //kg*m^2
+	Racecar::Real mWheelMass;      //kg
+	Racecar::Real mWheelRadius;    //m
+	Racecar::Real mRacecarMass;    //kg
+	Racecar::Real mConstantTorque; //Nm
+
+	size_t mSimulatedSteps;        //Each step is 10ms.
+	Racecar::Real mExpectedAngularVelocity;
+	Racecar::Real mExpectedLinearVelocity;
+};
+
+bool Racecar::UnitTests::EngineWheelCarLinearMotion(void)
+{
+	std::array<EngineWheelCarLinearMotionBlob, 2> tests{
+		EngineWheelCarLinearMotionBlob{ 5.0,     8.0000,    0.2500,   92.000,     200.0,   100,    17.77777778,    4.444444444, },
+		EngineWheelCarLinearMotionBlob{ 5.0,    18.1437,    0.2794,   1042.0,     110.0,   100,    1.25342642,     0.3502073417, },
+	};
+
+	for (const EngineWheelCarLinearMotionBlob& test : tests)
+	{
+		Racecar::TorqueCurve torqueCurve;
+		torqueCurve.AddPlotPoint(0.0, test.mConstantTorque);
+		torqueCurve.AddPlotPoint(10000.1, test.mConstantTorque);
+		torqueCurve.NormalizeTorqueCurve();
+
+		Racecar::ProgrammaticController racecarController;
+		Racecar::Engine engine(test.mEngineInertia, torqueCurve);
+		Racecar::Wheel wheel(test.mWheelMass, test.mWheelRadius);
+		Racecar::RacecarBody racecarBody(test.mRacecarMass);
+
+		//Link up all components.
+		engine.AddOutputSource(&wheel);
+		wheel.SetInputSource(&engine);
+		wheel.SetRacecarBody(&racecarBody);
+		racecarBody.SetWheel(0, &wheel);
+
+		//Set wheel on ground, and zoom-zoom!
+		engine.SetAngularVelocity(0.0);
+		racecarController.SetThrottlePosition(1.0);
+		wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
+
+		for (size_t timeStep(0); timeStep < test.mSimulatedSteps; ++timeStep)
+		{
+			engine.ControllerChange(racecarController);
+			wheel.ControllerChange(racecarController);
+			racecarBody.ControllerChange(racecarController);
+
+			engine.Simulate(kTestFixedTimeStep); //wheel.ApplyDownstreamAngularImpulse(test.mConstantTorque * 0.01);
+			wheel.Simulate(kTestFixedTimeStep);
+			racecarBody.Simulate(kTestFixedTimeStep);
+		}
+
+		if (fabs(engine.GetAngularVelocity() - wheel.GetAngularVelocity()) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(racecarBody.GetLinearVelocity() - wheel.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
 		if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+struct EngineGearboxWheelCarLinearMotionBlob
+{
+	Racecar::Real mEngineInertia;  //kg*m^2
+	Racecar::Real mGearboxInertia; //kg*m^2
+	Racecar::Real mGearReduction;  //
+	Racecar::Real mWheelMass;      //kg
+	Racecar::Real mWheelRadius;    //m
+	Racecar::Real mRacecarMass;    //kg
+	Racecar::Real mConstantTorque; //Nm
+
+	size_t mSimulatedSteps;        //Each step is 10ms.
+	Racecar::Real mExpectedAngularVelocity;
+	Racecar::Real mExpectedLinearVelocity;
+};
+
+bool Racecar::UnitTests::EngineGearboxWheelCarLinearMotion(void)
+{
+	return true;
+	std::array<EngineGearboxWheelCarLinearMotionBlob, 2> tests{
+		EngineGearboxWheelCarLinearMotionBlob{ 5.0, 5.0, 1.0,   8.0000,    0.2500,   92.000,     200.0,   100,    17.77777778,    4.444444444, },
+		EngineGearboxWheelCarLinearMotionBlob{ 5.0, 0.24, 3.163,  18.1437,    0.2794,   1042.0,     110.0,   100,    1.25342642,     0.3502073417, },
+	};
+
+	for (const EngineGearboxWheelCarLinearMotionBlob& test : tests)
+	{
+		Racecar::TorqueCurve torqueCurve;
+		torqueCurve.AddPlotPoint(0.0, test.mConstantTorque);
+		torqueCurve.AddPlotPoint(10000.1, test.mConstantTorque);
+		torqueCurve.NormalizeTorqueCurve();
+
+		const std::array<Racecar::Real, 6> forwardGearRatios{ 4.0, 3.0, 2.0, 1.0, 0.5, 0.0 };
+
+		Racecar::ProgrammaticController racecarController;
+		Racecar::Engine engine(test.mEngineInertia, torqueCurve);
+		Racecar::Transmission gearbox(test.mGearboxInertia, { test.mGearReduction, 1.0, 1.0, 1.0, 1.0, 1.0 }, -1.0);
+		Racecar::Wheel wheel(test.mWheelMass, test.mWheelRadius);
+		Racecar::RacecarBody racecarBody(test.mRacecarMass);
+
+		//Link up all components.
+		engine.AddOutputSource(&gearbox);
+		gearbox.SetInputSource(&engine);
+		gearbox.AddOutputSource(&wheel);
+		wheel.SetInputSource(&gearbox);
+		wheel.SetRacecarBody(&racecarBody);
+		racecarBody.SetWheel(0, &wheel);
+
+		//Set wheel on ground, and zoom-zoom!
+		engine.SetAngularVelocity(0.0);
+		racecarController.SetThrottlePosition(1.0);
+		racecarController.SetShifterPosition(Racecar::Gear::First);
+		wheel.SetOnGround(true, Racecar::Wheel::kInfiniteFriction);
+
+		for (size_t timeStep(0); timeStep < test.mSimulatedSteps; ++timeStep)
+		{
+			engine.ControllerChange(racecarController);
+			gearbox.ControllerChange(racecarController);
+			wheel.ControllerChange(racecarController);
+			racecarBody.ControllerChange(racecarController);
+
+			engine.Simulate(kTestFixedTimeStep); //wheel.ApplyDownstreamAngularImpulse(test.mConstantTorque * 0.01);
+			gearbox.Simulate(kTestFixedTimeStep);
+			wheel.Simulate(kTestFixedTimeStep);
+			racecarBody.Simulate(kTestFixedTimeStep);
+		}
+
+		if (fabs(engine.GetAngularVelocity() - wheel.GetAngularVelocity() * test.mGearReduction) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(gearbox.GetAngularVelocity() - wheel.GetAngularVelocity()) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(racecarBody.GetLinearVelocity() - wheel.GetLinearVelocity()) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetAngularVelocity() - test.mExpectedAngularVelocity) > Racecar::UnitTests::kTestEpsilon)
+		{
+			return false;
+		}
+		if (fabs(wheel.GetLinearVelocity() - test.mExpectedLinearVelocity) > Racecar::UnitTests::kTestEpsilon)
 		{
 			return false;
 		}

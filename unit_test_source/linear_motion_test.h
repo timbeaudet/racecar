@@ -27,6 +27,12 @@ namespace Racecar
 		bool RacecarWithLinearMotion(void);
 
 		///
+		///
+		///
+		bool EngineWheelCarLinearMotion(void);
+		bool EngineGearboxWheelCarLinearMotion(void);
+
+		///
 		/// Driver comes into a pit-stop, takes all four tires. The fronts and rears are on and off, and the front jack drops.
 		///   The lollipop guy signals to GO, but the rear jack is stuck - rear tires hanging in the air. Driver floors the throttle
 		///   rear wheels spin up to 40rad/s (approx 20-25mph). Finally the rear jack is freed and the car drops to ground with

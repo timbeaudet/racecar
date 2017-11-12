@@ -59,7 +59,7 @@ bool Racecar::UnitTests::TransmissionNeutralToFirstTest(void)
 
 	racecarController.SetThrottlePosition(0.0);
 	racecarController.SetUpshift(true);
-	//for (int timer(0); timer < 1000; timer += 10)
+	for (int timer(0); timer < 1000; timer += 10)
 	{
 		engine.ControllerChange(racecarController);
 		gearbox.ControllerChange(racecarController);
