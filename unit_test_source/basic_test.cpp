@@ -81,7 +81,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 		log_test("Your racecar has not passed technical inspection.\nYou must fix it proper before racing!\n\n");
 	}
 
-	return (true == sAllTestsPassed);
+	return Racecar::UnitTests::sAllTestsPassed;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -96,8 +96,6 @@ bool ConstructionTest(void)
 
 	const Real startingVelocity(rotatingMass.GetAngularVelocity());
 	Racecar::UnitTests::ExpectedValue(startingVelocity, 0.0, "Rotating body has non-Zero angular velocity after construction. Was: %f\n", startingVelocity);
-
-	Racecar::UnitTests::ExpectedValue(42, 0, "This is expected to fail!");
 
 	return true;
 }

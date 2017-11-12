@@ -202,8 +202,8 @@ bool Racecar::UnitTests::EngineTorqueTest(void)
 
 	for (int rpm = 0; rpm < 10000; ++rpm)
 	{
-		const Real expectedTorque((rpm * 1.0) + 100.0);
-		if (false == ExpectedValue(torqueCurve.GetOutputTorque(static_cast<float>(rpm)), expectedTorque, "Curve: OutputTorque does not match expected value."))
+		const Real expectedTorque(rpm + 100.0);
+		if (false == ExpectedValueWithin(torqueCurve.GetOutputTorque(static_cast<Real>(rpm)), expectedTorque, 0.1, "Curve: OutputTorque does not match expected value."))
 		{
 			return false;
 		}
@@ -217,7 +217,7 @@ bool Racecar::UnitTests::EngineTorqueTest(void)
 
 	for (int rpm = 0; rpm < 10000; ++rpm)
 	{
-		if (false == ExpectedValue(torqueLine.GetOutputTorque(static_cast<float>(rpm)), constantTorque, "Constant: OutputTorque does not match expected value."))
+		if (false == ExpectedValueWithin(torqueLine.GetOutputTorque(static_cast<float>(rpm)), constantTorque, 0.1, "Constant: OutputTorque does not match expected value."))
 		{
 			return false;
 		}

@@ -75,12 +75,14 @@ namespace Racecar
 		///
 		Real GetOutputTorque(const Real engineSpeedRPM) const;
 
+
+	private:
+
 		///
 		/// @details Returns a value from 0 to 1 representing a percentage of the maximum torque at this given engine speed.
 		///
 		Real GetOutputValue(const Real engineSpeedRPM) const;
 
-	private:
 		static const size_t kTorqueTableSize = 16;
 
 		typedef std::pair<Real, Real> PlotPoint; //RPM, NormalizedTorque

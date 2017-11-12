@@ -27,6 +27,7 @@ namespace Racecar
 
 		template <typename FunctionToCall> bool PerformTest(FunctionToCall testFunction, const std::string& testName);
 		bool ExpectedValue(Racecar::Real value, Racecar::Real expectedValue, const std::string formattedMessage, ...);
+		bool ExpectedValueWithin(Racecar::Real value, Racecar::Real expectedValue, Racecar::Real epsilon, const std::string formattedMessage, ...);
 
 	};
 };

@@ -48,6 +48,11 @@ namespace Racecar
 		///
 		///
 		///
+		size_t GetNumberOfOutputSources(void) const;
+
+		///
+		///
+		///
 		void AddOutputSource(RotatingBody* outputSource);
 		
 		///

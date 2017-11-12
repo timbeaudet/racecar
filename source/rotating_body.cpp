@@ -80,6 +80,13 @@ bool Racecar::RotatingBody::IsOutputSource(const RotatingBody& source) const
 
 //-------------------------------------------------------------------------------------------------------------------//
 
+size_t Racecar::RotatingBody::GetNumberOfOutputSources(void) const
+{
+	return mOutputSources.size();
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 void Racecar::RotatingBody::AddOutputSource(RotatingBody* output)
 {
 	error_if(mOutputSources.end() != std::find(mOutputSources.begin(), mOutputSources.end(), output), "Already connected to this output.");

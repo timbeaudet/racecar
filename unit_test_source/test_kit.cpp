@@ -17,7 +17,7 @@ namespace Racecar
 	namespace UnitTests
 	{
 		std::string sTestMessageBuffer;
-		bool sAllTestsPassed(false);
+		bool sAllTestsPassed(true);
 		bool sAllExpectionsPassed(true);
 	}
 }
@@ -26,7 +26,19 @@ namespace Racecar
 
 bool Racecar::UnitTests::ExpectedValue(Racecar::Real value, Racecar::Real expectedValue, const std::string formattedMessage, ...)
 {
-	if (fabs(value - expectedValue) > Racecar::UnitTests::kTestEpsilon)
+	va_list argumentsList;
+	va_start(argumentsList, formattedMessage);
+	const bool returnValue = ExpectedValueWithin(value, expectedValue, Racecar::UnitTests::kTestEpsilon, formattedMessage, argumentsList);
+	va_end(argumentsList);
+
+	return returnValue;
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+bool Racecar::UnitTests::ExpectedValueWithin(Racecar::Real value, Racecar::Real expectedValue, Racecar::Real epsilon, const std::string formattedMessage, ...)
+{
+	if (fabs(value - expectedValue) > epsilon)
 	{
 		char buffer[2048];
 
