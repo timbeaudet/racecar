@@ -17,6 +17,7 @@ namespace Racecar
 		bool EngineWithConnectionTest(void);
 
 		bool EngineTorqueTest(void);
+		bool EnginePowerTest(void);
 	};
 };
 

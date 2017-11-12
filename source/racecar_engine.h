@@ -129,6 +129,13 @@ namespace Racecar
 		///
 		void SetMaximumEngineSpeed(const Real& speedRadiansPerSecond);
 
+		///
+		/// @details Changes the behavior of the engine to output a constant or non-constant amount of power, essentially if
+		///   this is set to false (default) the engine will produce the angular impulse from the torque supplied by TorqueCurve, 
+		///   otherwise it will produce an angular impulse based on the rotational speed and TorqueCurve.
+		///
+		void SetConstantPower(const bool constantPower);
+
 	protected:
 		virtual void OnControllerChange(const Racecar::RacecarControllerInterface& racecarController) override;
 		virtual void OnSimulate(const Real& fixedTime);
@@ -139,6 +146,7 @@ namespace Racecar
 		Real mMinimumEngineSpeed;
 		Real mMaximumEngineSpeed;
 		float mThrottlePosition;
+		bool mConstantPower;
 	};
 };	/* namespace Racecar */
 

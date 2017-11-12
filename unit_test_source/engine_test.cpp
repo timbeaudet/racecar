@@ -203,23 +203,21 @@ bool Racecar::UnitTests::EngineTorqueTest(void)
 	for (int rpm = 0; rpm < 10000; ++rpm)
 	{
 		const Real expectedTorque((rpm * 1.0) + 100.0);
-		const Real actualTorque = torqueCurve.GetOutputTorque(rpm * 1.0);
-		if (fabs(expectedTorque - actualTorque) > 0.1)
+		if (false == ExpectedValue(torqueCurve.GetOutputTorque(static_cast<float>(rpm)), expectedTorque, "Curve: OutputTorque does not match expected value."))
 		{
 			return false;
 		}
 	}
 
+	const Racecar::Real constantTorque(100.0);
 	Racecar::TorqueCurve torqueLine;
-	torqueLine.AddPlotPoint(0.0, 100.0);
-	torqueLine.AddPlotPoint(10000.1, 100.0);
+	torqueLine.AddPlotPoint(0.0, constantTorque);
+	torqueLine.AddPlotPoint(10000.1, constantTorque);
 	torqueLine.NormalizeTorqueCurve();
 
 	for (int rpm = 0; rpm < 10000; ++rpm)
 	{
-		const Real expectedTorque(100.0);
-		const Real actualTorque = torqueLine.GetOutputTorque(rpm * 1.0);
-		if (fabs(expectedTorque - actualTorque) > 0.1)
+		if (false == ExpectedValue(torqueLine.GetOutputTorque(static_cast<float>(rpm)), constantTorque, "Constant: OutputTorque does not match expected value."))
 		{
 			return false;
 		}
@@ -244,5 +242,9 @@ bool Racecar::UnitTests::EngineTorqueTest(void)
 
 	return true;
 }
+
+//--------------------------------------------------------------------------------------------------------------------//
+
+//bool EnginePowerTest(void);
 
 //--------------------------------------------------------------------------------------------------------------------//

@@ -197,7 +197,8 @@ Racecar::Engine::Engine(const Real& momentOfInertia, const TorqueCurve& torqueCu
 	mFrictionResistance(0.0),
 	mMinimumEngineSpeed(-1.0),
 	mMaximumEngineSpeed(-1.0),
-	mThrottlePosition(0.0f)
+	mThrottlePosition(0.0f),
+	mConstantPower(true)
 {
 	error_if(false == mTorqueCurve.IsNormalized(), "Engine expects the TorqueCurve to be normalized / finalized.");
 	SetAngularVelocity(Racecar::RevolutionsMinuteToRadiansSecond(1000.0));
@@ -224,18 +225,18 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 	{
 		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * mThrottlePosition);
 		const Real appliedEngineTorque(onThrottleTorque);
-		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
+//		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 
-		//if (GetAngularVelocity() < 1.0)
-		//{
-		//	ApplyDownstreamAngularImpulse(appliedEngineTorque);
-		//}
-		//else
-		//{	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
-		//	const Real power = appliedEngineTorque * (GetAngularVelocity());  //Nm * 1/s = kg*m^2/s^3
-		//	const Real work = power * fixedTime;                              //Work = Nm,  Power * time = kg*m^2/s^3 * s = kg*m^2/s^2 = Nm
-		//	ApplyDownstreamAngularImpulse(work * fixedTime);                  //Finally Nm * time = impulse
-		//}
+		if (GetAngularVelocity() < 1.0 || true == mConstantPower)
+		{
+			ApplyDownstreamAngularImpulse(appliedEngineTorque);
+		}
+		else
+		{	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
+			const Real power = appliedEngineTorque * (GetAngularVelocity());  //Nm * rad/s = kg*m^2/s^3
+			const Real work = power * fixedTime;                              //Work = Nm,  Power * time = kg*m^2/s^3 * s = kg*m^2/s^2 = Nm
+			ApplyDownstreamAngularImpulse(work * fixedTime);                  //Finally Nm * time = impulse
+		}
 	}
 	
 	//if (mThrottlePosition < 0.01)
@@ -288,6 +289,13 @@ void Racecar::Engine::SetMinimumEngineSpeed(const Real& speedRadiansPerSecond)
 void Racecar::Engine::SetMaximumEngineSpeed(const Real& speedRadiansPerSecond)
 {
 	mMaximumEngineSpeed = speedRadiansPerSecond;
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+void Racecar::Engine::SetConstantPower(const bool constantPower)
+{
+	mConstantPower = constantPower;
 }
 
 //-------------------------------------------------------------------------------------------------------------------//
