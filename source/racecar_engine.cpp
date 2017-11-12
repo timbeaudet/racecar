@@ -233,11 +233,10 @@ void Racecar::Engine::OnSimulate(const Real& fixedTime)
 	{
 		const Real onThrottleTorque(mTorqueCurve.GetOutputTorque(GetEngineSpeedRPM()) * mThrottlePosition);
 		const Real appliedEngineTorque(onThrottleTorque);
-//		ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 
 		if (GetAngularVelocity() < 1.0 || true == mConstantPower)
 		{
-			ApplyDownstreamAngularImpulse(appliedEngineTorque);
+			ApplyDownstreamAngularImpulse(appliedEngineTorque * fixedTime);
 		}
 		else
 		{	//Power = Work / Time  which is  Nm / s    engineTorque is in Nm,  AngularVel is rad/s (or 1/s)
