@@ -9,6 +9,8 @@
 #include "racecar_engine.h"
 #include "racecar_controller.h"
 
+#include <algorithm>
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 Racecar::ConstantEngine::ConstantEngine(const Real& momentOfInertia, const Real& constantTorque, const Real& resistanceTorque) :
