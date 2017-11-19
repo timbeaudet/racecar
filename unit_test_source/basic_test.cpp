@@ -69,6 +69,7 @@ bool Racecar::UnitTests::PerformBasicTests(void)
 	PerformTest(TransmissionBrakeInNeutralTest, "Transmission Brake in Neutral Test");
 	PerformTest(TransmissionBrakeInReverseTest, "Transmission Brake in Reverse Test");
 
+	PerformTest(RacecarReverseTest, "Racecar Reverse Test");
 	//PerformTest(RacecarAccelerationTest, "Racecar Acceleration Test");
 	//PerformTest(RacecarZeroToSixtyTest, "Racecar Zero To Sixty Test");
 

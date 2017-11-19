@@ -239,6 +239,19 @@ Racecar::Real Racecar::GearJoint::ComputeTorqueImpulseToMatchVelocity(const Rota
 	const Real denominator = outputInertia + inputInertia * ratio; //Io + Ii * gr
 	const Real torqueImpulse = numerator / denominator;
 	return torqueImpulse;
+
+	////
+	//const Real ratio(GetGearRatio());
+	//error_if(ratio < kEpsilon && ratio > -kEpsilon, "Expected gear ratio non-zero value.");
+
+	//const Real inputInertia(input.ComputeUpstreamInertia());
+	//const Real outputInertia(output.ComputeDownstreamInertia());
+	//error_if(inputInertia < kEpsilon || outputInertia < kEpsilon, "Expected input and output inertia to be greater than zero.");
+
+	//const Real numerator = (inputInertia * outputInertia) * (ratio * output.GetAngularVelocity() - input.GetAngularVelocity()); //Io*Ii*(r*Wo - Wi)
+	//const Real denominator = outputInertia + inputInertia * ratio; //Io + Ii * gr
+	//const Real torqueImpulse = numerator / denominator;
+	//return torqueImpulse;
 }
 
 //--------------------------------------------------------------------------------------------------------------------//
