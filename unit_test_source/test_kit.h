@@ -12,7 +12,7 @@
 #include "../source/racecar.h"
 
 #include <cstdio>
-
+#include <string>
 #define log_test(message, ...)   printf(message, ##__VA_ARGS__)
 
 namespace Racecar

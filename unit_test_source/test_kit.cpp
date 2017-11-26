@@ -8,6 +8,7 @@
 
 #include "test_kit.h"
 #include <cstdarg> //va_list, va_start, va_end
+#include <string>
 
 const Racecar::Real Racecar::UnitTests::kTestEpsilon(0.00001);
 const Racecar::Real Racecar::UnitTests::kTestFixedTimeStep(0.01); //Do not change without modifying tests, or many tests will fail.
