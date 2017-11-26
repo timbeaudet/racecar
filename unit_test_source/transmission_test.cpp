@@ -214,15 +214,19 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	racecarController.SetBrakePosition(0.0);
 	racecarController.SetDownshift(true);
 
-	engine.ControllerChange(racecarController);
-	clutch.ControllerChange(racecarController);
-	gearbox.ControllerChange(racecarController);
-	wheel.ControllerChange(racecarController);
+	auto stepFunction = [&]() {
+		engine.ControllerChange(racecarController);
+		clutch.ControllerChange(racecarController);
+		gearbox.ControllerChange(racecarController);
+		wheel.ControllerChange(racecarController);
 
-	engine.Simulate(kTestFixedTimeStep);
-	clutch.Simulate(kTestFixedTimeStep);
-	gearbox.Simulate(kTestFixedTimeStep);
-	wheel.Simulate(kTestFixedTimeStep);
+		engine.Simulate(kTestFixedTimeStep);
+		clutch.Simulate(kTestFixedTimeStep);
+		gearbox.Simulate(kTestFixedTimeStep);
+		wheel.Simulate(kTestFixedTimeStep);
+	};
+
+	stepFunction();
 	racecarController.SetUpshift(false);
 
 	const Real reverseWheelSpeed(fabs(wheel.GetAngularVelocity()));
@@ -246,17 +250,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	for (int timer(0); timer < 200; timer += 10)
 	{
 		const Real previousWheelVelocity(wheel.GetAngularVelocity());
-
-		engine.ControllerChange(racecarController);
-		clutch.ControllerChange(racecarController);
-		gearbox.ControllerChange(racecarController);
-		wheel.ControllerChange(racecarController);
-
-		engine.Simulate(kTestFixedTimeStep);
-		clutch.Simulate(kTestFixedTimeStep);
-		gearbox.Simulate(kTestFixedTimeStep);
-		wheel.Simulate(kTestFixedTimeStep);
-
+		stepFunction();
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.
 			return false;
@@ -286,17 +280,7 @@ bool Racecar::UnitTests::TransmissionBrakeInReverseTest(void)
 	for (int timer(0); timer < 20000; timer += 10)
 	{
 		const Real previousWheelVelocity(wheel.GetAngularVelocity());
-
-		engine.ControllerChange(racecarController);
-		clutch.ControllerChange(racecarController);
-		gearbox.ControllerChange(racecarController);
-		wheel.ControllerChange(racecarController);
-
-		engine.Simulate(kTestFixedTimeStep);
-		clutch.Simulate(kTestFixedTimeStep);
-		gearbox.Simulate(kTestFixedTimeStep);
-		wheel.Simulate(kTestFixedTimeStep);
-
+		stepFunction();
 		if (fabs(previousWheelVelocity) < fabs(wheel.GetAngularVelocity()))
 		{	//The wheel is sped up, NOT slowing down.
 			return false;

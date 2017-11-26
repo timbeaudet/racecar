@@ -7,7 +7,6 @@
 ///-----------------------------------------------------------------------------------------------------------------///
 
 #include "test_kit.h"
-#include <cstdarg> //va_list, va_start, va_end
 #include <string>
 
 const Racecar::Real Racecar::UnitTests::kTestEpsilon(0.00001);

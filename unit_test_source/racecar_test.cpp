@@ -336,6 +336,8 @@ bool Racecar::UnitTests::RacecarReverseTest(void)
 		racecarController.SetDownshift(true);
 		racecarController.SetUpshift(false);
 		stepFunction();
+		ExpectedValue(gearbox.GetSelectedGear(), Racecar::Gear::Reverse, "Downshift should be in reverse gear.");
+		ExpectedValue(gearbox.GetSelectedGearRatio(), reverseGearRatio, "Downshift Reverse gear ratio check.");
 		ExpectedValue(engine.GetAngularVelocity(), 0.0, "Downshift: Engine should remain the same speed since NOTHING was moving.");
 		ExpectedValue(wheel.GetAngularVelocity(), 0.0, "Downshift: Wheel should remain the same speed since NOTHING was moving.");
 		ExpectedValue(engine.ComputeDownstreamInertia(), 5.264219244, "Downshift: Engine DownStream Inertia (In Gear)");
@@ -348,6 +350,7 @@ bool Racecar::UnitTests::RacecarReverseTest(void)
 		racecarController.SetDownshift(false);
 		racecarController.SetUpshift(true);
 		stepFunction();
+		ExpectedValue(gearbox.GetSelectedGear(), Racecar::Gear::Neutral, "Upshift should be in neutral.");
 		ExpectedValue(engine.GetAngularVelocity(), 0.0, "Upshift: Engine should remain the same speed now in Neutral.");
 		ExpectedValue(wheel.GetAngularVelocity(), 0.0, "Upshift: Wheel should remain the same speed now in Neutral.");
 		ExpectedValue(engine.ComputeDownstreamInertia(), 0.09035248882, "Upshift: Engine DownStream Inertia(Neutral)");
@@ -360,6 +363,7 @@ bool Racecar::UnitTests::RacecarReverseTest(void)
 		//Put the car in reverse, using shifter, no engine moving, no wheel moving nothing should change.
 		racecarController.SetShifterPosition(Gear::Reverse);
 		stepFunction();
+		ExpectedValue(gearbox.GetSelectedGear(), Racecar::Gear::Reverse, "Shifter(Reverse) should be in reverse gear.");
 		ExpectedValue(engine.GetAngularVelocity(), 0.0, "Shifter(Reverse): Engine should remain the same speed since NOTHING was moving.");
 		ExpectedValue(wheel.GetAngularVelocity(), 0.0, "Shifter(Reverse): Wheel should remain the same speed since NOTHING was moving.");
 		ExpectedValue(engine.ComputeDownstreamInertia(), 5.264219244, "Downshift: Engine DownStream Inertia (In Gear)");
@@ -367,6 +371,7 @@ bool Racecar::UnitTests::RacecarReverseTest(void)
 		//Put the car back into neutral, using shifter, no engine moving, no wheel moving nothing should change.
 		racecarController.SetShifterPosition(Gear::Neutral);
 		stepFunction();
+		ExpectedValue(gearbox.GetSelectedGear(), Racecar::Gear::Neutral, "Shifter(Neutral) should be in neutral gear.");
 		ExpectedValue(engine.GetAngularVelocity(), 0.0, "Shifter(Neutral): Engine should remain the same speed now in Neutral.");
 		ExpectedValue(wheel.GetAngularVelocity(), 0.0, "Shifter(Neutral): Wheel should remain the same speed now in Neutral.");
 		ExpectedValue(engine.ComputeDownstreamInertia(), 0.09035248882, "Upshift: Engine DownStream Inertia(Neutral)");
@@ -393,68 +398,68 @@ bool Racecar::UnitTests::RacecarReverseTest(void)
 
 
 
-	//if (false == sAllExpectionsPassed)
-	//{	//We have failed one of our basic expectations.
-	//	return false;
-	//}
-	/////////////// Extreme attempt?
+	if (false == sAllExpectionsPassed)
+	{	//We have failed one of our basic expectations.
+		return false;
+	}
+	///////////// Extreme attempt?
 
-	//int breaker = 2000;
-	//while (true)
-	//{
-	//	racecarController.SetShifterPosition(Racecar::Gear::Neutral);
-	//	racecarController.SetThrottlePosition(0.0);
-	//	racecarController.SetBrakePosition(1.0);
-	//	racecarController.SetClutchPosition(1.0);
-	//	stepFunction();
-	//	if (fabs(wheel.GetAngularVelocity()) < 0.0000001)
-	//	{
-	//		break;
-	//	}
+	int breaker = 2000;
+	while (true)
+	{
+		racecarController.SetShifterPosition(Racecar::Gear::Neutral);
+		racecarController.SetThrottlePosition(0.0);
+		racecarController.SetBrakePosition(1.0);
+		racecarController.SetClutchPosition(1.0);
+		stepFunction();
+		if (fabs(wheel.GetAngularVelocity()) < 0.0000001)
+		{
+			break;
+		}
 
-	//	--breaker;
-	//	if (breaker < 0)
-	//	{
-	//		return false;
-	//	}
-	//}
-	//
-	//if (false == ExpectedValue(gearbox.GetAngularVelocity(), 0.0, "gearbox after stopping") ||
-	//	false == ExpectedValue(differential.GetAngularVelocity(), 0.0, "differential after stopping") ||
-	//	false == ExpectedValue(wheel.GetAngularVelocity(), 0.0, "wheel after stopping") ||
-	//	false == ExpectedValue(racecarBody.GetLinearVelocity(), 0.0, "racecar velocity after stopping"))
-	//{
-	//	return false;
-	//}
+		--breaker;
+		if (breaker < 0)
+		{
+			return false;
+		}
+	}
+	
+	if (false == ExpectedValue(gearbox.GetAngularVelocity(), 0.0, "gearbox after stopping") ||
+		false == ExpectedValue(differential.GetAngularVelocity(), 0.0, "differential after stopping") ||
+		false == ExpectedValue(wheel.GetAngularVelocity(), 0.0, "wheel after stopping") ||
+		false == ExpectedValue(racecarBody.GetLinearVelocity(), 0.0, "racecar velocity after stopping"))
+	{
+		return false;
+	}
 
-	//for (size_t timer(0); timer < 500; timer += 10)
-	//{
-	//	racecarController.SetThrottlePosition(1.0);
-	//	racecarController.SetBrakePosition(1.0);
-	//	racecarController.SetClutchPosition(1.0);
-	//	stepFunction();
-	//}
+	for (size_t timer(0); timer < 500; timer += 10)
+	{
+		racecarController.SetThrottlePosition(1.0);
+		racecarController.SetBrakePosition(1.0);
+		racecarController.SetClutchPosition(1.0);
+		stepFunction();
+	}
 
 
-	//if (false == ExpectedValue(gearbox.GetAngularVelocity(), 0.0, "gearbox after revving") ||
-	//	false == ExpectedValue(differential.GetAngularVelocity(), 0.0, "differential after revving") ||
-	//	false == ExpectedValue(wheel.GetAngularVelocity(), 0.0, "wheel after revving") ||
-	//	false == ExpectedValue(racecarBody.GetLinearVelocity(), 0.0, "racecar velocity after revving"))
-	//{
-	//	return false;
-	//}
+	if (false == ExpectedValue(gearbox.GetAngularVelocity(), 0.0, "gearbox after revving") ||
+		false == ExpectedValue(differential.GetAngularVelocity(), 0.0, "differential after revving") ||
+		false == ExpectedValue(wheel.GetAngularVelocity(), 0.0, "wheel after revving") ||
+		false == ExpectedValue(racecarBody.GetLinearVelocity(), 0.0, "racecar velocity after revving"))
+	{
+		return false;
+	}
 
-	//rand();
+	rand();
 
-	////Now that the engine is spinning, car not moving, release clutch to move backwards.
-	//for (size_t timer(0); timer < 1000; timer += 10)
-	//{
-	//	racecarController.SetShifterPosition(Racecar::Gear::Reverse);
-	//	racecarController.SetThrottlePosition(1.0);
-	//	racecarController.SetBrakePosition(0.0);
-	//	racecarController.SetClutchPosition(0.0);
-	//	stepFunction();
-	//}
+	//Now that the engine is spinning, car not moving, release clutch to move backwards.
+	for (size_t timer(0); timer < 1000; timer += 10)
+	{
+		racecarController.SetShifterPosition(Racecar::Gear::Reverse);
+		racecarController.SetThrottlePosition(1.0);
+		racecarController.SetBrakePosition(0.0);
+		racecarController.SetClutchPosition(0.0);
+		stepFunction();
+	}
 
 	return true;
 }
