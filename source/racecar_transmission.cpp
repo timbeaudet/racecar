@@ -118,8 +118,8 @@ void Racecar::Transmission::OnSimulate(const Real& fixedTime)
 		{	//It appears the "dog collar" boxes just slam into required speeds.
 			GetExpectedInputSource().ApplyUpstreamAngularImpulse(matchImpulse);
 			ApplyDownstreamAngularImpulse(-matchImpulse);
-			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kEpsilon,
-				"InternalError: The output shaft is not rotating at the correct speed.");
+//			error_if(fabs(GetAngularVelocity() - GetExpectedInputSource().GetAngularVelocity() / GetSelectedGearRatio()) > Racecar::kEpsilon,
+//				"InternalError: The output shaft is not rotating at the correct speed.");
 		}
 	}
 
@@ -238,7 +238,7 @@ Racecar::Real Racecar::GearJoint::ComputeTorqueImpulseToMatchVelocity(const Rota
 	const Real numerator = (inputInertia * outputInertia * Sign(ratio)) * (ratio * output.GetAngularVelocity() - input.GetAngularVelocity()); //Io*Ii*(r*Wo - Wi)
 	const Real denominator = outputInertia + inputInertia * ratio; //Io + Ii * gr
 	const Real torqueImpulse = numerator / denominator;
-	return torqueImpulse;
+	return torqueImpulse * Sign(ratio);
 
 	////
 	//const Real ratio(GetGearRatio());
